@@ -10,11 +10,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  stats = {
-    players: 15234,
-    tournaments: 3456,
-    prizePools: '12,450,000'
-  };
 
   features = [
     {

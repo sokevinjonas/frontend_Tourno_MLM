@@ -1,0 +1,154 @@
+
+<!-- Background -->
+<div class="fixed inset-0 bg-[#0f172a] -z-50">
+  <div class="absolute top-[30%] left-[50%] -translate-x-1/2 w-[800px] h-[800px] bg-blue-600/5 rounded-full blur-[150px] animate-pulse-glow"></div>
+  <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzYjgyZjYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-20"></div>
+</div>
+
+<div class="min-h-screen pt-24 pb-12 px-4">
+  <div class="container mx-auto max-w-6xl">
+    
+    <!-- Header -->
+    <div class="text-center mb-16 relative">
+      <div class="inline-block relative">
+         <span class="absolute -top-6 -right-6 text-4xl animate-bounce">👑</span>
+         <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">
+           Classement <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">Elite</span>
+         </h1>
+      </div>
+      <p class="text-xl text-gray-400">Les meilleurs joueurs de la plateforme s'affrontent ici.</p>
+    </div>
+
+    <!-- Podium (Top 3) -->
+    <div class="flex flex-col md:flex-row justify-center items-end gap-6 mb-20 px-4">
+      
+      <!-- 2nd Place -->
+      <div class="order-2 md:order-1 w-full md:w-1/3 max-w-[300px] flex flex-col items-center">
+        <div class="relative mb-4 group cursor-pointer">
+          <div class="w-24 h-24 rounded-full border-4 border-gray-400 overflow-hidden relative z-10 bg-gray-800">
+             <div class="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-3xl font-bold text-gray-400">
+               {{topPlayers[1].username.charAt(0)}}
+             </div>
+          </div>
+          <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gray-400 text-black font-bold px-3 py-1 rounded-full text-sm z-20 shadow-lg">#2</div>
+        </div>
+        <div class="glass-card w-full p-6 rounded-t-2xl border-t-4 border-gray-400 text-center relative overflow-hidden">
+           <div class="absolute inset-0 bg-gray-400/10"></div>
+           <h3 class="text-xl font-bold text-white mb-1 truncate">{{topPlayers[1].username}}</h3>
+           <p class="text-sm text-gray-400 mb-2">{{topPlayers[1].points}} pts</p>
+           <span class="text-xs bg-gray-700/50 px-2 py-1 rounded text-gray-300">{{topPlayers[1].game}}</span>
+        </div>
+      </div>
+
+      <!-- 1st Place -->
+      <div class="order-1 md:order-2 w-full md:w-1/3 max-w-[320px] flex flex-col items-center relative -top-8 md:-top-12 z-10">
+        <div class="absolute -inset-10 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 blur-3xl rounded-full"></div>
+        <div class="relative mb-4 group cursor-pointer scale-110">
+          <div class="absolute -inset-1 bg-gradient-to-r from-yellow-300 to-orange-500 rounded-full animate-spin-slow opacity-75"></div>
+          <div class="w-28 h-28 rounded-full border-4 border-yellow-400 overflow-hidden relative z-10 bg-gray-800">
+             <div class="w-full h-full bg-gradient-to-br from-yellow-600 to-yellow-800 flex items-center justify-center text-4xl font-bold text-yellow-100">
+               {{topPlayers[0].username.charAt(0)}}
+             </div>
+          </div>
+          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold px-4 py-1 rounded-full text-lg z-20 shadow-lg shadow-yellow-500/50">#1</div>
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 text-4xl animate-bounce">🏆</div>
+        </div>
+        <div class="glass-card w-full p-8 rounded-t-2xl border-t-4 border-yellow-400 text-center relative overflow-hidden shadow-[0_0_30px_rgba(234,179,8,0.2)]">
+           <div class="absolute inset-0 bg-yellow-400/10"></div>
+           <h3 class="text-2xl font-bold text-white mb-1 truncate">{{topPlayers[0].username}}</h3>
+           <p class="text-base text-yellow-400 font-bold mb-2">{{topPlayers[0].points}} pts</p>
+           <span class="text-sm bg-yellow-500/20 border border-yellow-500/30 px-3 py-1 rounded text-yellow-200">{{topPlayers[0].game}}</span>
+        </div>
+      </div>
+
+      <!-- 3rd Place -->
+      <div class="order-3 w-full md:w-1/3 max-w-[300px] flex flex-col items-center">
+        <div class="relative mb-4 group cursor-pointer">
+          <div class="w-24 h-24 rounded-full border-4 border-amber-700 overflow-hidden relative z-10 bg-gray-800">
+             <div class="w-full h-full bg-gradient-to-br from-amber-800 to-amber-950 flex items-center justify-center text-3xl font-bold text-amber-500">
+               {{topPlayers[2].username.charAt(0)}}
+             </div>
+          </div>
+          <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-amber-700 text-white font-bold px-3 py-1 rounded-full text-sm z-20 shadow-lg">#3</div>
+        </div>
+        <div class="glass-card w-full p-6 rounded-t-2xl border-t-4 border-amber-700 text-center relative overflow-hidden">
+           <div class="absolute inset-0 bg-amber-700/10"></div>
+           <h3 class="text-xl font-bold text-white mb-1 truncate">{{topPlayers[2].username}}</h3>
+           <p class="text-sm text-gray-400 mb-2">{{topPlayers[2].points}} pts</p>
+           <span class="text-xs bg-gray-700/50 px-2 py-1 rounded text-gray-300">{{topPlayers[2].game}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Ranking Table -->
+    <div class="glass-card rounded-2xl overflow-hidden border border-white/5 mb-20">
+      <div class="p-6 border-b border-white/5 bg-white/5">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+          <span>📊</span> Classement Global
+        </h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead>
+            <tr class="bg-black/40 text-gray-400 text-sm uppercase tracking-wider">
+              <th class="p-4 pl-6">Rang</th>
+              <th class="p-4">Joueur</th>
+              <th class="p-4">Jeu</th>
+              <th class="p-4 text-center">Victoires</th>
+              <th class="p-4 text-center">Tendance</th>
+              <th class="p-4 pr-6 text-right">Points</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr *ngFor="let p of topPlayers.slice(3)" class="hover:bg-white/5 transition-colors group">
+              <td class="p-4 pl-6 font-mono text-gray-500 font-bold group-hover:text-white transition-colors">#{{p.rank}}</td>
+              <td class="p-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex items-center justify-center text-xs font-bold text-white">
+                    {{p.username.charAt(0)}}
+                  </div>
+                  <span class="font-bold text-gray-200 group-hover:text-blue-400 transition-colors">{{p.username}}</span>
+                </div>
+              </td>
+              <td class="p-4 text-sm text-gray-400 flex items-center gap-2">
+                <span>{{getGameIcon(p.game)}}</span> {{p.game}}
+              </td>
+              <td class="p-4 text-center text-gray-300">{{p.wins}}</td>
+              <td class="p-4 text-center">
+                <span *ngIf="p.trend === 'up'" class="text-green-500">▲</span>
+                <span *ngIf="p.trend === 'down'" class="text-red-500">▼</span>
+                <span *ngIf="p.trend === 'stable'" class="text-gray-600">-</span>
+              </td>
+              <td class="p-4 pr-6 text-right font-bold text-white">{{p.points}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="p-4 bg-black/20 text-center">
+        <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">Voir tout le classement →</button>
+      </div>
+    </div>
+
+    <!-- Hall of Fame -->
+    <div class="flex flex-col md:flex-row gap-8 items-center">
+       <div class="flex-1">
+          <h2 class="text-3xl font-bold text-white mb-4">Hall of Fame 🏛️</h2>
+          <p class="text-gray-400 mb-6">Les légendes qui ont marqué l'histoire de Mobile League Manager.</p>
+          <button class="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium transition-all">
+             Voir l'historique complet
+          </button>
+       </div>
+       <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div *ngFor="let entry of hallOfFame" class="glass-card p-4 rounded-xl border border-white/5 hover:border-yellow-500/30 transition-all flex items-center gap-4">
+             <div class="text-3xl">🏆</div>
+             <div>
+                <div class="text-xs text-yellow-500 font-bold uppercase tracking-wider">{{entry.division}}</div>
+                <div class="font-bold text-white">{{entry.winner}}</div>
+                <div class="text-xs text-gray-500">{{entry.season}} • {{entry.game}}</div>
+             </div>
+          </div>
+       </div>
+    </div>
+
+  </div>
+</div>

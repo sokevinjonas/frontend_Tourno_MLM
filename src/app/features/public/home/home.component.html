@@ -44,26 +44,25 @@
           La plateforme #1 en Afrique
         </div>
         
-        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-          Passe au niveau <br/>
-          <span class="text-gradient">Supérieur</span>
+        <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          Mobile League Manager <br/>
+          <span class="text-gradient">Tournois E-sports Mobile</span>
         </h1>
         
         <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-          Rejoins l'élite des joueurs mobile. Organise tes tournois, affronte les meilleurs et gagne
-          du <span class="text-white font-semibold">CASH</span> réel directement sur ton téléphone.
+          Organise et participe à des tournois de jeux mobiles. Gagne de l'argent réel.
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
           <a routerLink="/register" class="group relative px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
             <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             <span class="relative flex items-center gap-2">
-              Commencer
+              S'inscrire
               <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </span>
           </a>
-          <a routerLink="/tournaments" class="px-8 py-4 glass text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all border border-white/10 flex items-center gap-2 justify-center">
-            <span>🎮</span> Voir les tournois
+          <a routerLink="/login" class="px-8 py-4 glass text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all border border-white/10 flex items-center gap-2 justify-center">
+            Se connecter
           </a>
         </div>
         
@@ -91,7 +90,7 @@
                   <div class="text-xs text-gray-400">Il y a 2 min</div>
                 </div>
               </div>
-              <div class="text-green-400 font-bold">+ 50,000 F</div>
+              <div class="text-green-400 font-bold">+ 100 MLM</div>
             </div>
             <div class="h-2 bg-white/10 rounded-full overflow-hidden">
               <div class="h-full w-3/4 bg-blue-500 rounded-full"></div>
@@ -109,43 +108,6 @@
              </div>
           </div>
 
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-20 relative z-10">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
-        <div class="absolute inset-0 bg-blue-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-        <div class="relative z-10">
-          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2 font-mono">
-            {{stats.players.toLocaleString()}}+
-          </div>
-          <p class="text-gray-400 font-medium tracking-wide">JOUEURS ACTIFS</p>
-        </div>
-      </div>
-
-      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
-        <div class="absolute inset-0 bg-purple-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-        <div class="relative z-10">
-          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2 font-mono">
-            {{stats.tournaments.toLocaleString()}}+
-          </div>
-          <p class="text-gray-400 font-medium tracking-wide">TOURNOIS JOUÉS</p>
-        </div>
-      </div>
-
-      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
-        <div class="absolute inset-0 bg-green-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-        <div class="relative z-10">
-          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2 font-mono">
-           {{stats.prizePools}}
-          </div>
-          <p class="text-gray-400 font-medium tracking-wide">CASH DISTRIBUÉ</p>
         </div>
       </div>
     </div>
