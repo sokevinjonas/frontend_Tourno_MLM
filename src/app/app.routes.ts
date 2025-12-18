@@ -8,28 +8,28 @@ export const routes: Routes = [
   },
 
   // Auth routes
-  // {
-  //   path: 'auth',
-  //   loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
-  // },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
+  },
 
-  // // Player routes (authentication required)
-  // {
-  //   path: 'player',
-  //   loadChildren: () => import('./features/player/player.routes').then(m => m.playerRoutes)
-  // },
+  // Player routes (authentication required)
+  {
+    path: 'player',
+    loadChildren: () => import('./features/player/player.routes').then(m => m.playerRoutes)
+  },
 
-  // // Organizer routes (organizer role required)
-  // {
-  //   path: 'organizer',
-  //   loadChildren: () => import('./features/organizer/organizer.routes').then(m => m.organizerRoutes)
-  // },
+  // Organizer routes (organizer role required)
+  {
+    path: 'organizer',
+    loadChildren: () => import('./features/organizer/organizer.routes').then(m => m.organizerRoutes)
+  },
 
-  // // Moderator routes (moderator role required)
-  // {
-  //   path: 'moderator',
-  //   loadChildren: () => import('./features/moderator/moderator.routes').then(m => m.moderatorRoutes)
-  // },
+  // Moderator routes (moderator role required)
+  {
+    path: 'moderator',
+    loadChildren: () => import('./features/moderator/moderator.routes').then(m => m.moderatorRoutes)
+  },
 
   // Referee routes (referee role required)
   {
