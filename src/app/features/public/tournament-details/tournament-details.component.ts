@@ -40,6 +40,16 @@ interface Tournament {
   prizeDistribution: { 1: number; 2: number; 3: number };
   status: 'Inscriptions ouvertes' | 'En cours' | 'Terminé';
   rules: string[];
+  rounds?: {
+    name: string;
+    matches: {
+      p1: string;
+      p2: string;
+      s1: number | null;
+      s2: number | null;
+      status: 'completed' | 'scheduled' | 'live';
+    }[];
+  }[];
 }
 
 @Component({
@@ -99,23 +109,65 @@ export class TournamentDetailsComponent implements OnInit {
       entryFee: 5,
       participants: {
         current: 16,
-        max: 32,
+        max: 16,
         list: [
           { name: 'ProGamer237', rank: 'Gold' },
           { name: 'LionIndomptable', rank: 'Silver' },
           { name: 'DoualaKing', rank: 'Bronze' },
-          // ... more
+          { name: 'YaoundeBoss', rank: 'Silver' },
+          { name: 'KribiSlayer', rank: 'Gold' },
+          { name: 'GarouaBoy', rank: 'Bronze' },
+          { name: 'BamendaStriker', rank: 'Platinum' },
+          { name: 'BueaSniper', rank: 'Silver' },
+          { name: 'EbolowaStar', rank: 'Bronze' },
+          { name: 'BafoussamPower', rank: 'Gold' },
+          { name: 'LimbeShark', rank: 'Silver' },
+          { name: 'KumbaWarrior', rank: 'Bronze' },
+          { name: 'MarouaLion', rank: 'Silver' },
+          { name: 'NgaoundereEagle', rank: 'Gold' },
+          { name: 'BertouaPanther', rank: 'Bronze' },
+          { name: 'EdéaCroc', rank: 'Silver' }
         ]
       },
       prizePool: 160,
       prizeDistribution: { 1: 80, 2: 50, 3: 30 },
-      status: 'Inscriptions ouvertes',
+      status: 'En cours', // Changed to En cours for bracket to be relevant
       rules: [
         'Format Suisse : 5 rondes minimum',
         'Victoire = 3 points, Nul = 1 point',
         'Screenshot du score final obligatoire',
         'Fair-play exigé sous peine de disqualification',
         'Connexion stable requise'
+      ],
+      // Mocking Bracket/Rounds Data
+      rounds: [
+        {
+          name: 'Ronde 1',
+          matches: [
+            { p1: 'ProGamer237', p2: 'LionIndomptable', s1: 3, s2: 1, status: 'completed' },
+            { p1: 'DoualaKing', p2: 'YaoundeBoss', s1: 0, s2: 2, status: 'completed' },
+            { p1: 'KribiSlayer', p2: 'GarouaBoy', s1: 1, s2: 1, status: 'completed' },
+            { p1: 'BamendaStriker', p2: 'BueaSniper', s1: 4, s2: 0, status: 'completed' }
+          ]
+        },
+        {
+          name: 'Ronde 2',
+          matches: [
+            { p1: 'ProGamer237', p2: 'BamendaStriker', s1: 2, s2: 2, status: 'completed' },
+            { p1: 'YaoundeBoss', p2: 'KribiSlayer', s1: 1, s2: 0, status: 'completed' },
+            { p1: 'LionIndomptable', p2: 'DoualaKing', s1: 2, s2: 1, status: 'completed' },
+             { p1: 'BueaSniper', p2: 'GarouaBoy', s1: 0, s2: 3, status: 'completed' }
+          ]
+        },
+         {
+          name: 'Ronde 3',
+          matches: [
+            { p1: 'ProGamer237', p2: 'YaoundeBoss', s1: null, s2: null, status: 'scheduled' },
+            { p1: 'BamendaStriker', p2: 'GarouaBoy', s1: null, s2: null, status: 'scheduled' },
+             { p1: 'LionIndomptable', p2: 'KribiSlayer', s1: null, s2: null, status: 'scheduled' },
+             { p1: 'DoualaKing', p2: 'BueaSniper', s1: null, s2: null, status: 'scheduled' }
+          ]
+        }
       ]
     };
   }
