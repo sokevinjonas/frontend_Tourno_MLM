@@ -1,0 +1,52 @@
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm transition-all duration-300">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16 sm:h-20">
+      <!-- Logo -->
+      <a routerLink="/" class="flex items-center gap-2 group">
+        <span class="text-2xl sm:text-3xl">⚽</span>
+        <span class="font-bold text-xl sm:text-2xl text-slate-800 tracking-tight group-hover:text-blue-600 transition-colors">MLM</span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-8">
+        <a routerLink="/tournaments" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Tournois</a>
+        <a routerLink="/" fragment="how-it-works" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">Comment ça marche</a>
+        <a routerLink="/faq" class="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Auth Buttons -->
+      <div class="hidden md:flex items-center gap-4">
+        <a routerLink="/login" class="text-sm font-medium text-slate-700 hover:text-blue-600 px-4 py-2 rounded-lg transition-colors">
+          Se connecter
+        </a>
+        <a routerLink="/register" class="text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+          S'inscrire
+        </a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button (click)="toggleMenu()" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="isMenuOpen" class="md:hidden bg-white border-t border-slate-100 py-4 px-4 shadow-lg absolute w-full left-0">
+    <nav class="flex flex-col gap-4">
+      <a routerLink="/tournaments" class="text-base font-medium text-slate-600 hover:text-blue-600 py-2 border-b border-slate-50">Tournois</a>
+      <a routerLink="/" fragment="how-it-works" class="text-base font-medium text-slate-600 hover:text-blue-600 py-2 border-b border-slate-50">Comment ça marche</a>
+      <a routerLink="/faq" class="text-base font-medium text-slate-600 hover:text-blue-600 py-2 border-b border-slate-50">FAQ</a>
+      <div class="flex flex-col gap-3 mt-2">
+        <a routerLink="/login" class="text-center text-sm font-medium text-slate-700 border border-slate-200 hover:bg-slate-50 px-4 py-2.5 rounded-lg transition-colors">
+          Se connecter
+        </a>
+        <a routerLink="/register" class="text-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow-md transition-colors">
+          S'inscrire
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
