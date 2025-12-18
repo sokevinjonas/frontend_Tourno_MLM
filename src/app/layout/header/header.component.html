@@ -45,21 +45,76 @@
           </a>
         </nav>
 
-        <!-- Auth Buttons -->
-        <div class="hidden md:flex items-center gap-3">
-          <a routerLink="/login" class="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
-            Se connecter
-          </a>
-          <a routerLink="/register" class="group relative px-5 py-2">
-            <div class="absolute inset-0 bg-blue-600 rounded-xl transition-all group-hover:bg-blue-500 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 group-hover:-translate-y-0.5"></div>
-            <div class="relative flex items-center gap-2 text-sm font-bold text-white">
-              <span>S'inscrire</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-0.5">
-                <path d="M5 12h14" />
-                <path d="m12 5 7 7-7 7" />
-              </svg>
-            </div>
-          </a>
+        <!-- Auth Buttons / Profile -->
+        <div class="hidden md:flex items-center gap-4">
+          
+          <ng-container *ngIf="currentUser$ | async as user; else guest">
+             
+             <!-- Coin Balance -->
+             <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-lg border border-slate-700">
+                <span class="text-yellow-400 text-lg">🪙</span>
+                <span class="font-bold text-white">{{ user.wallet?.balance || 0 }}</span>
+             </div>
+
+             <!-- Profile Dropdown -->
+             <div class="relative">
+                <button (click)="toggleProfileMenu()" class="flex items-center gap-3 hover:bg-white/5 p-1 rounded-xl transition-colors">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
+                     {{ user.name.charAt(0).toUpperCase() }}
+                  </div>
+                  <span class="text-sm font-medium text-slate-200 max-w-[100px] truncate">{{ user.name }}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 transition-transform duration-200" [class.rotate-180]="isProfileMenuOpen">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
+
+                <!-- Dropdown -->
+                <div *ngIf="isProfileMenuOpen" class="absolute right-0 top-full mt-2 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
+                   <div class="p-3 border-b border-white/5">
+                      <p class="text-sm font-medium text-white">{{ user.name }}</p>
+                      <p class="text-xs text-slate-400 truncate">{{ user.email }}</p>
+                   </div>
+                   <div class="p-1">
+                      <a routerLink="/profile" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                         Mon Profil
+                      </a>
+                      <a routerLink="/game-accounts" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                         Mes Comptes de jeu
+                      </a>
+                      <a routerLink="/wallet" class="flex items-center gap-3 px-3 py-2 text-sm text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                         Portefeuille
+                      </a>
+                   </div>
+                   <div class="h-px bg-white/5 my-1"></div>
+                   <div class="p-1">
+                      <button (click)="logout()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors text-left">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                         Se déconnecter
+                      </button>
+                   </div>
+                </div>
+             </div>
+
+          </ng-container>
+
+          <ng-template #guest>
+            <a routerLink="/login" class="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+              Se connecter
+            </a>
+            <a routerLink="/register" class="group relative px-5 py-2">
+              <div class="absolute inset-0 bg-blue-600 rounded-xl transition-all group-hover:bg-blue-500 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 group-hover:-translate-y-0.5"></div>
+              <div class="relative flex items-center gap-2 text-sm font-bold text-white">
+                <span>S'inscrire</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-0.5">
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </div>
+            </a>
+          </ng-template>
         </div>
 
         <!-- Mobile Menu Button -->
