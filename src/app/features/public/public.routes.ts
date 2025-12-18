@@ -18,6 +18,10 @@ export const publicRoutes: Routes = [
     loadComponent: () => import('./register/register.component').then(m => m.RegisterComponent)
   },
   {
+    path: 'auth/verify',
+    loadComponent: () => import('./auth-verify/auth-verify.component').then(m => m.AuthVerifyComponent)
+  },
+  {
     path: 'tournaments',
     loadComponent: () => import('./tournaments/tournaments.component').then(m => m.TournamentsComponent)
   },

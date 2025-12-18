@@ -39,6 +39,14 @@ export class LoginComponent {
   }
 
   loginWithOAuth(provider: 'google' | 'facebook' | 'apple') {
-    this.authService.loginWithOAuth(provider);
+    this.authService.getOAuthRedirectUrl(provider).subscribe({
+      next: (response) => {
+        window.location.href = response.url;
+      },
+      error: (err) => {
+        console.error('OAuth Error:', err);
+        this.error = 'Erreur de connexion avec ' + provider;
+      }
+    });
   }
 }
