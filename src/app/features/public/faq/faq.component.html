@@ -1,0 +1,135 @@
+<div class="min-h-screen bg-slate-900 pt-20"> <!-- pt-20 to clear fixed header -->
+  
+  <!-- Hero Section -->
+  <div class="relative bg-gradient-to-b from-slate-800 to-slate-900 py-20 px-4 sm:px-6 lg:px-8 text-center border-b border-slate-700/50">
+    <!-- Background Accents -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 pointer-events-none"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl translate-y-1/3 pointer-events-none"></div>
+
+    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 relative z-10 flex flex-col md:flex-row items-center justify-center gap-4">
+      <span class="text-6xl">❓</span> Questions Fréquentes
+    </h1>
+    <p class="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto relative z-10">
+      Trouvez rapidement des réponses à vos questions sur Mobile League Manager.
+    </p>
+
+    <!-- Search Bar -->
+    <div class="mt-12 max-w-2xl mx-auto relative z-10">
+      <div class="relative group">
+        <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="onSearch()"
+          class="w-full bg-slate-800/80 backdrop-blur-xl border border-slate-600 text-white rounded-full py-4 pl-16 pr-6 shadow-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-500 text-lg"
+          placeholder="Rechercher une question..."
+        >
+      </div>
+      <!-- Popular Tags -->
+      <div class="mt-4 flex flex-wrap justify-center gap-2 text-sm">
+         <span class="text-slate-400">Populaire :</span>
+         <button (click)="searchQuery='inscription'; onSearch()" class="text-blue-400 hover:text-blue-300 transition-colors">Comment m'inscrire ?</button>
+         <span class="text-slate-600">•</span>
+         <button (click)="searchQuery='suisse'; onSearch()" class="text-blue-400 hover:text-blue-300 transition-colors">Format Suisse</button>
+         <span class="text-slate-600">•</span>
+         <button (click)="searchQuery='pièces'; onSearch()" class="text-blue-400 hover:text-blue-300 transition-colors">Pièces MLM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Pills Navigation (Sticky) -->
+  <div class="sticky top-[72px] z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50 py-4 overflow-x-auto hide-scrollbar">
+    <div class="container mx-auto px-4 flex gap-3 min-w-max md:justify-center">
+       <button 
+         *ngFor="let cat of categories" 
+         (click)="scrollToCategory(cat.id)"
+         class="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 border"
+         [ngClass]="activeCategory === cat.id ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/25' : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'">
+         <span>{{cat.icon}}</span>
+         {{cat.name}}
+       </button>
+    </div>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 max-w-4xl">
+     
+     <!-- No Results State -->
+     <div *ngIf="showNoResults" class="text-center py-20 bg-slate-800/50 rounded-2xl border border-slate-700 border-dashed animate-fade-in">
+        <div class="text-6xl mb-4">🤷‍♂️</div>
+        <h3 class="text-2xl font-bold text-white mb-2">Aucune question trouvée</h3>
+        <p class="text-slate-400 mb-6">Essayez avec des mots-clés différents ou parcourez les catégories.</p>
+        <button (click)="searchQuery=''; onSearch()" class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors font-medium">
+           Voir toutes les questions
+        </button>
+     </div>
+
+     <!-- Question Lists by Category -->
+     <div *ngFor="let cat of filteredCategories" [id]="cat.id" class="mb-16 scroll-mt-32">
+        <div class="flex items-center gap-3 mb-6" *ngIf="!searchQuery || cat.questions.length > 0">
+           <span class="text-3xl">{{cat.icon}}</span>
+           <h2 class="text-2xl font-bold text-white">{{cat.name}}</h2>
+        </div>
+
+        <div class="space-y-4">
+           <div *ngFor="let q of cat.questions" class="bg-slate-800/50 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-slate-600 transition-colors duration-300 group">
+              <!-- Header -->
+              <button 
+                (click)="toggleQuestion(q.id)"
+                class="w-full flex items-center justify-between p-5 text-left focus:outline-none"
+                [attr.aria-expanded]="openedQuestionId === q.id">
+                 <span class="text-lg font-medium text-slate-200 group-hover:text-blue-400 transition-colors pr-4">{{q.question}}</span>
+                 <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-slate-700 text-slate-400 transition-transform duration-300" 
+                       [class.rotate-180]="openedQuestionId === q.id"
+                       [class.bg-blue-600]="openedQuestionId === q.id"
+                       [class.text-white]="openedQuestionId === q.id">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                 </span>
+              </button>
+              
+              <!-- Content -->
+              <div 
+                 class="accordion-content border-t border-slate-700/30 bg-slate-900/30"
+                 [class.open]="openedQuestionId === q.id">
+                 <div class="p-6 text-slate-300 leading-relaxed space-y-4 text-base" [innerHTML]="sanitize(q.answer)"></div>
+              </div>
+           </div>
+        </div>
+     </div>
+
+     <!-- Support Section -->
+     <div class="mt-20 py-16 text-center bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-3xl border border-slate-700 relative overflow-hidden">
+        <div class="absolute inset-0 bg-slate-800/40 backdrop-blur-sm -z-10"></div>
+        
+        <h2 class="text-3xl font-bold text-white mb-2">Vous n'avez pas trouvé de réponse ?</h2>
+        <p class="text-slate-400 mb-10">Notre équipe de support est là pour vous aider.</p>
+        
+        <div class="flex flex-col sm:flex-row gap-6 justify-center px-4">
+           <!-- Email Card -->
+           <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-colors shadow-lg flex-1 max-w-sm mx-auto w-full">
+              <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">📧</div>
+              <h3 class="text-white font-bold mb-1">Email</h3>
+              <p class="text-slate-400 text-sm mb-4">support@mlm-platform.com</p>
+              <a href="mailto:support@mlm-platform.com" class="block w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors font-medium">
+                 Nous écrire
+              </a>
+           </div>
+
+           <!-- WhatsApp Card -->
+           <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 hover:border-green-500/50 transition-colors shadow-lg flex-1 max-w-sm mx-auto w-full">
+              <div class="w-12 h-12 bg-green-500/10 text-green-400 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">💬</div>
+              <h3 class="text-white font-bold mb-1">WhatsApp</h3>
+              <p class="text-slate-400 text-sm mb-4">+237 6XX XXX XXX</p>
+              <button class="block w-full py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors font-medium">
+                 Ouvrir WhatsApp
+              </button>
+           </div>
+        </div>
+        
+        <p class="mt-8 text-sm text-slate-500">Délai de réponse moyen : 24-48h</p>
+     </div>
+
+  </div>
+</div>

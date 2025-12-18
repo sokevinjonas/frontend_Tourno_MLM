@@ -6,6 +6,10 @@ export const publicRoutes: Routes = [
     loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'faq',
+    loadComponent: () => import('./faq/faq.component').then(m => m.FaqComponent)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
