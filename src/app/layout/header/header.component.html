@@ -1,52 +1,109 @@
-<header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-sm shadow-sm transition-all duration-300 border-b border-slate-800">
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-16 sm:h-20">
-      <!-- Logo -->
-      <a routerLink="/" class="flex items-center gap-2 group">
-        <span class="text-2xl sm:text-3xl">⚽</span>
-        <span class="font-bold text-xl sm:text-2xl text-white tracking-tight group-hover:text-blue-500 transition-colors">MLM</span>
-      </a>
-
-      <!-- Desktop Navigation -->
-      <nav class="hidden md:flex items-center gap-8">
-        <a routerLink="/tournaments" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Tournois</a>
-        <a routerLink="/" fragment="how-it-works" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">Comment ça marche</a>
-        <a routerLink="/faq" class="text-sm font-medium text-slate-300 hover:text-white transition-colors">FAQ</a>
-      </nav>
-
-      <!-- Auth Buttons -->
-      <div class="hidden md:flex items-center gap-4">
-        <a routerLink="/login" class="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 rounded-lg transition-colors">
-          Se connecter
+<header class="fixed w-full z-50 transition-all duration-300 top-4 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="backdrop-blur-xl bg-slate-900/80 border border-white/10 rounded-2xl shadow-lg shadow-black/20">
+      <div class="px-6 h-16 flex items-center justify-between">
+        
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center gap-3 group relative">
+          <div class="absolute -inset-2 bg-blue-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div class="relative w-8 h-8 flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg text-white shadow-lg shadow-blue-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+              <path d="M4 22h16" />
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+            </svg>
+          </div>
+          <span class="font-bold text-xl text-white tracking-tight relative group-hover:text-blue-400 transition-colors">MLM</span>
         </a>
-        <a routerLink="/register" class="text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-          S'inscrire
-        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-1">
+          <a href="#" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M3 9h18" />
+            </svg>
+            Tournois
+          </a>
+          <a href="#" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <path d="M12 17h.01" />
+            </svg>
+            Comment ça marche
+          </a>
+          <a href="#" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
+              <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
+              <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+            </svg>
+            FAQ
+          </a>
+        </nav>
+
+        <!-- Auth Buttons -->
+        <div class="hidden md:flex items-center gap-3">
+          <a routerLink="/login" class="px-4 py-2 text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+            Se connecter
+          </a>
+          <a routerLink="/register" class="group relative px-5 py-2">
+            <div class="absolute inset-0 bg-blue-600 rounded-xl transition-all group-hover:bg-blue-500 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 group-hover:-translate-y-0.5"></div>
+            <div class="relative flex items-center gap-2 text-sm font-bold text-white">
+              <span>S'inscrire</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-0.5">
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button (click)="toggleMenu()" class="md:hidden p-2 text-slate-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" x2="20" y1="12" y2="12" />
+            <line x1="4" x2="20" y1="6" y2="6" />
+            <line x1="4" x2="20" y1="18" y2="18" />
+          </svg>
+        </button>
       </div>
-
-      <!-- Mobile Menu Button -->
-      <button (click)="toggleMenu()" class="md:hidden p-2 text-slate-400 hover:bg-slate-800 rounded-lg transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-        </svg>
-      </button>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="isMenuOpen" class="md:hidden bg-slate-900 border-t border-slate-800 py-4 px-4 shadow-lg absolute w-full left-0">
-    <nav class="flex flex-col gap-4">
-      <a routerLink="/tournaments" class="text-base font-medium text-slate-300 hover:text-white py-2 border-b border-slate-800">Tournois</a>
-      <a routerLink="/" fragment="how-it-works" class="text-base font-medium text-slate-300 hover:text-white py-2 border-b border-slate-800">Comment ça marche</a>
-      <a routerLink="/faq" class="text-base font-medium text-slate-300 hover:text-white py-2 border-b border-slate-800">FAQ</a>
-      <div class="flex flex-col gap-3 mt-2">
-        <a routerLink="/login" class="text-center text-sm font-medium text-slate-300 border border-slate-700 hover:bg-slate-800 px-4 py-2.5 rounded-lg transition-colors">
-          Se connecter
-        </a>
-        <a routerLink="/register" class="text-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg shadow-md transition-colors">
-          S'inscrire
-        </a>
-      </div>
-    </nav>
+  <div *ngIf="isMenuOpen" class="absolute top-24 left-4 right-4 p-4 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-white/10 shadow-xl md:hidden flex flex-col gap-2 z-50 animate-in fade-in slide-in-from-top-4 duration-200">
+     <a href="#" class="px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+            <path d="M3 9h18" />
+        </svg>
+        Tournois
+     </a>
+     <a href="#" class="px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <path d="M12 17h.01" />
+        </svg>
+        Comment ça marche
+     </a>
+     <a href="#" class="px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500">
+            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
+            <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+        </svg>
+        FAQ
+     </a>
+     <div class="h-px bg-white/10 my-1"></div>
+     <a routerLink="/login" class="px-4 py-3 text-sm font-semibold text-center text-white bg-white/5 hover:bg-white/10 rounded-xl transition-colors">
+       Se connecter
+     </a>
+     <a routerLink="/register" class="px-4 py-3 text-sm font-semibold text-center text-white bg-blue-600 hover:bg-blue-500 rounded-xl transition-colors shadow-lg shadow-blue-600/20">
+       S'inscrire
+     </a>
   </div>
 </header>

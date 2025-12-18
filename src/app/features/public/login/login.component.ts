@@ -1,13 +1,21 @@
-
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styles: []
 })
-export class LoginComponent {}
+export class LoginComponent {
+  // Placeholder for login logic
+  login() {
+    console.log('Login clicked');
+  }
+
+  loginWithGoogle() {
+    console.log('Login with Google');
+  }
+}
