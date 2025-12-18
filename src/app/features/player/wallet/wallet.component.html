@@ -1,0 +1,82 @@
+<div class="container mx-auto px-4 py-8" *ngIf="currentUser$ | async as user">
+  <div class="max-w-4xl mx-auto space-y-8">
+    
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white mb-2">Mon Portefeuille 💰</h1>
+      <p class="text-slate-400">Gérez vos pièces MLM et consultez votre historique.</p>
+    </div>
+
+    <!-- Balance Card -->
+    <div class="bg-gradient-to-r from-yellow-600 to-orange-600 rounded-3xl p-8 border border-white/10 shadow-2xl relative overflow-hidden">
+       <!-- Pattern -->
+       <div class="absolute inset-0 bg-[url('/assets/pattern.svg')] opacity-20"></div>
+       <div class="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+       
+       <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div>
+             <h2 class="text-white/80 text-lg font-medium mb-1">Solde Disponible</h2>
+             <div class="text-5xl font-black text-white tracking-tight flex items-center justify-center md:justify-start gap-2">
+                {{ user.wallet?.balance || 0 | number:'1.2-2' }} 
+                <span class="text-3xl opacity-80">🪙</span>
+             </div>
+             <p class="text-white/60 text-sm mt-2">≈ {{ (user.wallet?.balance || 0) * 500 | number }} FCFA</p>
+          </div>
+
+          <div class="flex flex-col gap-3">
+             <button class="bg-white text-orange-600 font-bold py-3 px-8 rounded-xl hover:bg-orange-50 transition-all shadow-lg active:scale-95">
+                Recharger (Admin)
+             </button>
+             <p class="text-white/50 text-xs text-center">Les retraits sont gérés manuellement</p>
+          </div>
+       </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+       <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+          <div class="text-slate-500 text-xs mb-1">Total Crédité</div>
+          <div class="text-xl font-bold text-green-400">+10.00</div>
+       </div>
+       <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+          <div class="text-slate-500 text-xs mb-1">Total Débité</div>
+          <div class="text-xl font-bold text-red-400">-5.00</div>
+       </div>
+       <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+          <div class="text-slate-500 text-xs mb-1">Tournois Payés</div>
+          <div class="text-xl font-bold text-white">1</div>
+       </div>
+       <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
+          <div class="text-slate-500 text-xs mb-1">Gains Tournois</div>
+          <div class="text-xl font-bold text-yellow-400">0.00</div>
+       </div>
+    </div>
+
+    <!-- History -->
+    <div class="bg-slate-800 rounded-3xl border border-slate-700 overflow-hidden">
+       <div class="p-6 border-b border-slate-700 flex justify-between items-center">
+          <h3 class="font-bold text-white text-lg">Historique des transactions</h3>
+          <button class="text-blue-400 text-sm hover:text-blue-300 font-medium">Tout voir</button>
+       </div>
+       
+       <div class="divide-y divide-slate-700/50">
+          <div *ngFor="let tx of transactions" class="p-4 flex items-center justify-between hover:bg-slate-700/30 transition-colors">
+             <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center" 
+                     [ngClass]="tx.type === 'credit' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'">
+                   <svg *ngIf="tx.type==='credit'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 12-7 7-7-7"/><path d="M12 19V5"/></svg>
+                   <svg *ngIf="tx.type==='debit'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 5v14"/></svg>
+                </div>
+                <div>
+                   <div class="font-medium text-white">{{ tx.description }}</div>
+                   <div class="text-xs text-slate-500">{{ tx.date | date:'dd MMM yyyy, HH:mm' }} • ID: {{ tx.id }}</div>
+                </div>
+             </div>
+             <div class="font-bold text-right" [ngClass]="tx.type === 'credit' ? 'text-green-400' : 'text-white'">
+                {{ tx.type === 'credit' ? '+' : '-' }}{{ tx.amount | number:'1.2-2' }}
+             </div>
+          </div>
+       </div>
+    </div>
+
+  </div>
+</div>

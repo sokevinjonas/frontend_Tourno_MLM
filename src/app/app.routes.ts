@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // Public routes (no authentication required)
@@ -14,9 +15,41 @@ export const routes: Routes = [
   },
 
   // Player routes (authentication required)
+  // Player routes (authentication required)
   {
-    path: 'player',
-    loadChildren: () => import('./features/player/player.routes').then(m => m.playerRoutes)
+    path: 'profile/complete',
+    loadComponent: () => import('./features/player/profile-complete/profile-complete.component').then(m => m.ProfileCompleteComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./features/player/profile/profile.component').then(m => m.ProfileComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'game-accounts',
+    loadComponent: () => import('./features/player/game-accounts/game-accounts.component').then(m => m.GameAccountsComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'wallet',
+    loadComponent: () => import('./features/player/wallet/wallet.component').then(m => m.WalletComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'my-matches',
+    loadComponent: () => import('./features/player/my-matches/my-matches.component').then(m => m.MyMatchesComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'my-registrations',
+    loadComponent: () => import('./features/player/tournaments/tournaments.component').then(m => m.TournamentsComponent), // Reusing/Aliasing relevant component
+    canActivate: [authGuard]
+  },
+  {
+    path: 'player', // Keep legacy/dashboard route if needed, or redirect
+    redirectTo: 'profile',
+    pathMatch: 'full'
   },
 
   // Organizer routes (organizer role required)

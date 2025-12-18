@@ -1,0 +1,98 @@
+<div class="container mx-auto px-4 py-8" *ngIf="currentUser$ | async as user">
+  <div class="max-w-4xl mx-auto space-y-8">
+
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">Comptes de Jeu 🎮</h1>
+        <p class="text-slate-400">Gérez vos identifiants pour chaque jeu.</p>
+      </div>
+      <button (click)="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-blue-600/20 hover:scale-105">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouveau Compte
+      </button>
+    </div>
+
+    <!-- Accounts Grid -->
+    <div class="grid md:grid-cols-2 gap-6" *ngIf="user.game_accounts?.length; else emptyState">
+      <div *ngFor="let account of user.game_accounts" class="bg-slate-800 rounded-3xl p-6 border border-slate-700 hover:border-slate-600 transition-all group relative overflow-hidden">
+        
+        <!-- Game Banner (Background) -->
+        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-gradient-to-br"
+             [ngClass]="{
+               'from-blue-500 to-indigo-600': account.game_type === 'efootball',
+               'from-green-500 to-emerald-600': account.game_type === 'fcmobile',
+               'from-orange-500 to-red-600': account.game_type === 'dls'
+             }"></div>
+
+        <div class="relative z-10 flex items-start justify-between">
+          <div class="flex items-center gap-4">
+             <!-- Icon -->
+             <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold shadow-lg"
+                  [ngClass]="{
+                    'bg-blue-500 text-white shadow-blue-500/30': account.game_type === 'efootball',
+                    'bg-green-500 text-white shadow-green-500/30': account.game_type === 'fcmobile',
+                    'bg-orange-500 text-white shadow-orange-500/30': account.game_type === 'dls'
+                  }">
+                {{ account.game_type === 'efootball' ? 'EF' : (account.game_type === 'fcmobile' ? 'FC' : 'DLS') }}
+             </div>
+             
+             <div>
+                <h3 class="text-xl font-bold text-white">{{ account.in_game_name }}</h3>
+                <span class="text-sm text-slate-400 capitalize">{{ account.game_type }}</span>
+             </div>
+          </div>
+
+          <button class="p-2 text-slate-500 hover:text-red-400 transition-colors" title="Supprimer">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          </button>
+        </div>
+
+        <div class="mt-6 flex items-center justify-between text-sm">
+           <span class="text-slate-500">ID: #{{ account.id }}</span>
+           <span class="text-green-400 flex items-center gap-1 font-medium">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Vérifié
+           </span>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+       <div class="bg-slate-800/50 rounded-3xl p-12 border border-slate-700/50 dashed-border text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-slate-600 mb-6"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>
+          <h3 class="text-xl font-bold text-white mb-2">Aucun compte de jeu</h3>
+          <p class="text-slate-400 mb-8 max-w-md mx-auto">Vous ne pouvez pas participer aux tournois sans compte de jeu associé. Ajoutez-en un maintenant !</p>
+          <button (click)="openAddModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all">
+             Ajouter mon premier compte
+          </button>
+       </div>
+    </ng-template>
+
+  </div>
+</div>
+
+<!-- Add Modal (Simple Placeholder) -->
+<div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+   <div class="bg-slate-800 rounded-3xl p-8 max-w-md w-full border border-slate-700 shadow-2xl relative">
+      <button (click)="closeAddModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <h2 class="text-2xl font-bold text-white mb-6">Ajouter un compte</h2>
+      
+      <div class="space-y-4">
+         <button (click)="addAccount('efootball')" class="w-full bg-slate-700 hover:bg-slate-600 text-white p-4 rounded-xl flex items-center justify-between transition-all group">
+            <span class="font-bold">E-football</span>
+            <span class="text-slate-400 group-hover:text-white">→</span>
+         </button>
+         <button (click)="addAccount('fcmobile')" class="w-full bg-slate-700 hover:bg-slate-600 text-white p-4 rounded-xl flex items-center justify-between transition-all group">
+            <span class="font-bold">FC Mobile</span>
+            <span class="text-slate-400 group-hover:text-white">→</span>
+         </button>
+         <button (click)="addAccount('dls')" class="w-full bg-slate-700 hover:bg-slate-600 text-white p-4 rounded-xl flex items-center justify-between transition-all group">
+            <span class="font-bold">Dream League Soccer</span>
+            <span class="text-slate-400 group-hover:text-white">→</span>
+         </button>
+      </div>
+   </div>
+</div>

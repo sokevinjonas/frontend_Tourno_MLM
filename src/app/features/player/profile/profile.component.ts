@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">ProfileComponent</h1>
-      <p class="text-gray-600">This feature is under construction.</p>
-    </div>
-  `
+  imports: [CommonModule, RouterLink],
+  templateUrl: './profile.component.html',
+  styles: []
 })
-export class ProfileComponent {}
+export class ProfileComponent {
+  privateauthService = inject(AuthService);
+  currentUser$ = this.privateauthService.currentUser$;
+}

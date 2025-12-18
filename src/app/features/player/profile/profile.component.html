@@ -1,0 +1,153 @@
+<div class="container mx-auto px-4 py-8" *ngIf="currentUser$ | async as user">
+  <div class="max-w-4xl mx-auto space-y-8">
+    
+    <!-- Profile Header Card -->
+    <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-xl relative overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-50"></div>
+      
+      <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
+        <!-- Avatar -->
+        <div class="relative group">
+           <div class="w-32 h-32 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-5xl font-bold text-white shadow-2xl shadow-blue-500/30 transform group-hover:scale-105 transition-transform duration-300">
+              {{ user.name.charAt(0).toUpperCase() }}
+           </div>
+           <div class="absolute -bottom-2 -right-2 bg-slate-900 rounded-xl p-2 border border-slate-700 shadow-lg" *ngIf="user.profile?.validation_status === 'validated'">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-blue-400"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.491 4.491 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" /></svg>
+           </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 text-center md:text-left space-y-2">
+           <h1 class="text-3xl font-bold text-white">{{ user.name }}</h1>
+           <div class="flex flex-col md:flex-row items-center gap-4 text-slate-400 text-sm">
+              <span class="flex items-center gap-2">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                 {{ user.email }}
+              </span>
+              <span class="hidden md:block w-1 h-1 bg-slate-600 rounded-full"></span>
+              <span class="flex items-center gap-2" *ngIf="user.profile?.whatsapp_number">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                 {{ user.profile?.whatsapp_number }}
+              </span>
+           </div>
+           
+           <!-- Status Badge -->
+           <div class="pt-2">
+              <span *ngIf="user.profile?.validation_status === 'validated'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                 ✅ Profil Validé
+              </span>
+              <span *ngIf="user.profile?.validation_status === 'pending'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                 ⏳ En attente de validation
+              </span>
+              <span *ngIf="user.profile?.validation_status === 'rejected'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+                 ❌ Profil Rejeté
+              </span>
+              <a *ngIf="!user.profile" routerLink="/profile/complete" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors">
+                 ⚠️ Profil Incomplet - Compléter maintenant
+              </a>
+           </div>
+        </div>
+
+        <!-- Edit Button -->
+        <button [routerLink]="['/profile/complete']" class="p-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-xl transition-colors">
+           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <!-- Wallet -->
+       <a routerLink="/wallet" class="bg-slate-800 p-6 rounded-3xl border border-slate-700 hover:border-slate-500 transition-all hover:-translate-y-1 group">
+          <div class="flex items-center justify-between mb-4">
+             <div class="w-10 h-10 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+             </div>
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-white transition-colors"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <h3 class="text-slate-400 text-sm font-medium mb-1">Solde actuel</h3>
+          <p class="text-2xl font-bold text-white">{{ user.wallet?.balance || 0 }} 🪙</p>
+       </a>
+
+       <!-- Game Accounts -->
+       <a routerLink="/game-accounts" class="bg-slate-800 p-6 rounded-3xl border border-slate-700 hover:border-slate-500 transition-all hover:-translate-y-1 group">
+          <div class="flex items-center justify-between mb-4">
+             <div class="w-10 h-10 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>
+             </div>
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-white transition-colors"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <h3 class="text-slate-400 text-sm font-medium mb-1">Comptes de jeu</h3>
+          <p class="text-2xl font-bold text-white">{{ user.game_accounts?.length || 0 }}</p>
+       </a>
+
+       <!-- Tournaments -->
+       <a routerLink="/my-registrations" class="bg-slate-800 p-6 rounded-3xl border border-slate-700 hover:border-slate-500 transition-all hover:-translate-y-1 group">
+          <div class="flex items-center justify-between mb-4">
+             <div class="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+             </div>
+             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-white transition-colors"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </div>
+          <h3 class="text-slate-400 text-sm font-medium mb-1">Tournois actifs</h3>
+          <p class="text-2xl font-bold text-white">0</p>
+       </a>
+    </div>
+
+    <!-- Personal Info Details -->
+    <div class="grid md:grid-cols-2 gap-8">
+       <div class="bg-slate-800 rounded-3xl p-6 border border-slate-700">
+          <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+             Informations Personnelles
+          </h3>
+          <div class="space-y-4">
+             <div class="flex justify-between items-center py-2 border-b border-slate-700/50">
+                <span class="text-slate-400 text-sm">Pays</span>
+                <span class="text-white font-medium">{{ user.profile?.country || 'Non défini' }}</span>
+             </div>
+             <div class="flex justify-between items-center py-2 border-b border-slate-700/50">
+                <span class="text-slate-400 text-sm">Ville</span>
+                <span class="text-white font-medium">{{ user.profile?.city || 'Non défini' }}</span>
+             </div>
+             <div class="flex justify-between items-center py-2 border-b border-slate-700/50">
+                <span class="text-slate-400 text-sm">Date de naissance</span>
+                <span class="text-white font-medium">{{ user.profile?.date_of_birth | date:'dd/MM/yyyy' || 'Non défini' }}</span>
+             </div>
+          </div>
+       </div>
+
+       <!-- Linked Games List (Preview) -->
+       <div class="bg-slate-800 rounded-3xl p-6 border border-slate-700">
+         <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>
+               Comptes liés
+            </h3>
+            <a routerLink="/game-accounts" class="text-sm text-blue-400 hover:text-blue-300 font-medium">Gérer</a>
+         </div>
+
+         <div class="space-y-3" *ngIf="user.game_accounts?.length; else noGames">
+            <div *ngFor="let account of user.game_accounts" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-700/50">
+               <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold border border-slate-700">
+                     {{ account.game_type === 'efootball' ? 'EF' : (account.game_type === 'fcmobile' ? 'FC' : 'DLS') }}
+                  </div>
+                  <div>
+                     <div class="text-sm font-medium text-white">{{ account.in_game_name }}</div>
+                     <div class="text-xs text-slate-500 capitalize">{{ account.game_type }}</div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <ng-template #noGames>
+            <div class="text-center py-8 text-slate-500 text-sm">
+               Aucun compte de jeu associé.
+            </div>
+         </ng-template>
+       </div>
+    </div>
+
+  </div>
+</div>

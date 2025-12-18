@@ -13,6 +13,7 @@ export interface User {
   // Add other fields as needed based on API response
   profile?: any;
   wallet?: any;
+  game_accounts?: any[];
 }
 
 export interface AuthResponse {
