@@ -93,6 +93,26 @@
      </div>
   </section>
 
+  <!-- Competition Formats Section -->
+  <section class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Formats de Compétition</h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">Choisissez le style de tournoi qui vous convient le mieux. Du marathon de la Ligue au sprint de la Coupe.</p>
+    </div>
+    
+    <div class="grid md:grid-cols-3 gap-8">
+      <div *ngFor="let format of formats" class="bg-slate-900 border border-slate-800 rounded-3xl p-8 hover:border-slate-600 transition-colors duration-300">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm border border-slate-700/50" [ngClass]="format.bg">
+          {{format.icon}}
+        </div>
+        <h3 class="text-xl font-bold text-white mb-3" [ngClass]="format.color">{{format.title}}</h3>
+        <p class="text-slate-400 leading-relaxed text-sm">
+          {{format.description}}
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- Games Section (Dark Mode) -->
   <section class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <h2 class="text-3xl md:text-4xl font-bold text-white mb-12">Jeux Supportés</h2>
