@@ -11,6 +11,6 @@ import { RouterLink } from '@angular/router';
   styles: []
 })
 export class ProfileComponent {
-  privateauthService = inject(AuthService);
-  currentUser$ = this.privateauthService.currentUser$;
+  authService = inject(AuthService);
+  currentUser$ = this.authService.currentUser$;
 }
