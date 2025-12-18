@@ -18,6 +18,10 @@ export const publicRoutes: Routes = [
     loadComponent: () => import('./tournaments/tournaments.component').then(m => m.TournamentsComponent)
   },
   {
+    path: 'tournaments/:id',
+    loadComponent: () => import('./tournament-details/tournament-details.component').then(m => m.TournamentDetailsComponent)
+  },
+  {
     path: 'divisions',
     loadComponent: () => import('./divisions/divisions.component').then(m => m.DivisionsComponent)
   },
