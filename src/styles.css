@@ -5,8 +5,9 @@
 :root {
   --primary-blue: #3b82f6;
   --secondary-green: #10b981;
-  --bg-color: #f8fafc;
-  --text-main: #1e293b;
+  --bg-color: #0f172a; /* Slate 900 */
+  --text-main: #f1f5f9; /* Slate 100 */
+  --text-muted: #94a3b8; /* Slate 400 */
 }
 
 body {
