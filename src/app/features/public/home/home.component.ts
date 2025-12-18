@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -12,6 +13,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 })
 export class HomeComponent {
   private sanitizer = inject(DomSanitizer);
+  private authService = inject(AuthService);
+  
+  currentUser$ = this.authService.currentUser$;
 
   sanitize(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);

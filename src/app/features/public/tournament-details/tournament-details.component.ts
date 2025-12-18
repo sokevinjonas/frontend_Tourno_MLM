@@ -1,23 +1,14 @@
-
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { AuthService, User } from '../../../core/services/auth.service';
 
 interface Tab {
   id: string;
   label: string;
   icon: string;
-}
-
-interface User {
-  id: number;
-  name: string;
-  avatar?: string;
-  role: 'player' | 'admin' | 'moderator' | 'organizer';
-  isProfileComplete: boolean;
-  walletBalance: number;
 }
 
 interface Tournament {
@@ -57,18 +48,15 @@ interface Tournament {
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './tournament-details.component.html',
-  styleUrls: ['./tournament-details.component.css'] // Optional if we just use Tailwind
+  styleUrls: ['./tournament-details.component.css']
 })
 export class TournamentDetailsComponent implements OnInit {
   tournament: Tournament | undefined;
   activeTab: string = 'info';
-  user: User = {
-    id: 99,
-    name: 'JonasDev',
-    role: 'player',
-    isProfileComplete: false, // Set to false to test modal 1, true for modal 2
-    walletBalance: 12.50
-  };
+  
+  private authService = inject(AuthService);
+  currentUser$ = this.authService.currentUser$;
+  currentUser: User | null = null;
 
   showCompleteProfileModal = false;
   showPaymentModal = false;
@@ -93,7 +81,9 @@ export class TournamentDetailsComponent implements OnInit {
     private location: Location,
     private router: Router,
     private sanitizer: DomSanitizer
-  ) {}
+  ) {
+    this.authService.currentUser$.subscribe(u => this.currentUser = u);
+  }
 
   ngOnInit() {
     // Mock data based on ID, usually fetch from service
@@ -131,7 +121,7 @@ export class TournamentDetailsComponent implements OnInit {
       },
       prizePool: 160,
       prizeDistribution: { 1: 80, 2: 50, 3: 30 },
-      status: 'En cours', // Changed to En cours for bracket to be relevant
+      status: 'En cours',
       rules: [
         'Format Suisse : 5 rondes minimum',
         'Victoire = 3 points, Nul = 1 point',
@@ -139,7 +129,6 @@ export class TournamentDetailsComponent implements OnInit {
         'Fair-play exigé sous peine de disqualification',
         'Connexion stable requise'
       ],
-      // Mocking Bracket/Rounds Data
       rounds: [
         {
           name: 'Ronde 1',
@@ -181,7 +170,15 @@ export class TournamentDetailsComponent implements OnInit {
   }
 
   onParticipate() {
-    if (!this.user.isProfileComplete) {
+    if (!this.authService.isAuthenticated()) {
+      // Redirect to login with return URL
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/tournaments/' + this.tournament?.id } });
+      return;
+    }
+    
+    const isProfileComplete = this.currentUser?.profile?.validation_status === 'validated';
+
+    if (!isProfileComplete) {
       this.showCompleteProfileModal = true;
     } else {
       this.showPaymentModal = true;
@@ -203,11 +200,10 @@ export class TournamentDetailsComponent implements OnInit {
   goToProfile() {
     this.router.navigate(['/profile/complete']);
   }
-
   
   // Helpers for template logic
   get remainingBalance() {
-    if (!this.tournament) return 0;
-    return this.user.walletBalance - this.tournament.entryFee;
+    if (!this.tournament || !this.currentUser || !this.currentUser.wallet) return 0;
+    return (this.currentUser.wallet.balance || 0) - this.tournament.entryFee;
   }
 }
