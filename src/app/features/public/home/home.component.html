@@ -1,268 +1,215 @@
-<!-- Hero Section -->
-<section class="relative bg-gradient-to-br from-blue-600 to-purple-700 text-white overflow-hidden">
-  <div class="absolute inset-0 bg-black opacity-20"></div>
 
-  <div class="relative container mx-auto px-4 py-16 md:py-24 lg:py-32">
-    <div class="max-w-4xl mx-auto text-center">
-      <!-- Logo/Brand -->
-      <div class="mb-8">
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold mb-4">
-          Mobile League Manager
+<!-- Background Elements -->
+<div class="fixed inset-0 bg-[#0f172a] -z-50">
+  <!-- Glowing Orbs -->
+  <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] animate-pulse-glow"></div>
+  <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[120px] animate-pulse-glow" style="animation-delay: 2s;"></div>
+  <!-- Grid Pattern -->
+  <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzYjgyZjYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] opacity-30"></div>
+</div>
+
+<!-- Navbar Placeholder (Visual purposes since layout handles this usually, but adjusting for effect) -->
+<nav class="sticky top-0 z-50 glass border-b border-white/5 px-6 py-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <a routerLink="/" class="text-2xl font-bold flex items-center gap-2">
+      <span class="text-3xl">🏆</span>
+      <span class="text-white tracking-widest">MLM</span>
+    </a>
+    <div class="hidden md:flex gap-8 text-gray-300 text-sm font-medium">
+      <a routerLink="/tournaments" class="hover:text-white transition-colors">Tournois</a>
+      <a routerLink="/rankings" class="hover:text-white transition-colors">Classement</a>
+      <a routerLink="/divisions" class="hover:text-white transition-colors">Divisions</a>
+    </div>
+    <div class="flex gap-4">
+      <a routerLink="/login" class="px-5 py-2 text-gray-300 hover:text-white font-medium transition-colors">Log In</a>
+      <a routerLink="/register" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.5)] hover:shadow-[0_0_25px_rgba(37,99,235,0.7)]">
+        Sign Up
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
+  <div class="container mx-auto px-4 z-10 relative">
+    <div class="flex flex-col lg:flex-row items-center gap-12">
+      
+      <!-- Text Content -->
+      <div class="flex-1 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-blue-500/30 text-blue-300 text-sm font-semibold mb-6 animate-float">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+          </span>
+          La plateforme #1 en Afrique
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+          Passe au niveau <br/>
+          <span class="text-gradient">Supérieur</span>
         </h1>
-        <div class="inline-block bg-yellow-400 text-gray-900 px-4 py-1 rounded-full text-sm font-semibold">
-          🏆 Plateforme #1 de tournois e-sports mobile en Afrique
+        
+        <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+          Rejoins l'élite des joueurs mobile. Organise tes tournois, affronte les meilleurs et gagne
+          du <span class="text-white font-semibold">CASH</span> réel directement sur ton téléphone.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <a routerLink="/register" class="group relative px-8 py-4 bg-blue-600 text-white rounded-xl font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(37,99,235,0.4)]">
+            <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            <span class="relative flex items-center gap-2">
+              Commencer
+              <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </span>
+          </a>
+          <a routerLink="/tournaments" class="px-8 py-4 glass text-white rounded-xl font-bold text-lg hover:bg-white/10 transition-all border border-white/10 flex items-center gap-2 justify-center">
+            <span>🎮</span> Voir les tournois
+          </a>
+        </div>
+        
+        <div class="mt-12 flex items-center justify-center lg:justify-start gap-8 text-gray-500 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+          <div class="flex items-center gap-2" *ngFor="let game of games">
+            <span class="text-2xl">{{game.icon}}</span>
+            <span class="font-bold text-sm">{{game.name}}</span>
+          </div>
         </div>
       </div>
 
-      <!-- Main Headline -->
-      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6">
-        Organise et participe à des tournois de jeux mobiles
-      </h2>
-      <p class="text-xl md:text-2xl text-blue-100 mb-8">
-        Gagne de l'argent réel en jouant à tes jeux mobiles préférés
-      </p>
+      <!-- Hero Visual -->
+      <div class="flex-1 w-full max-w-lg lg:max-w-none relative">
+        <div class="relative w-full aspect-square animate-float-delayed">
+          <!-- Central Circle -->
+          <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/30 to-purple-600/30 rounded-full blur-3xl"></div>
+          
+          <!-- Mockup Cards -->
+          <div class="absolute top-[10%] left-[5%] right-[5%] z-20 glass-card p-6 rounded-2xl transform rotate-[-6deg] hover:rotate-0 transition-transform duration-500">
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center font-bold text-white">W</div>
+                <div>
+                  <div class="text-white font-bold">Winner 🏆</div>
+                  <div class="text-xs text-gray-400">Il y a 2 min</div>
+                </div>
+              </div>
+              <div class="text-green-400 font-bold">+ 50,000 F</div>
+            </div>
+            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full w-3/4 bg-blue-500 rounded-full"></div>
+            </div>
+          </div>
 
-      <!-- CTA Buttons -->
-      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-        <a routerLink="/register"
-           class="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg">
-          S'inscrire gratuitement
-        </a>
-        <a routerLink="/login"
-           class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-lg font-bold text-lg transition-all">
-          Se connecter
-        </a>
-      </div>
+          <div class="absolute top-[40%] right-[-5%] left-[10%] z-10 glass-card p-6 rounded-2xl transform rotate-[3deg] hover:rotate-0 transition-transform duration-500">
+             <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-600 flex items-center justify-center text-2xl">⚽</div>
+                <div class="flex-1">
+                  <div class="text-white font-bold">Tournament Final</div>
+                  <div class="text-blue-300 text-sm">vs Predator_99</div>
+                </div>
+                <button class="px-3 py-1 bg-white/10 rounded text-xs text-white hover:bg-white/20">Watch</button>
+             </div>
+          </div>
 
-      <!-- Games Icons -->
-      <div class="flex flex-wrap justify-center gap-4 mt-12">
-        <div *ngFor="let game of games"
-             class="flex items-center gap-2 {{game.color}} bg-opacity-20 backdrop-blur-sm px-6 py-3 rounded-full border border-white border-opacity-30">
-          <span class="text-2xl">{{game.icon}}</span>
-          <span class="font-semibold">{{game.name}}</span>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Decorative Wave -->
-  <div class="absolute bottom-0 left-0 right-0">
-    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
-      <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
-            fill="white"/>
-    </svg>
   </div>
 </section>
 
 <!-- Stats Section -->
-<section class="py-16 bg-white">
+<section class="py-20 relative z-10">
   <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-      <div class="text-center">
-        <div class="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
-          {{stats.players.toLocaleString('fr-FR')}}+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+        <div class="absolute inset-0 bg-blue-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+        <div class="relative z-10">
+          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2 font-mono">
+            {{stats.players.toLocaleString()}}+
+          </div>
+          <p class="text-gray-400 font-medium tracking-wide">JOUEURS ACTIFS</p>
         </div>
-        <div class="text-gray-600 font-medium">Joueurs inscrits</div>
       </div>
-      <div class="text-center">
-        <div class="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
-          {{stats.tournaments.toLocaleString('fr-FR')}}+
+
+      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+        <div class="absolute inset-0 bg-purple-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+        <div class="relative z-10">
+          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2 font-mono">
+            {{stats.tournaments.toLocaleString()}}+
+          </div>
+          <p class="text-gray-400 font-medium tracking-wide">TOURNOIS JOUÉS</p>
         </div>
-        <div class="text-gray-600 font-medium">Tournois organisés</div>
       </div>
-      <div class="text-center">
-        <div class="text-4xl md:text-5xl font-bold text-blue-600 mb-2">
-          {{stats.prizePools}} FCFA
+
+      <div class="glass-card p-8 rounded-2xl text-center relative overflow-hidden group">
+        <div class="absolute inset-0 bg-green-600/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+        <div class="relative z-10">
+          <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400 mb-2 font-mono">
+           {{stats.prizePools}}
+          </div>
+          <p class="text-gray-400 font-medium tracking-wide">CASH DISTRIBUÉ</p>
         </div>
-        <div class="text-gray-600 font-medium">Prize pools distribués</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- How It Works Section -->
-<section class="py-16 bg-gray-50">
+<!-- How It Works -->
+<section class="py-24 relative z-10">
   <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-        Comment ça marche ?
-      </h2>
-      <p class="text-xl text-gray-600">
-        3 étapes simples pour commencer à gagner
-      </p>
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Comment ça marche ?</h2>
+      <p class="text-gray-400 text-lg">Ta route vers la gloire en 3 étapes</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-      <div *ngFor="let step of howItWorks; let i = index"
-           class="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+      <!-- Decorator Line -->
+      <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-600/30 to-transparent -translate-y-1/2 z-0"></div>
+
+      <div *ngFor="let step of howItWorks; let i = index" 
+           class="glass-card p-8 rounded-2xl relative z-10 group hover:-translate-y-2 transition-transform duration-300">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center text-3xl mb-6 shadow-lg shadow-blue-900/50 group-hover:scale-110 transition-transform mx-auto">
+          {{step.icon}}
+        </div>
+        <h3 class="text-xl font-bold text-white text-center mb-3">{{step.title}}</h3>
+        <p class="text-gray-400 text-center leading-relaxed">{{step.description}}</p>
+        
         <!-- Step Number -->
-        <div class="absolute -top-6 left-8 w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
-          {{step.step}}
-        </div>
-
-        <!-- Icon -->
-        <div class="text-6xl mb-4 mt-4 text-center">{{step.icon}}</div>
-
-        <!-- Content -->
-        <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">
-          {{step.title}}
-        </h3>
-        <p class="text-gray-600 text-center">
-          {{step.description}}
-        </p>
-
-        <!-- Arrow for desktop -->
-        <div *ngIf="i < howItWorks.length - 1"
-             class="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-          </svg>
-        </div>
+        <div class="absolute top-4 right-4 text-4xl font-black text-white/5 select-none">0{{i+1}}</div>
       </div>
-    </div>
-
-    <div class="text-center mt-12">
-      <a routerLink="/register"
-         class="inline-block bg-blue-600 text-white hover:bg-blue-700 px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg">
-        Commencer maintenant
-      </a>
     </div>
   </div>
 </section>
 
-<!-- Features Section -->
-<section class="py-16 bg-white">
+<!-- Features Grid -->
+<section class="py-24 bg-black/20 z-10 relative">
   <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-        Pourquoi choisir MLM ?
-      </h2>
-      <p class="text-xl text-gray-600">
-        La plateforme de tournois e-sports la plus complète d'Afrique
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-      <div *ngFor="let feature of features"
-           class="text-center p-6 rounded-xl hover:bg-gray-50 transition-colors">
-        <div class="text-5xl mb-4">{{feature.icon}}</div>
-        <h3 class="text-lg font-bold text-gray-900 mb-2">
-          {{feature.title}}
-        </h3>
-        <p class="text-gray-600 text-sm">
-          {{feature.description}}
-        </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div *ngFor="let feature of features" class="glass-card p-6 rounded-2xl hover:bg-white/5 transition-colors">
+        <div class="text-4xl mb-4 text-blue-400">{{feature.icon}}</div>
+        <h3 class="text-lg font-bold text-white mb-2">{{feature.title}}</h3>
+        <p class="text-sm text-gray-400">{{feature.description}}</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Testimonials Section -->
-<section class="py-16 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <div class="text-center mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-        Ce que disent nos joueurs
-      </h2>
-      <p class="text-xl text-gray-600">
-        Des milliers de joueurs nous font confiance
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      <div *ngFor="let testimonial of testimonials"
-           class="bg-white rounded-xl p-6 shadow-lg">
-        <!-- Avatar -->
-        <div class="flex items-center mb-4">
-          <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
-            {{testimonial.avatar}}
-          </div>
-          <div class="ml-4">
-            <div class="font-bold text-gray-900">{{testimonial.name}}</div>
-            <div class="text-sm text-gray-600">{{testimonial.country}}</div>
-          </div>
-        </div>
-
-        <!-- Rating -->
-        <div class="flex gap-1 mb-3">
-          <span *ngFor="let star of [1,2,3,4,5]" class="text-yellow-400 text-xl">★</span>
-        </div>
-
-        <!-- Text -->
-        <p class="text-gray-700 italic">
-          "{{testimonial.text}}"
-        </p>
+<!-- CTA / Footer -->
+<footer class="py-20 border-t border-white/5 relative z-10 overflow-hidden">
+  <div class="absolute inset-0 bg-blue-900/10"></div>
+  <div class="container mx-auto px-4 text-center relative z-20">
+    <h2 class="text-4xl md:text-5xl font-bold text-white mb-8">Prêt à dominer la ligue ?</h2>
+    <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">Rejoins la communauté maintenant et reçois un bonus de bienvenue sur ta première recharge.</p>
+    
+    <a routerLink="/register" class="inline-flex items-center gap-2 px-10 py-5 bg-white text-black rounded-full font-bold text-xl hover:bg-gray-100 transition-all transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+      <span>🚀</span> Créer mon compte
+    </a>
+    
+    <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500">
+      <p>© 2024 Mobile League Manager. Tous droits réservés.</p>
+      <div class="flex gap-6">
+        <a href="#" class="hover:text-blue-400 transition-colors">Conditions</a>
+        <a href="#" class="hover:text-blue-400 transition-colors">Confidentialité</a>
+        <a href="#" class="hover:text-blue-400 transition-colors">Support</a>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">
-      Prêt à devenir un champion ?
-    </h2>
-    <p class="text-xl mb-8 text-blue-100">
-      Rejoins des milliers de joueurs et commence à gagner dès aujourd'hui
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a routerLink="/register"
-         class="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-lg">
-        Créer mon compte
-      </a>
-      <a routerLink="/tournaments"
-         class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-lg font-bold text-lg transition-all">
-        Voir les tournois
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer class="bg-gray-900 text-gray-300 py-12">
-  <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-      <!-- Brand -->
-      <div>
-        <h3 class="text-white font-bold text-xl mb-4">MLM</h3>
-        <p class="text-sm">
-          La plateforme de tournois e-sports mobile en Afrique
-        </p>
-      </div>
-
-      <!-- Quick Links -->
-      <div>
-        <h4 class="text-white font-semibold mb-4">Liens rapides</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a routerLink="/tournaments" class="hover:text-white transition-colors">Tournois</a></li>
-          <li><a routerLink="/divisions" class="hover:text-white transition-colors">Divisions</a></li>
-          <li><a routerLink="/rankings" class="hover:text-white transition-colors">Classements</a></li>
-        </ul>
-      </div>
-
-      <!-- Help -->
-      <div>
-        <h4 class="text-white font-semibold mb-4">Aide</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
-        </ul>
-      </div>
-
-      <!-- Legal -->
-      <div>
-        <h4 class="text-white font-semibold mb-4">Légal</h4>
-        <ul class="space-y-2 text-sm">
-          <li><a href="#" class="hover:text-white transition-colors">CGU</a></li>
-          <li><a href="#" class="hover:text-white transition-colors">Politique de confidentialité</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="border-t border-gray-800 pt-8 text-center text-sm">
-      <p>&copy; 2024 Mobile League Manager. Tous droits réservés.</p>
     </div>
   </div>
 </footer>
