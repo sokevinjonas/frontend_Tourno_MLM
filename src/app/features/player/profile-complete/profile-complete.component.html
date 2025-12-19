@@ -7,7 +7,7 @@
 
     <div class="relative z-10">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-white mb-2">Complétez votre profil 🚀</h1>
+        <h1 class="text-3xl font-bold text-white mb-2">Complétez votre profil</h1>
         <p class="text-slate-400">Quelques étapes pour rejoindre l'arène.</p>
       </div>
 
@@ -58,20 +58,6 @@
                        class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all">
              </div>
           </div>
-
-          <!-- DOB -->
-          <div>
-             <label class="block text-sm font-medium text-slate-300 mb-2">Date de naissance</label>
-             <input type="date" formControlName="date_of_birth" 
-                    class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 transition-all">
-          </div>
-
-          <!-- Bio -->
-          <div>
-             <label class="block text-sm font-medium text-slate-300 mb-2">Bio (Optionnel)</label>
-             <textarea formControlName="bio" rows="3" placeholder="Parlez-nous de votre style de jeu..." 
-                       class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all"></textarea>
-          </div>
         </div>
 
         <button type="submit" [disabled]="isLoading" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -81,23 +67,32 @@
         </button>
       </form>
 
-      <!-- Step 2: Game Accounts (Placeholder for now) -->
+      <!-- Step 2: Game Accounts -->
       <div *ngIf="currentStep === 2" class="space-y-6 text-center">
          <div class="bg-slate-900/50 rounded-2xl p-8 border border-slate-700/50 dashed-border">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-slate-600 mb-4"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>
             <h3 class="text-xl font-bold text-white mb-2">Lier vos comptes de jeu</h3>
             <p class="text-slate-400 mb-6">Ajoutez vos IDs E-football ou FC Mobile pour participer aux tournois.</p>
             
-            <button (click)="finish()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all">
+            <button (click)="openAddAccountModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all">
                Ajouter un compte maintenant
             </button>
          </div>
 
-         <button (click)="skipGameAccounts()" class="text-slate-500 hover:text-white text-sm font-medium transition-colors">
-            Je ferai ça plus tard
-         </button>
+         <div class="flex justify-center gap-4">
+             <button (click)="finish()" class="text-slate-400 hover:text-white underline text-sm">
+                Pas maintenant, aller au profil
+             </button>
+         </div>
       </div>
 
     </div>
   </div>
 </div>
+
+<app-game-account-modal
+  *ngIf="showAccountModal"
+  [account]="null"
+  (close)="closeAccountModal()"
+  (success)="onAccountAdded()">
+</app-game-account-modal>

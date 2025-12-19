@@ -128,11 +128,11 @@
             <div *ngFor="let account of user.game_accounts" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-700/50">
                <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold border border-slate-700">
-                     {{ account.game_type === 'efootball' ? 'EF' : (account.game_type === 'fcmobile' ? 'FC' : 'DLS') }}
+                     {{ account.game_type === 'efootball' ? 'EF' : (account.game === 'fcmobile' ? 'FC' : 'DLS') }}
                   </div>
                   <div>
-                     <div class="text-sm font-medium text-white">{{ account.in_game_name }}</div>
-                     <div class="text-xs text-slate-500 capitalize">{{ account.game_type }}</div>
+                     <div class="text-sm font-medium text-white">{{ account.game_username }}</div>
+                     <div class="text-xs text-slate-500 capitalize">{{ account.game }}</div>
                   </div>
                </div>
             </div>

@@ -31,11 +31,6 @@ export class PlayerService {
       })
     );
   }
-  /**
-   * Modifie un compte de jeu
-   * POST /game-accounts/{id} (using POST with _method=PUT or straight PUT if FormData supported correctly by backend, usually POST for files)
-   * Laravels handle PUT files better with POST + _method=PUT
-   **/
   updateGameAccount(id: number, gameType: string, inGameName: string, screenshot?: File): Observable<any> {
     const formData = new FormData();
     formData.append('game', gameType);
@@ -50,5 +45,16 @@ export class PlayerService {
       })
     );
   }
-  
+
+  /**
+   * Met à jour les informations du profil (Bio, WhatsApp, Ville, etc.)
+   * POST /profile
+   */
+  updateProfile(data: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/profile`, data).pipe(
+      tap(() => {
+        this.authService.getCurrentUser().subscribe();
+      })
+    );
+  }
 }
