@@ -34,13 +34,13 @@
            
            <!-- Status Badge -->
            <div class="pt-2">
-              <span *ngIf="user.profile?.validation_status === 'validated'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+              <span *ngIf="user.profile?.status === 'validated'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
                  ✅ Profil Validé
               </span>
-              <span *ngIf="user.profile?.validation_status === 'pending'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+              <span *ngIf="user.profile?.status === 'pending'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
                  ⏳ En attente de validation
               </span>
-              <span *ngIf="user.profile?.validation_status === 'rejected'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
+              <span *ngIf="user.profile?.status === 'rejected'" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/10 text-red-400 border border-red-500/20">
                  ❌ Profil Rejeté
               </span>
               <a *ngIf="!user.profile" routerLink="/profile/complete" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition-colors">
