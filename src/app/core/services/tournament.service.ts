@@ -23,6 +23,7 @@ export interface Tournament {
   prize_distribution: string; // JSON string
   image?: string;
   is_featured?: boolean;
+  registrations?: any[]; // Added to support participant count calculation
 }
 
 interface TournamentResponse {

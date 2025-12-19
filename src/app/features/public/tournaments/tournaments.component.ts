@@ -36,9 +36,11 @@ export class TournamentsComponent implements OnInit {
     this.isLoading = true;
     this.tournamentService.getTournaments().subscribe({
       next: (data) => {
-        this.tournaments = data;
-        // this.total_registrations = data.reduce;
-        console.log(this.total_registrations);
+        // Calculate current_participants for each tournament
+        this.tournaments = data.map(t => ({
+          ...t,
+          current_participants: t.registrations ? t.registrations.length : (t.current_participants || 0)
+        }));
         
         this.isLoading = false;
         this.cd.markForCheck(); // Ensure view updates

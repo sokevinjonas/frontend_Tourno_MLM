@@ -90,9 +90,8 @@ export class TournamentDetailsComponent implements OnInit {
                       max: Number((this.tournament as any).max_participants) || 0,
                       list: regs.map((r: any) => ({
                           // Fallback if user object is missing in registration
-                          name: r.user ? r.user.name : `Joueur ${r.user_id}`,
-                          rank: 'N/A',
-                          avatar: undefined 
+                          name: r.game_account.game_username,
+                          email: r.user.email,
                       }))
                   };
                   this.tournament.current_participants = regs.length;
