@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -13,15 +13,21 @@ import { GameAccountModalComponent } from '../../../shared/components/game-accou
   templateUrl: './profile-complete.component.html',
   styleUrls: ['./profile-complete.component.css']
 })
-export class ProfileCompleteComponent {
+export class ProfileCompleteComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private playerService = inject(PlayerService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  
+  public currentUser$ = this.authService.currentUser$;
 
   currentStep = 1;
   isLoading = false;
   showAccountModal = false;
+
+  toastMessage: string | null = null;
+  toastType: 'success' | 'error' = 'success';
 
   personalInfoForm = this.fb.group({
     whatsapp_number: ['', [Validators.required]],
@@ -29,24 +35,70 @@ export class ProfileCompleteComponent {
     city: ['', Validators.required]
   });
 
+  ngOnInit() {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        const profile = user.profile || {};
+        const data = {
+           whatsapp_number: user.profile?.whatsapp_number || profile.whatsapp_number || '',
+           city: user.profile?.city || profile.city || '',
+           country: user.profile?.country || profile.country || 'Cameroun'
+        };
+        
+        if (data.whatsapp_number || data.city) {
+            this.personalInfoForm.patchValue(data);
+        }
+      }
+    });
+  }
+
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.toastMessage = null;
+      this.cdr.detectChanges();
+    }, 5000);
+  }
+
   submitStep1() {
     if (this.personalInfoForm.valid) {
       this.isLoading = true;
       
       this.playerService.updateProfile(this.personalInfoForm.value).subscribe({
-        next: () => {
+        next: (response) => {
           this.isLoading = false;
-          this.currentStep = 2;
+          // Use server message if available, else default
+          const msg = response?.message || 'Profil mis à jour avec succès !';
+          this.showToast(msg, 'success');
+          
+          setTimeout(() => {
+             this.currentStep = 2;
+          }, 1000);
         },
         error: (err) => {
           console.error('Error updating profile', err);
           this.isLoading = false;
-          // Ideally show a global toast here if available, or bind error to form
-          alert('Erreur lors de la mise à jour du profil. Vérifiez vos données.');
+          
+          let errorMessage = 'Erreur lors de la mise à jour.';
+          if (err.error) {
+            if (typeof err.error === 'string') errorMessage = err.error;
+            else if (err.error.message) errorMessage = err.error.message;
+            else if (err.error.error) errorMessage = err.error.error;
+            
+            if (err.error.errors) {
+                const firstKey = Object.keys(err.error.errors)[0];
+                if (firstKey) errorMessage = err.error.errors[firstKey][0];
+            }
+          }
+          
+          this.showToast(errorMessage, 'error');
         }
       });
     } else {
       this.personalInfoForm.markAllAsTouched();
+      this.showToast('Veuillez remplir correctement tous les champs requis.', 'error');
     }
   }
 
@@ -59,11 +111,7 @@ export class ProfileCompleteComponent {
   }
 
   onAccountAdded() {
-    // Account added successfully
     this.showAccountModal = false;
-    // Maybe verify if they have at least one account now?
-    // For now, let's just allow them to finish or add another.
-    // We could auto-navigate to profile?
     if (confirm('Compte ajouté ! Voulez-vous aller au tableau de bord ?')) {
        this.finish();
     }
