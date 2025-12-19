@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 export interface Tournament {
   id: number;
   name: string;
+  description?: string; // Content for "A propos"
   game: 'efootball' | 'fc_mobile' | 'dream_league_soccer' | 'other';
   organizer: {
     id: number;
@@ -24,6 +25,7 @@ export interface Tournament {
   image?: string;
   is_featured?: boolean;
   registrations?: any[]; // Added to support participant count calculation
+  rounds?: any[]; // Added for bracket display
 }
 
 interface TournamentResponse {

@@ -1,6 +1,11 @@
 <div class="min-h-screen pt-24 pb-12">
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     
+    <!-- Back Button -->
+    <button (click)="goBack()" class="flex items-center gap-2 text-slate-400 hover:text-white mb-6 transition-colors">
+      <div class="w-5 h-5" [innerHTML]="sanitize(icons.back)"></div>
+      Retour à la page d'accueil
+    </button>
     <!-- Hero Header -->
     <div class="text-center mb-12">
       <h1 class="text-3xl md:text-5xl font-bold text-white mb-4">Tournois de la communauté</h1>

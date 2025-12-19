@@ -19,7 +19,7 @@ interface ParsedTournament extends Tournament {
   participants?: {
     current: number;
     max: number;
-    list: { name: string; avatar?: string; rank?: string }[];
+    list: { name: string; email?: string; avatar?: string; rank?: string }[];
   };
   current_participants?: number; // Helper
 }
