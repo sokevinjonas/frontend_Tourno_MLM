@@ -35,7 +35,7 @@
     - [Tablet (768px - 1023px)](#tablet-768px---1023px)
     - [Mobile (≤ 767px)](#mobile--767px)
   - [🔍 Fonctionnalité de Recherche](#-fonctionnalité-de-recherche)
-  - [⚡ Intégration Technique](#-intégration-technique)
+  - [🪙 Intégration Technique](#-intégration-technique)
   - [♿ Accessibilité](#-accessibilité)
   - [📐 Maquette ASCII Complète](#-maquette-ascii-complète)
     - [Version Desktop](#version-desktop)
@@ -1477,7 +1477,7 @@ Envoyez votre candidature à **moderator@mlm-platform.com** avec :
 - Disponibilité
 
 **Rémunération :**
-- ⚡ Pièces MLM bonus mensuelles
+- 🪙 Pièces MLM bonus mensuelles
 - 🏅 Badge Modérateur 🛡️
 - 🎁 Accès anticipé aux nouvelles fonctionnalités
 
@@ -1991,7 +1991,7 @@ onSearch(): void {
 
 ---
 
-## ⚡ Intégration Technique
+## 🪙 Intégration Technique
 
 **Structure de données :**
 ```typescript
