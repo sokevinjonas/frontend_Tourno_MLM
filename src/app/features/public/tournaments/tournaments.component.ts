@@ -1,28 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
-interface Tournament {
-  id: number;
-  name: string;
-  gameType: 'E-football' | 'FC Mobile' | 'Dream League' | 'Autre';
-  organizer: {
-    name: string;
-    verified?: boolean;
-  };
-  startDate: string;
-  entryFee: number;
-  participants: {
-    current: number;
-    max: number;
-  };
-  prizePool: number;
-  status: 'Inscriptions ouvertes' | 'En cours' | 'Terminé';
-  image?: string;
-  isFeatured?: boolean;
-}
+import { Tournament, TournamentService } from '../../../core/services/tournament.service';
 
 @Component({
   selector: 'app-tournaments',
@@ -31,71 +12,38 @@ interface Tournament {
   templateUrl: './tournaments.component.html',
   styleUrls: ['./tournaments.component.css']
 })
-export class TournamentsComponent {
+export class TournamentsComponent implements OnInit {
+  private tournamentService = inject(TournamentService);
+  private sanitizer = inject(DomSanitizer);
+
   selectedGame: string = 'Tous';
   selectedStatus: string = 'Tous';
+  isLoading = true;
+  error: string | null = null;
 
   games = ['Tous', 'E-football', 'FC Mobile', 'Dream League'];
   statuses = ['Tous', 'Inscriptions ouvertes', 'En cours', 'Terminé'];
 
-  tournaments: Tournament[] = [
-    {
-      id: 1,
-      name: 'Championnat E-football Cameroun',
-      gameType: 'E-football',
-      organizer: { name: 'MLM Official', verified: true },
-      startDate: '25 Déc 2024, 14:00',
-      entryFee: 5,
-      participants: { current: 16, max: 32 },
-      prizePool: 160,
-      status: 'Inscriptions ouvertes',
-      isFeatured: true
-    },
-    {
-      id: 2,
-      name: 'Weekend Cup FC Mobile',
-      gameType: 'FC Mobile',
-      organizer: { name: 'ProGamer237' },
-      startDate: '26 Déc 2024, 18:00',
-      entryFee: 2,
-      participants: { current: 5, max: 16 },
-      prizePool: 30,
-      status: 'Inscriptions ouvertes'
-    },
-    {
-      id: 3,
-      name: 'DLS League Pro',
-      gameType: 'Dream League',
-      organizer: { name: 'DLS Africa', verified: true },
-      startDate: '20 Déc 2024, 20:00',
-      entryFee: 10,
-      participants: { current: 8, max: 8 },
-      prizePool: 80,
-      status: 'En cours'
-    },
-    {
-      id: 4,
-      name: 'Sunday Clash',
-      gameType: 'E-football',
-      organizer: { name: 'TournamentKing' },
-      startDate: '24 Déc 2024, 15:00',
-      entryFee: 3,
-      participants: { current: 12, max: 16 },
-      prizePool: 45,
-      status: 'Inscriptions ouvertes'
-    },
-    {
-      id: 5,
-      name: 'Monthly Masters',
-      gameType: 'FC Mobile',
-      organizer: { name: 'MLM Official', verified: true },
-      startDate: '01 Jan 2025, 12:00',
-      entryFee: 20,
-      participants: { current: 2, max: 64 },
-      prizePool: 1200,
-      status: 'Inscriptions ouvertes'
-    }
-  ];
+  tournaments: Tournament[] = [];
+
+  ngOnInit() {
+    this.loadTournaments();
+  }
+
+  loadTournaments() {
+    this.isLoading = true;
+    this.tournamentService.getTournaments().subscribe({
+      next: (data) => {
+        this.tournaments = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading tournaments', err);
+        this.error = 'Impossible de charger les tournois.';
+        this.isLoading = false;
+      }
+    });
+  }
 
   // Icons SVGs
   icons = {
@@ -108,7 +56,6 @@ export class TournamentsComponent {
     lightning: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>'
   };
 
-  constructor(private sanitizer: DomSanitizer) {}
 
   sanitize(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
@@ -116,9 +63,22 @@ export class TournamentsComponent {
 
   get filteredTournaments() {
     return this.tournaments.filter(t => {
-      const matchGame = this.selectedGame === 'Tous' || t.gameType === this.selectedGame;
-      const matchStatus = this.selectedStatus === 'Tous' || t.status === this.selectedStatus;
-      return matchGame && matchStatus;
+      // Map selection to backend values
+      let gameMatch = this.selectedGame === 'Tous';
+      if (!gameMatch) {
+         if (this.selectedGame === 'E-football' && t.game === 'efootball') gameMatch = true;
+         else if (this.selectedGame === 'FC Mobile' && t.game === 'fc_mobile') gameMatch = true;
+         else if (this.selectedGame === 'Dream League' && t.game === 'dream_league_soccer') gameMatch = true;
+      }
+
+      let statusMatch = this.selectedStatus === 'Tous';
+      if (!statusMatch) {
+          if (this.selectedStatus === 'Inscriptions ouvertes' && t.status === 'open') statusMatch = true;
+          else if (this.selectedStatus === 'En cours' && t.status === 'ongoing') statusMatch = true;
+          else if (this.selectedStatus === 'Terminé' && t.status === 'completed') statusMatch = true;
+      }
+      
+      return gameMatch && statusMatch;
     });
   }
 
@@ -129,19 +89,37 @@ export class TournamentsComponent {
 
   getStatusClass(status: string): string {
     switch(status) {
-      case 'Inscriptions ouvertes': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'En cours': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
-      case 'Terminé': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
+      case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'ongoing': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
       default: return 'bg-slate-700/50 text-slate-400';
     }
   }
 
   getGameColor(game: string): string {
     switch(game) {
-      case 'E-football': return 'text-blue-400';
-      case 'FC Mobile': return 'text-cyan-400';
-      case 'Dream League': return 'text-purple-400';
+      case 'efootball': return 'text-blue-400';
+      case 'fc_mobile': return 'text-cyan-400';
+      case 'dream_league_soccer': return 'text-purple-400';
       default: return 'text-slate-400';
     }
+  }
+
+  getGameDisplayName(game: string): string {
+     switch(game) {
+       case 'efootball': return 'E-football';
+       case 'fc_mobile': return 'FC Mobile';
+       case 'dream_league_soccer': return 'Dream League';
+       default: return game;
+     }
+  }
+
+  getStatusDisplayName(status: string): string {
+      switch(status) {
+          case 'open': return 'Inscriptions ouvertes';
+          case 'ongoing': return 'En cours';
+          case 'completed': return 'Terminé';
+          default: return status;
+      }
   }
 }
