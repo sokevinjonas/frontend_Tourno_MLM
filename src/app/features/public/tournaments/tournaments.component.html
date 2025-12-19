@@ -49,7 +49,7 @@
 
     <!-- Tournaments Grid -->
       <div *ngIf="!isLoading && !error" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let tournament of filteredTournaments" class="group bg-slate-900/50 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10">
+        <div *ngFor="let tournament of filteredTournaments" class="group bg-slate-900/50 rounded-2xl border border-slate-700/50 overflow-hidden">
           
           <!-- Header -->
           <div class="p-6 relative">
@@ -72,7 +72,7 @@
 
             <div class="flex items-center gap-2 text-sm text-slate-400 mb-4">
               <span class="flex items-center gap-1.5">
-                 <span *ngIf="tournament.organizer.verified" [innerHtml]="sanitize(icons.verified)"></span>
+                 <span *ngIf="tournament.organizer.verified" [innerHTML]="sanitize(icons.verified)"></span>
                  {{ tournament.organizer.name }}
               </span>
             </div>
@@ -81,7 +81,7 @@
               <!-- Date -->
               <div class="flex items-center gap-3 text-slate-400">
                 <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 text-slate-500">
-                  <span [innerHtml]="sanitize(icons.calendar)"></span>
+                  <span [innerHTML]="sanitize(icons.calendar)"></span>
                 </div>
                 <span class="text-sm">{{ tournament.start_date | date:'dd MMM yyyy, HH:mm' }}</span>
               </div>
@@ -89,7 +89,7 @@
               <!-- Participants -->
               <div class="flex items-center gap-3 text-slate-400">
                 <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 text-slate-500">
-                  <span [innerHtml]="sanitize(icons.users)"></span>
+                  <span [innerHTML]="sanitize(icons.users)"></span>
                 </div>
                 <div class="flex-1">
                    <div class="flex justify-between text-xs mb-1.5">
