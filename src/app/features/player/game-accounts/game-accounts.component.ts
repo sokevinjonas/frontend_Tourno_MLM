@@ -20,6 +20,7 @@ export class GameAccountsComponent {
 
   showAddModal = false;
   isSubmitting = false;
+  isImageLoading = false;
   selectedFile: File | null = null;
   filePreview: string | null = null;
 
@@ -40,17 +41,20 @@ export class GameAccountsComponent {
     this.addAccountForm.reset({ gameType: 'efootball' });
     this.selectedFile = null;
     this.filePreview = null;
+    this.isImageLoading = false;
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.isImageLoading = true;
       this.selectedFile = file;
       
       // Create preview
       const reader = new FileReader();
       reader.onload = () => {
         this.filePreview = reader.result as string;
+        this.isImageLoading = false;
       };
       reader.readAsDataURL(file);
     }

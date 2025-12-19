@@ -16,12 +16,13 @@ export class PlayerService {
   /**
    * Ajoute un compte de jeu
    * POST /game-accounts
-   */
+  **/
+   
   addGameAccount(gameType: string, inGameName: string, screenshot: File): Observable<any> {
     const formData = new FormData();
-    formData.append('game_type', gameType);
-    formData.append('in_game_name', inGameName);
-    formData.append('screenshot', screenshot);
+    formData.append('game', gameType);
+    formData.append('game_username', inGameName);
+    formData.append('team_screenshot_path', screenshot);
 
     return this.http.post<any>(`${this.apiUrl}/game-accounts`, formData).pipe(
       tap(() => {
