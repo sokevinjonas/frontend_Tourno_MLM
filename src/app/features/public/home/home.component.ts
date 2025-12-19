@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
+import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 
 @Component({
   selector: 'app-home',
@@ -11,14 +12,54 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);
   private authService = inject(AuthService);
+  private tournamentService = inject(TournamentService);
+  private cd = inject(ChangeDetectorRef);
   
   currentUser$ = this.authService.currentUser$;
+  featuredTournaments: Tournament[] = [];
+  isLoadingTournaments = true;
+
+  ngOnInit() {
+    this.loadFeaturedTournaments();
+  }
 
   sanitize(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  loadFeaturedTournaments() {
+     this.tournamentService.getTournaments().subscribe({
+        next: (data) => {
+           // Get 3 latest (by ID desc)
+           this.featuredTournaments = data.sort((a, b) => b.id - a.id).slice(0, 6);
+           this.isLoadingTournaments = false;
+           this.cd.markForCheck();
+        },
+        error: (err) => {
+           console.error('Failed to load home tournaments', err);
+           this.isLoadingTournaments = false;
+        }
+     });
+  }
+
+  getGameDisplayName(game: string): string {
+     switch(game) {
+       case 'efootball': return 'E-football';
+       case 'fc_mobile': return 'FC Mobile';
+       case 'dream_league_soccer': return 'Dream League';
+       default: return game;
+     }
+  }
+
+  getParticipantCount(t: Tournament): number {
+    return t.registrations ? t.registrations.length : (t.current_participants || 0);
+  }
+
+  isTournamentFull(t: Tournament): boolean {
+    return this.getParticipantCount(t) >= t.max_participants;
   }
 
   features = [
@@ -65,60 +106,6 @@ export class HomeComponent {
       icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
       color: 'text-yellow-400',
       bg: 'bg-yellow-500/10'
-    }
-  ];
-
-  games = [
-    { 
-      name: 'E-Football', 
-      players: '125', 
-      color: 'from-blue-600 to-blue-900', 
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>' 
-    },
-    { 
-      name: 'FC Mobile', 
-      players: '89', 
-      color: 'from-red-600 to-red-900', 
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>' 
-    },
-    { 
-      name: 'Call of Duty', 
-      players: '450', 
-      color: 'from-green-600 to-green-900', 
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>' 
-    },
-    { 
-      name: 'Clash Royale', 
-      players: '210', 
-      color: 'from-purple-600 to-purple-900', 
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l-8 4v6c0 5.5 8 10 8 10s8-4.5 8-10V6l-8-4z"/><path d="M12 22V6"/></svg>' 
-    }
-  ];
-
-  featuredTournaments = [
-    {
-      name: "Coupe d'Afrique",
-      game: "E-football",
-      price: 5,
-      players: "24/32",
-      date: "Dans 2 jours",
-      isFull: false
-    },
-    {
-      name: "Champions League",
-      game: "FC Mobile",
-      price: 10,
-      players: "16/16",
-      date: "Demain 14h",
-      isFull: true
-    },
-    {
-      name: "Weekend Cup",
-      game: "DLS",
-      price: 3,
-      players: "8/16",
-      date: "Dans 5h",
-      isFull: false
     }
   ];
 }
