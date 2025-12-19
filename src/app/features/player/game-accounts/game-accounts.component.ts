@@ -19,6 +19,15 @@ export class GameAccountsComponent {
   private cdr = inject(ChangeDetectorRef);
   
   currentUser$ = this.authService.currentUser$;
+  
+  // Helper to construct full image URL
+  getAccountImageUrl(path: string | null): string {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    // Assuming API is at .../api, storage is at .../storage
+    const baseUrl = this.playerService.apiUrl.replace('/api', '');
+    return `${baseUrl}/storage/${path}`;
+  }
 
   showAddModal = false;
   isSubmitting = false;
@@ -142,6 +151,78 @@ export class GameAccountsComponent {
         
         this.showToast(errorMessage, 'error');
         this.cdr.detectChanges(); // Force UI update
+      }
+    });
+  }
+
+  // View Image Modal
+  showViewModal = false;
+  viewImageUrl: string | null = null;
+
+  openViewModal(imageUrl: string) {
+    this.viewImageUrl = imageUrl;
+    this.showViewModal = true;
+  }
+
+  closeViewModal() {
+    this.showViewModal = false;
+    this.viewImageUrl = null;
+  }
+
+  // Edit Account Modal
+  showEditModal = false;
+  editingAccountId: number | null = null;
+  
+  editAccountForm = this.fb.group({
+    gameType: ['efootball', Validators.required],
+    inGameName: ['', Validators.required]
+  });
+
+  openEditModal(account: any) {
+    this.editingAccountId = account.id;
+    this.editAccountForm.patchValue({
+      gameType: account.game || account.game_type,
+      inGameName: account.game_username || account.in_game_name
+    });
+    this.filePreview = account.team_screenshot_path ? this.getAccountImageUrl(account.team_screenshot_path) : null; 
+    this.showEditModal = true;
+  }
+
+  closeEditModal() {
+    this.showEditModal = false;
+    this.editingAccountId = null;
+    this.editAccountForm.reset();
+    this.selectedFile = null;
+    this.filePreview = null;
+    this.isImageLoading = false;
+  }
+
+  submitEditAccount() {
+    if (this.editAccountForm.invalid) {
+      this.editAccountForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting = true;
+    const { gameType, inGameName } = this.editAccountForm.value;
+
+    this.playerService.updateGameAccount(
+      this.editingAccountId!, 
+      gameType!, 
+      inGameName!, 
+      this.selectedFile || undefined
+    ).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.closeEditModal();
+        this.showToast('Compte modifié avec succès !', 'success');
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error updating account', err);
+        this.isSubmitting = false;
+        this.showToast('Erreur lors de la modification.', 'error');
+        this.cdr.detectChanges();
       }
     });
   }
