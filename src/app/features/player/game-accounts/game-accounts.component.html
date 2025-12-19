@@ -1,21 +1,4 @@
 <div class="container mx-auto px-4 py-8" *ngIf="currentUser$ | async as user">
-  
-  <!-- Toast Notification -->
-  <div *ngIf="toastMessage" class="fixed top-24 right-4 z-[60] animate-fade-in-left max-w-sm w-full">
-      <div class="rounded-xl shadow-2xl p-4 border flex items-center gap-3" 
-           [ngClass]="toastType === 'success' ? 'bg-slate-800 border-green-500/50 text-green-400' : 'bg-slate-800 border-red-500/50 text-red-400'">
-         <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" 
-              [ngClass]="toastType === 'success' ? 'bg-green-500/10' : 'bg-red-500/10'">
-            <svg *ngIf="toastType === 'success'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <svg *ngIf="toastType === 'error'" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-         </div>
-         <p class="font-medium text-sm">{{ toastMessage }}</p>
-         <button (click)="toastMessage = null" class="ml-auto p-1 hover:bg-white/5 rounded-lg transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-         </button>
-      </div>
-  </div>
-
   <div class="max-w-4xl mx-auto space-y-8">
 
     <div class="flex items-center justify-between">
@@ -101,173 +84,17 @@
   </div>
 </div>
 
-<!-- Add Modal -->
-<div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-   <div class="bg-slate-800 rounded-3xl p-8 max-w-md w-full border border-slate-700 shadow-2xl relative">
-      <button (click)="closeAddModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
-         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-
-      <h2 class="text-2xl font-bold text-white mb-6">Ajouter un compte</h2>
-      
-      <form [formGroup]="addAccountForm" (ngSubmit)="submitAddAccount()" class="space-y-6">
-         <!-- Game Type Select -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Jeu</label>
-            <div class="grid grid-cols-3 gap-2">
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="efootball" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-blue-600 peer-checked:border-blue-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">E-Foot</div>
-                  </div>
-               </label>
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="fc_mobile" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-green-600 peer-checked:border-green-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">FC Mobile</div>
-                  </div>
-               </label>
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="dream_league_soccer" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-orange-600 peer-checked:border-orange-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">DLS</div>
-                  </div>
-               </label>
-            </div>
-         </div>
-
-         <!-- Pseudo -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Pseudo en jeu</label>
-            <input type="text" formControlName="inGameName" placeholder="Ex: ProGamer237" 
-                   class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all">
-            <p *ngIf="addAccountForm.get('inGameName')?.touched && addAccountForm.get('inGameName')?.invalid" class="text-red-400 text-xs mt-1">Le pseudo est requis</p>
-         </div>
-
-         <!-- Screenshot Upload -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Screenshot du profil</label>
-            <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-500 transition-all relative group">
-               <input type="file" (change)="onFileSelected($event)" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" [disabled]="isImageLoading">
-               
-               <ng-container *ngIf="isImageLoading; else loadedContent">
-                  <div class="flex flex-col items-center justify-center py-2">
-                     <div class="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-2"></div>
-                     <p class="text-sm text-slate-400">Traitement de l'image...</p>
-                  </div>
-               </ng-container>
-
-               <ng-template #loadedContent>
-                  <ng-container *ngIf="!filePreview; else previewTemplate">
-                     <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-500 group-hover:bg-slate-700 group-hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                     </div>
-                     <p class="text-sm text-slate-400">Cliquez pour uploader une capture</p>
-                     <p class="text-xs text-slate-600 mt-1">Preuve de votre pseudo en jeu</p>
-                  </ng-container>
-
-                  <ng-template #previewTemplate>
-                     <img [src]="filePreview" class="max-h-32 mx-auto rounded-lg shadow-lg mb-2">
-                     <p class="text-xs text-green-400 font-medium">Image sélectionnée</p>
-                  </ng-template>
-               </ng-template>
-            </div>
-            <p *ngIf="!selectedFile && addAccountForm.touched" class="text-red-400 text-xs mt-1">La capture d'écran est requise pour validation</p>
-         </div>
-
-         <button type="submit" [disabled]="isSubmitting" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-            <span *ngIf="isSubmitting" class="animate-spin">⌛</span>
-            {{ isSubmitting ? 'Enregistrement...' : 'Enregistrer le compte' }}
-         </button>
-      </form>
-   </div>
-</div>
-
-<!-- Edit Modal -->
-<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-   <div class="bg-slate-800 rounded-3xl p-8 max-w-md w-full border border-slate-700 shadow-2xl relative">
-      <button (click)="closeEditModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
-         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-
-      <h2 class="text-2xl font-bold text-white mb-6">Modifier le compte</h2>
-      
-      <form [formGroup]="editAccountForm" (ngSubmit)="submitEditAccount()" class="space-y-6">
-         <!-- Game Type Select (Disabled or Editable? assume editable) -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Jeu</label>
-            <div class="grid grid-cols-3 gap-2">
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="efootball" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-blue-600 peer-checked:border-blue-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">E-Foot</div>
-                  </div>
-               </label>
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="fc_mobile" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-green-600 peer-checked:border-green-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">FC Mobile</div>
-                  </div>
-               </label>
-               <label class="cursor-pointer">
-                  <input type="radio" formControlName="gameType" value="dream_league_soccer" class="peer sr-only">
-                  <div class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-center peer-checked:bg-orange-600 peer-checked:border-orange-500 peer-checked:text-white transition-all">
-                     <div class="font-bold text-xs">DLS</div>
-                  </div>
-               </label>
-            </div>
-         </div>
-
-         <!-- Pseudo -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Pseudo en jeu</label>
-            <input type="text" formControlName="inGameName" placeholder="Ex: ProGamer237" 
-                   class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all">
-         </div>
-
-         <!-- Screenshot Upload (Optional) -->
-         <div>
-            <label class="block text-sm font-medium text-slate-300 mb-2">Modifier le screenshot (optionnel)</label>
-            <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-slate-500 transition-all relative group">
-               <input type="file" (change)="onFileSelected($event)" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" [disabled]="isImageLoading">
-               
-               <ng-container *ngIf="isImageLoading; else loadedContent">
-                  <div class="flex flex-col items-center justify-center py-2">
-                     <div class="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-2"></div>
-                     <p class="text-sm text-slate-400">Traitement de l'image...</p>
-                  </div>
-               </ng-container>
-
-               <ng-template #loadedContent>
-                 <ng-container *ngIf="!filePreview; else previewTemplate">
-                     <div class="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-500 group-hover:bg-slate-700 group-hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                     </div>
-                     <p class="text-sm text-slate-400">Cliquez pour modifier la capture</p>
-                  </ng-container>
-
-                  <ng-template #previewTemplate>
-                     <img [src]="filePreview" class="max-h-32 mx-auto rounded-lg shadow-lg mb-2">
-                     <p class="text-xs text-green-400 font-medium">Nouvelle image sélectionnée</p>
-                  </ng-template>
-               </ng-template>
-            </div>
-         </div>
-
-         <button type="submit" [disabled]="isSubmitting" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-            <span *ngIf="isSubmitting" class="animate-spin">⌛</span>
-            {{ isSubmitting ? 'Modification...' : 'Modifier le compte' }}
-         </button>
-      </form>
-   </div>
-</div>
+<!-- Game Account Modal (Add / Edit) -->
+<app-game-account-modal
+  *ngIf="showAccountModal"
+  [account]="selectedAccount"
+  (close)="closeAccountModal()"
+  (success)="onAccountSaved()">
+</app-game-account-modal>
 
 <!-- View Image Modal -->
-<div *ngIf="showViewModal" class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-fade-in" (click)="closeViewModal()">
-   <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
-      <button (click)="closeViewModal()" class="absolute -top-12 right-0 text-white hover:text-slate-300 transition-colors">
-         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <img [src]="viewImageUrl" class="max-w-full max-h-[85vh] rounded-xl shadow-2xl object-contain border border-slate-700" (click)="$event.stopPropagation()">
-   </div>
-</div>
+<app-image-view-modal
+  *ngIf="showViewModal"
+  [imageUrl]="viewImageUrl"
+  (close)="closeViewModal()">
+</app-image-view-modal>
