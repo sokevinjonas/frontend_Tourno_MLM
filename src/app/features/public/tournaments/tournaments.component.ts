@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -15,6 +15,7 @@ import { Tournament, TournamentService } from '../../../core/services/tournament
 export class TournamentsComponent implements OnInit {
   private tournamentService = inject(TournamentService);
   private sanitizer = inject(DomSanitizer);
+  private cd = inject(ChangeDetectorRef);
 
   selectedGame: string = 'Tous';
   selectedStatus: string = 'Tous';
@@ -36,11 +37,13 @@ export class TournamentsComponent implements OnInit {
       next: (data) => {
         this.tournaments = data;
         this.isLoading = false;
+        this.cd.markForCheck(); // Ensure view updates
       },
       error: (err) => {
         console.error('Error loading tournaments', err);
         this.error = 'Impossible de charger les tournois.';
         this.isLoading = false;
+        this.cd.markForCheck();
       }
     });
   }
@@ -63,16 +66,21 @@ export class TournamentsComponent implements OnInit {
 
   get filteredTournaments() {
     return this.tournaments.filter(t => {
-      // Map selection to backend values
-      let gameMatch = this.selectedGame === 'Tous';
-      if (!gameMatch) {
+      // Game Filter
+      const isGameAll = this.selectedGame === 'Tous';
+      let gameMatch = isGameAll;
+      
+      if (!isGameAll) {
          if (this.selectedGame === 'E-football' && t.game === 'efootball') gameMatch = true;
          else if (this.selectedGame === 'FC Mobile' && t.game === 'fc_mobile') gameMatch = true;
          else if (this.selectedGame === 'Dream League' && t.game === 'dream_league_soccer') gameMatch = true;
       }
 
-      let statusMatch = this.selectedStatus === 'Tous';
-      if (!statusMatch) {
+      // Status Filter
+      const isStatusAll = this.selectedStatus === 'Tous';
+      let statusMatch = isStatusAll;
+
+      if (!isStatusAll) {
           if (this.selectedStatus === 'Inscriptions ouvertes' && t.status === 'open') statusMatch = true;
           else if (this.selectedStatus === 'En cours' && t.status === 'ongoing') statusMatch = true;
           else if (this.selectedStatus === 'Terminé' && t.status === 'completed') statusMatch = true;
