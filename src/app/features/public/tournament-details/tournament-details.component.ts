@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../../core/services/auth.service';
+import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 
 interface Tab {
   id: string;
@@ -11,36 +12,16 @@ interface Tab {
   icon: string;
 }
 
-interface Tournament {
-  id: number;
-  name: string;
-  description: string;
-  gameType: string;
-  organizer: {
-    name: string;
-    verified: boolean;
-  };
-  startDate: string;
-  entryFee: number;
-  participants: {
+interface ParsedTournament extends Tournament {
+  prizeDistributionObj?: any;
+  rulesList?: string[];
+  roundsList?: any[];
+  participants?: {
     current: number;
     max: number;
     list: { name: string; avatar?: string; rank?: string }[];
   };
-  prizePool: number;
-  prizeDistribution: { 1: number; 2: number; 3: number };
-  status: 'Inscriptions ouvertes' | 'En cours' | 'Terminé';
-  rules: string[];
-  rounds?: {
-    name: string;
-    matches: {
-      p1: string;
-      p2: string;
-      s1: number | null;
-      s2: number | null;
-      status: 'completed' | 'scheduled' | 'live';
-    }[];
-  }[];
+  current_participants?: number; // Helper
 }
 
 @Component({
@@ -51,16 +32,24 @@ interface Tournament {
   styleUrls: ['./tournament-details.component.css']
 })
 export class TournamentDetailsComponent implements OnInit {
-  tournament: Tournament | undefined;
+  tournament: ParsedTournament | undefined;
   activeTab: string = 'info';
   
   private authService = inject(AuthService);
+  private tournamentService = inject(TournamentService);
+  private cd = inject(ChangeDetectorRef);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private location = inject(Location);
+  private sanitizer = inject(DomSanitizer);
+  
   currentUser$ = this.authService.currentUser$;
   currentUser: User | null = null;
 
   showCompleteProfileModal = false;
   showPaymentModal = false;
-
+  isLoading = true;
+  error: string | null = null;
   tabs: Tab[] = [
     { id: 'info', label: 'Informations', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' },
     { id: 'participants', label: 'Participants', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
@@ -68,97 +57,78 @@ export class TournamentDetailsComponent implements OnInit {
   ];
 
   icons = {
-    back: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    back: '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
     verified: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-blue-400"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.491 4.491 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" /></svg>',
-    lightning: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
-    check: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-    alert: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>',
-    bracket: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>'
+    lightning: '<svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    check: '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    alert: '<svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>',
+    bracket: '<svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>'
   };
 
-  constructor(
-    private route: ActivatedRoute,
-    private location: Location,
-    private router: Router,
-    private sanitizer: DomSanitizer
-  ) {
-    this.authService.currentUser$.subscribe(u => this.currentUser = u);
-  }
+  // ... constructor ...
 
   ngOnInit() {
-    // Mock data based on ID, usually fetch from service
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    
-    this.tournament = {
-      id: id,
-      name: 'Championnat E-football Cameroun',
-      description: 'Le plus grand tournoi E-football du mois. Affrontez les meilleurs joueurs du pays et tentez de remporter le cashprize exceptionnel. Format Suisse pour garantir un maximum de matchs à tous les participants.',
-      gameType: 'E-football',
-      organizer: { name: 'MLM Official', verified: true },
-      startDate: '25 Déc 2024, 14:00',
-      entryFee: 5,
-      participants: {
-        current: 16,
-        max: 16,
-        list: [
-          { name: 'ProGamer237', rank: 'Gold' },
-          { name: 'LionIndomptable', rank: 'Silver' },
-          { name: 'DoualaKing', rank: 'Bronze' },
-          { name: 'YaoundeBoss', rank: 'Silver' },
-          { name: 'KribiSlayer', rank: 'Gold' },
-          { name: 'GarouaBoy', rank: 'Bronze' },
-          { name: 'BamendaStriker', rank: 'Platinum' },
-          { name: 'BueaSniper', rank: 'Silver' },
-          { name: 'EbolowaStar', rank: 'Bronze' },
-          { name: 'BafoussamPower', rank: 'Gold' },
-          { name: 'LimbeShark', rank: 'Silver' },
-          { name: 'KumbaWarrior', rank: 'Bronze' },
-          { name: 'MarouaLion', rank: 'Silver' },
-          { name: 'NgaoundereEagle', rank: 'Gold' },
-          { name: 'BertouaPanther', rank: 'Bronze' },
-          { name: 'EdéaCroc', rank: 'Silver' }
-        ]
-      },
-      prizePool: 160,
-      prizeDistribution: { 1: 80, 2: 50, 3: 30 },
-      status: 'En cours',
-      rules: [
-        'Format Suisse : 5 rondes minimum',
-        'Victoire = 3 points, Nul = 1 point',
-        'Screenshot du score final obligatoire',
-        'Fair-play exigé sous peine de disqualification',
-        'Connexion stable requise'
-      ],
-      rounds: [
-        {
-          name: 'Ronde 1',
-          matches: [
-            { p1: 'ProGamer237', p2: 'LionIndomptable', s1: 3, s2: 1, status: 'completed' },
-            { p1: 'DoualaKing', p2: 'YaoundeBoss', s1: 0, s2: 2, status: 'completed' },
-            { p1: 'KribiSlayer', p2: 'GarouaBoy', s1: 1, s2: 1, status: 'completed' },
-            { p1: 'BamendaStriker', p2: 'BueaSniper', s1: 4, s2: 0, status: 'completed' }
-          ]
-        },
-        {
-          name: 'Ronde 2',
-          matches: [
-            { p1: 'ProGamer237', p2: 'BamendaStriker', s1: 2, s2: 2, status: 'completed' },
-            { p1: 'YaoundeBoss', p2: 'KribiSlayer', s1: 1, s2: 0, status: 'completed' },
-            { p1: 'LionIndomptable', p2: 'DoualaKing', s1: 2, s2: 1, status: 'completed' },
-             { p1: 'BueaSniper', p2: 'GarouaBoy', s1: 0, s2: 3, status: 'completed' }
-          ]
-        },
-         {
-          name: 'Ronde 3',
-          matches: [
-            { p1: 'ProGamer237', p2: 'YaoundeBoss', s1: null, s2: null, status: 'scheduled' },
-            { p1: 'BamendaStriker', p2: 'GarouaBoy', s1: null, s2: null, status: 'scheduled' },
-             { p1: 'LionIndomptable', p2: 'KribiSlayer', s1: null, s2: null, status: 'scheduled' },
-             { p1: 'DoualaKing', p2: 'BueaSniper', s1: null, s2: null, status: 'scheduled' }
-          ]
-        }
-      ]
-    };
+    if (id) {
+       this.loadTournament(id);
+    }
+  }
+
+  loadTournament(id: number) {
+      this.isLoading = true;
+      this.tournamentService.getTournament(id).subscribe({
+          next: (data) => {
+              const response = data as any;
+              // API returns wrapped object { tournament: ..., statistics: ... }
+              this.tournament = response.tournament;
+              
+              if (this.tournament) {
+                  // Map registrations to participants structure for template
+                  const regs = (this.tournament as any).registrations || [];
+                  this.tournament.participants = {
+                      current: regs.length,
+                      max: Number((this.tournament as any).max_participants) || 0,
+                      list: regs.map((r: any) => ({
+                          // Fallback if user object is missing in registration
+                          name: r.user ? r.user.name : `Joueur ${r.user_id}`,
+                          rank: 'N/A',
+                          avatar: undefined 
+                      }))
+                  };
+                  this.tournament.current_participants = regs.length;
+
+                  // Parse JSON fields
+                  try {
+                      if (typeof this.tournament.prize_distribution === 'string') {
+                          this.tournament.prizeDistributionObj = JSON.parse(this.tournament.prize_distribution);
+                      } else {
+                          this.tournament.prizeDistributionObj = this.tournament.prize_distribution;
+                      }
+                  } catch (e) {
+                      console.error('Error parsing prize distribution', e);
+                      this.tournament.prizeDistributionObj = {};
+                  }
+
+                  // Default Mock Data for missing fields
+                  this.tournament.rulesList = [
+                      'Format Suisse : 5 rondes minimum',
+                      'Victoire = 3 points, Nul = 1 point',
+                      'Screenshot du score final obligatoire', 
+                      'Fair-play exigé'
+                  ];
+                  this.tournament.roundsList = []; 
+              }
+
+              this.isLoading = false;
+              this.cd.markForCheck();
+          },
+          error: (err) => {
+              console.error('Error loading tournament details', err);
+              this.error = 'Impossible de charger les détails du tournoi.';
+              this.isLoading = false;
+              this.cd.markForCheck();
+          }
+      });
   }
 
   sanitize(html: string): SafeHtml {
@@ -176,7 +146,7 @@ export class TournamentDetailsComponent implements OnInit {
       return;
     }
     
-    const isProfileComplete = this.currentUser?.profile?.validation_status === 'validated';
+    const isProfileComplete = this.currentUser?.profile?.status === 'validated';
 
     if (!isProfileComplete) {
       this.showCompleteProfileModal = true;
@@ -192,7 +162,7 @@ export class TournamentDetailsComponent implements OnInit {
 
   confirmParticipation() {
     // Implement payment logic here
-    alert('Participation confirmée ! ' + this.tournament?.entryFee + ' pièces déduites.');
+    alert('Participation confirmée ! ' + this.tournament?.entry_fee + ' pièces déduites.');
     this.closeModals();
     // Refresh data...
   }
@@ -204,6 +174,47 @@ export class TournamentDetailsComponent implements OnInit {
   // Helpers for template logic
   get remainingBalance() {
     if (!this.tournament || !this.currentUser || !this.currentUser.wallet) return 0;
-    return (this.currentUser.wallet.balance || 0) - this.tournament.entryFee;
+    const fee = parseFloat(this.tournament.entry_fee) || 0;
+    return (this.currentUser.wallet.balance || 0) - fee;
+  }
+
+  getGameDisplayName(game: string | undefined): string {
+     if (!game) return '';
+     switch(game) {
+       case 'efootball': return 'E-football';
+       case 'fc_mobile': return 'FC Mobile';
+       case 'dream_league_soccer': return 'Dream League';
+       default: return game;
+     }
+  }
+
+  getStatusDisplayName(status: string | undefined): string {
+      if (!status) return '';
+      switch(status) {
+          case 'open': return 'Inscriptions ouvertes';
+          case 'ongoing': return 'En cours';
+          case 'completed': return 'Terminé';
+          default: return status;
+      }
+  }
+
+  getStatusClass(status: string | undefined): string {
+    if (!status) return '';
+    switch(status) {
+      case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
+      case 'ongoing': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
+      default: return 'bg-slate-700/50 text-slate-400';
+    }
+  }
+
+  getGameColor(game: string | undefined): string {
+    if (!game) return '';
+    switch(game) {
+      case 'efootball': return 'text-blue-400';
+      case 'fc_mobile': return 'text-cyan-400';
+      case 'dream_league_soccer': return 'text-purple-400';
+      default: return 'text-slate-400';
+    }
   }
 }

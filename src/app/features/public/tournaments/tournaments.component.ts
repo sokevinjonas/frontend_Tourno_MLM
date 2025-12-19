@@ -21,6 +21,7 @@ export class TournamentsComponent implements OnInit {
   selectedStatus: string = 'Tous';
   isLoading = true;
   error: string | null = null;
+  total_registrations = 0;
 
   games = ['Tous', 'E-football', 'FC Mobile', 'Dream League'];
   statuses = ['Tous', 'Inscriptions ouvertes', 'En cours', 'Terminé'];
@@ -36,6 +37,9 @@ export class TournamentsComponent implements OnInit {
     this.tournamentService.getTournaments().subscribe({
       next: (data) => {
         this.tournaments = data;
+        // this.total_registrations = data.reduce;
+        console.log(this.total_registrations);
+        
         this.isLoading = false;
         this.cd.markForCheck(); // Ensure view updates
       },

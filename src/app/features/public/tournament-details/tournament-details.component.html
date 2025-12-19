@@ -15,8 +15,12 @@
        <div class="relative z-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
          <div>
             <div class="flex items-center gap-3 mb-2">
-              <span class="bg-green-500/10 text-green-400 border border-green-500/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">{{tournament.status}}</span>
-              <span class="text-blue-400 font-bold text-sm">{{tournament.gameType}}</span>
+              <span [class]="'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ' + getStatusClass(tournament.status)">
+                  {{getStatusDisplayName(tournament.status)}}
+              </span>
+              <span [class]="'font-bold text-sm ' + getGameColor(tournament.game)">
+                  {{getGameDisplayName(tournament.game)}}
+              </span>
             </div>
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">{{tournament.name}}</h1>
             <div class="flex items-center gap-2 text-slate-400">
@@ -27,16 +31,10 @@
 
          <!-- Hero Stats -->
          <div class="flex gap-4 md:gap-8">
-            <div class="text-center bg-slate-900/50 p-4 rounded-2xl border border-slate-700/50 min-w-[100px]">
-               <div class="text-xs text-slate-500 uppercase font-bold mb-1">Prize Pool</div>
-               <div class="text-xl font-bold text-blue-400 flex items-center justify-center gap-1">
-                 {{tournament.prizePool}} <div class="w-4 h-4" [innerHTML]="sanitize(icons.lightning)"></div>
-               </div>
-            </div>
              <div class="text-center bg-slate-900/50 p-4 rounded-2xl border border-slate-700/50 min-w-[100px]">
                <div class="text-xs text-slate-500 uppercase font-bold mb-1">Frais</div>
                <div class="text-xl font-bold text-white flex items-center justify-center gap-1">
-                 {{tournament.entryFee}} <div class="w-4 h-4" [innerHTML]="sanitize(icons.lightning)"></div>
+                 {{tournament.entry_fee}} 🪙
                </div>
             </div>
          </div>
@@ -65,36 +63,36 @@
            <!-- Description -->
            <section>
               <h3 class="text-lg font-bold text-white mb-4">À propos</h3>
-              <p class="text-slate-300 leading-relaxed">{{tournament.description}}</p>
+              <p class="text-slate-300 leading-relaxed">{{tournament.description || 'Aucune description disponible.'}}</p>
            </section>
 
            <!-- Prize Distribution -->
-           <section>
+           <section *ngIf="tournament.prizeDistributionObj">
               <h3 class="text-lg font-bold text-white mb-4">Récompenses</h3>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                 <div class="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['1st']" class="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥇</span>
                     <span class="text-yellow-400 font-bold mb-1">1ère Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistribution[1]}} pièces</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['1st']}} 🪙</span>
                  </div>
-                 <div class="bg-gradient-to-br from-slate-400/10 to-transparent border border-slate-400/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['2nd']" class="bg-gradient-to-br from-slate-400/10 to-transparent border border-slate-400/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥈</span>
                     <span class="text-slate-300 font-bold mb-1">2ème Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistribution[2]}} pièces</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['2nd']}} 🪙</span>
                  </div>
-                 <div class="bg-gradient-to-br from-orange-700/10 to-transparent border border-orange-700/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['3rd']" class="bg-gradient-to-br from-orange-700/10 to-transparent border border-orange-700/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥉</span>
                     <span class="text-orange-400 font-bold mb-1">3ème Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistribution[3]}} pièces</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['3rd']}} 🪙</span>
                  </div>
               </div>
            </section>
 
            <!-- Rules -->
-           <section>
+           <section *ngIf="tournament.rulesList && tournament.rulesList.length > 0">
               <h3 class="text-lg font-bold text-white mb-4">Règles du tournoi</h3>
               <ul class="space-y-3">
-                 <li *ngFor="let rule of tournament.rules" class="flex items-start gap-3 text-slate-300">
+                 <li *ngFor="let rule of tournament.rulesList" class="flex items-start gap-3 text-slate-300">
                     <div class="w-5 h-5 mt-0.5 text-blue-500 shrink-0" [innerHTML]="sanitize(icons.check)"></div>
                     {{rule}}
                  </li>
@@ -199,7 +197,7 @@
                  </div>
                  <div>
                     <div class="text-sm text-slate-400 mb-1">Date</div>
-                    <div class="font-semibold text-white">{{tournament.startDate}}</div>
+                    <div class="font-semibold text-white">{{tournament.start_date | date:'dd MMM yyyy, HH:mm'}}</div>
                  </div>
               </div>
 
@@ -209,7 +207,7 @@
                  </div>
                  <div>
                     <div class="text-sm text-slate-400 mb-1">Plateforme</div>
-                    <div class="font-semibold text-white">{{tournament.gameType}} | Mobile</div>
+                    <div class="font-semibold text-white">{{getGameDisplayName(tournament.game)}} | Mobile</div>
                  </div>
               </div>
 
@@ -227,7 +225,7 @@
            <div class="my-8 border-t border-slate-700"></div>
            
            <button (click)="onParticipate()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
-              S'inscrire ({{tournament.entryFee}} ⚡)
+              S'inscrire ({{tournament.entry_fee}} ⚡)
            </button>
            <p class="text-center text-xs text-slate-500 mt-4">
               En vous inscrivant, vous acceptez les règles du tournoi.
@@ -276,7 +274,7 @@
        </div>
        <div class="flex justify-between items-center text-sm">
           <span class="text-slate-400">Frais d'inscription</span>
-          <span class="text-red-400 font-medium">- {{tournament.entryFee}} ⚡</span>
+          <span class="text-red-400 font-medium">- {{tournament.entry_fee}} ⚡</span>
        </div>
        <div class="border-t border-slate-700/50 pt-3 flex justify-between items-center">
           <span class="text-slate-300 font-medium">Nouveau solde</span>

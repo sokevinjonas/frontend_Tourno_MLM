@@ -94,11 +94,11 @@
                 <div class="flex-1">
                    <div class="flex justify-between text-xs mb-1.5">
                       <span>Participants</span>
-                      <span class="text-white">{{ tournament.current_participants || 0 }}/{{ tournament.max_participants }}</span>
+                      <span class="text-white">{{ total_registrations }}/{{ tournament.max_participants }}</span>
                    </div>
                    <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden">
                       <div class="h-full bg-blue-500 rounded-full transition-all duration-500" 
-                           [style.width.%]="((tournament.current_participants || 0) / tournament.max_participants) * 100">
+                           [style.width.%]="((total_registrations / tournament.max_participants) * 100)">
                       </div>
                    </div>
                 </div>

@@ -32,13 +32,21 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     // Charger l'utilisateur depuis localStorage au démarrage
-    const user = localStorage.getItem('user');
-    if (user) {
-      try {
-        this.currentUserSubject.next(JSON.parse(user));
-      } catch (e) {
-        console.error('Error parsing user from localStorage', e);
-        localStorage.removeItem('user');
+    const token = this.getToken();
+    
+    // Check if token is expired immediately
+    if (token && this.isTokenExpired(token)) {
+      this.doLogoutCleanup();
+    } else {
+      // If token is valid (or null), try to load user
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          this.currentUserSubject.next(JSON.parse(user));
+        } catch (e) {
+          console.error('Error parsing user from localStorage', e);
+          this.doLogoutCleanup();
+        }
       }
     }
   }
@@ -135,6 +143,32 @@ export class AuthService {
    * Vérifie si l'utilisateur est connecté
    */
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) return false;
+
+    if (this.isTokenExpired(token)) {
+      this.doLogoutCleanup();
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Vérifie si le token est expiré
+   */
+  private isTokenExpired(token: string): boolean {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = atob(base64);
+      const payload = JSON.parse(jsonPayload);
+      
+      if (!payload.exp) return true; // Invalid if no expiration claim
+      
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp < currentTime;
+    } catch (e) {
+      return true; // Treat invalid tokens as expired
+    }
   }
 }
