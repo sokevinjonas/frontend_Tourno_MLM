@@ -40,7 +40,7 @@
              </h3>
              <div class="flex items-baseline gap-2">
                 <span class="text-3xl font-bold text-white" [ngClass]="{'text-blue-400': plan.isPopular}">{{plan.price}}</span>
-                <span *ngIf="plan.price !== 'Gratuit'" class="text-slate-400 font-medium text-sm">/ unique</span>
+                <!-- <span *ngIf="plan.price !== 'Gratuit'" class="text-slate-400 font-medium text-sm">/ unique</span> -->
              </div>
              <p class="text-sm mt-2" [ngClass]="plan.isPopular ? 'text-blue-200' : 'text-slate-500'">{{plan.priceDetail}}</p>
           </div>

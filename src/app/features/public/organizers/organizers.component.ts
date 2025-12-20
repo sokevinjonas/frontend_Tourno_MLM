@@ -148,8 +148,8 @@ export class OrganizersComponent implements OnInit {
   plans = [
     {
       name: 'Organisateur Standard',
-      price: 'Gratuit',
-      priceDetail: '0 🪙 / mois',
+      price: '0 🪙',
+      priceDetail: '0 FCFA',
       features: [
         'Création de tournois illimitée',
         'Tournois gratuits uniquement',
@@ -165,11 +165,11 @@ export class OrganizersComponent implements OnInit {
     },
     {
       name: 'Organisateur Vérifié',
-      price: '5.000 FCFA',
-      priceDetail: '10 🪙 (Frais unique)',
+      price: '50 🪙',
+      priceDetail: '25.000 FCFA',
       features: [
         'Tout du plan Standard',
-        'Badge "Vérifié" 🛡️',
+        'Badge "Vérifié"',
         'Validation d\'identité',
         'Plus de confiance',
         'Support standard'
@@ -182,12 +182,12 @@ export class OrganizersComponent implements OnInit {
     },
     {
       name: 'Organisateur Certifié',
-      price: '25.000 FCFA',
-      priceDetail: '50 🪙 (Frais unique)',
+      price: '200 🪙',
+      priceDetail: '1000.000 FCFA',
       features: [
         'Tout du plan Standard',
-        'Tournois avec Cashprize 💰',
-        'Badge "Certifié" ✅',
+        'Tournois avec Cashprize',
+        'Badge "Certifié"',
         'Visibilité accrue',
         'Support prioritaire 24/7'
       ],
@@ -198,6 +198,22 @@ export class OrganizersComponent implements OnInit {
       type: 'certified'
     }
   ];
+
+  handlePlanClick(plan: any) {
+    if (plan.type === 'standard') {
+      this.router.navigate(['/register']);
+      return;
+    }
+
+    if (plan.type === 'verified') {
+       this.toastService.info('La certification "Vérifié" sera bientôt disponible !');
+       return;
+    }
+
+    if (plan.type === 'certified') {
+       this.handleCertifiedClick();
+    }
+  }
 
   get filteredOrganizers() {
     if (!this.organizers) return [];
