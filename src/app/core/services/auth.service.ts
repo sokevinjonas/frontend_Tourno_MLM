@@ -157,18 +157,9 @@ export class AuthService {
    * Vérifie si le token est expiré
    */
   private isTokenExpired(token: string): boolean {
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = atob(base64);
-      const payload = JSON.parse(jsonPayload);
-      
-      if (!payload.exp) return true; // Invalid if no expiration claim
-      
-      const currentTime = Math.floor(Date.now() / 1000);
-      return payload.exp < currentTime;
-    } catch (e) {
-      return true; // Treat invalid tokens as expired
-    }
+    // Avec Sanctum, les tokens sont opaques (non JWT).
+    // On ne peut pas vérifier l'expiration côté client.
+    // On considère le token valide tant que l'API ne renvoie pas 401.
+    return false;
   }
 }
