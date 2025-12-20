@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService, User } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +21,10 @@ export class HeaderComponent {
     private router: Router
   ) {
     this.currentUser$ = this.authService.currentUser$;
+  }
+
+  hasRole(user: User, role: string): boolean {
+    return user?.role === role;
   }
 
   toggleMenu() {
