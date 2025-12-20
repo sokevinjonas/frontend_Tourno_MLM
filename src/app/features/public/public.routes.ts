@@ -36,5 +36,9 @@ export const publicRoutes: Routes = [
   {
     path: 'rankings',
     loadComponent: () => import('./rankings/rankings.component').then(m => m.RankingsComponent)
+  },
+  {
+    path: 'organizers',
+    loadComponent: () => import('./organizers/organizers.component').then(m => m.OrganizersComponent)
   }
 ];
