@@ -24,7 +24,7 @@ export class OrganizerService {
 
   constructor(private http: HttpClient) {}
 
-  getOrganizers(params?: { featured?: boolean; badge?: string; sort?: string; page?: number; limit?: number; search?: string }): Observable<OrganizersResponse> {
+  getOrganizers(params?: { featured?: boolean; badge?: string; sort?: string; page?: number; limit?: number; search?: string }): Observable<any> {
     let httpParams = new HttpParams();
     
     if (params) {
@@ -36,7 +36,7 @@ export class OrganizerService {
       if (params.search) httpParams = httpParams.set('search', params.search);
     }
 
-    return this.http.get<OrganizersResponse>(this.apiUrl, { params: httpParams });
+    return this.http.get<any>(this.apiUrl, { params: httpParams });
   }
 
   getOrganizer(id: number): Observable<{ organizer: OrganizerDetails }> {

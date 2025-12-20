@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../../core/services/auth.service';
@@ -29,7 +29,8 @@ export class OrganizersComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private organizerService: OrganizerService,
-    private router: Router
+    private router: Router,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -52,14 +53,21 @@ export class OrganizersComponent implements OnInit {
     
     this.organizerService.getOrganizers(params).subscribe({
       next: (res) => {
-        this.organizers = res.organizers;
-        console.log(this.organizers);
-        
+        if (Array.isArray(res)) {
+          this.organizers = res;
+        } else if (res && Array.isArray(res.organizers)) {
+          this.organizers = res.organizers;
+        } else {
+          this.organizers = [];
+          console.error('Invalid response format', res);
+        }
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error loading organizers', err);
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }
@@ -148,9 +156,10 @@ export class OrganizersComponent implements OnInit {
   ];
 
   get filteredOrganizers() {
+    if (!this.organizers) return [];
     return this.organizers.filter(org => {
-      const matchesSearch = org.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-      return matchesSearch;
+      const name = org.name || '';
+      return name.toLowerCase().includes(this.searchTerm.toLowerCase());
     });
   }
 
@@ -177,6 +186,15 @@ export class OrganizersComponent implements OnInit {
     this.showCertifiedOnly = !this.showCertifiedOnly;
     this.currentPage = 1;
     this.loadOrganizers();
+  }
+
+  getBadgeDescription(type: string | null): string {
+    switch (type) {
+      case 'certified': return 'Organisateur officiel certifié par la plateforme.';
+      case 'verified': return "L'identité de cet organisateur a été vérifiée.";
+      case 'partner': return 'Partenaire officiel de Tourno.';
+      default: return '';
+    }
   }
 
   handleCertifiedClick() {
