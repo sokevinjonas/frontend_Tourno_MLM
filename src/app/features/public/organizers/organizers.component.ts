@@ -164,26 +164,9 @@ export class OrganizersComponent implements OnInit {
       type: 'standard'
     },
     {
-      name: 'Organisateur Vérifié',
+      name: 'Organisateur Certifié',
       price: '50 🪙',
       priceDetail: '25.000 FCFA',
-      features: [
-        'Tout du plan Standard',
-        'Badge "Vérifié"',
-        'Validation d\'identité',
-        'Plus de confiance',
-        'Support standard'
-      ],
-      cta: 'Devenir Vérifié',
-      isPopular: false,
-      color: 'emerald',
-      badge: true,
-      type: 'verified'
-    },
-    {
-      name: 'Organisateur Certifié',
-      price: '200 🪙',
-      priceDetail: '1000.000 FCFA',
       features: [
         'Tout du plan Standard',
         'Tournois avec Cashprize',
@@ -196,6 +179,23 @@ export class OrganizersComponent implements OnInit {
       color: 'blue',
       badge: true,
       type: 'certified'
+    },
+    {
+      name: 'Organisateur Vérifié',
+      price: '200 🪙',
+      priceDetail: '100.000 FCFA',
+      features: [
+        'Tout du plan Standard',
+        'Badge "Vérifié"',
+        'Validation d\'identité',
+        'Plus de confiance',
+        'Support standard'
+      ],
+      cta: 'Devenir Vérifié',
+      isPopular: false,
+      color: 'emerald',
+      badge: true,
+      type: 'verified'
     }
   ];
 

@@ -40,7 +40,6 @@
              </h3>
              <div class="flex items-baseline gap-2">
                 <span class="text-3xl font-bold text-white" [ngClass]="{'text-blue-400': plan.isPopular}">{{plan.price}}</span>
-                <!-- <span *ngIf="plan.price !== 'Gratuit'" class="text-slate-400 font-medium text-sm">/ unique</span> -->
              </div>
              <p class="text-sm mt-2" [ngClass]="plan.isPopular ? 'text-blue-200' : 'text-slate-500'">{{plan.priceDetail}}</p>
           </div>
@@ -158,8 +157,8 @@
                         </div>
                     </h3>
                     <div class="flex gap-3 text-xs text-slate-400 mt-1">
-                       <span class="flex items-center gap-1 whitespace-nowrap"><span class="text-white font-bold">{{org.tournaments}}</span> Trn.</span>
-                       <span class="flex items-center gap-1 whitespace-nowrap"><span class="text-white font-bold">{{org.followers}}</span> Abo.</span>
+                       <span class="flex items-center gap-1 whitespace-nowrap"><span class="text-white font-bold">{{org.tournaments}}</span> Tournois</span>
+                       <span class="flex items-center gap-1 whitespace-nowrap"><span class="text-white font-bold">{{org.followers}}</span> Abonnés</span>
                     </div>
                  </div>
               </div>
