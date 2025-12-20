@@ -9,10 +9,12 @@ export interface User {
   name: string;
   email: string;
   role: string;
+  badge?: string;
   is_new_user?: boolean;
   // Add other fields as needed based on API response
   profile?: any;
   wallet?: any;
+  organizer?: any;
   game_accounts?: any[];
 }
 

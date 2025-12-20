@@ -54,4 +54,20 @@ export class OrganizerService {
   getMyFollowing(): Observable<MyFollowingResponse> {
     return this.http.get<MyFollowingResponse>(`${this.apiUrl}/my/following`);
   }
+
+  checkMyFollowing(): Observable<MyFollowingResponse> {
+    return this.http.get<MyFollowingResponse>(`${this.apiUrl}/my/following`);
+  }
+
+  /**
+   * Souscrire au pack Organisateur Certifié
+   * POST /api/organizers/upgrade
+   */
+  subscribeToCertified(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upgrade`, { type: 'certified' });
+  }
+
+  checkIfOrganizer(): Observable<{ is_organizer: boolean; role: string }> {
+    return this.http.get<{ is_organizer: boolean; role: string }>(`${this.apiUrl}/check-if-organizer`);
+  }
 }

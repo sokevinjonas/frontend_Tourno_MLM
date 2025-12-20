@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService, User } from '../../../core/services/auth.service';
 import { OrganizerService } from '../../../core/services/organizer.service';
 import { Organizer } from '../../../core/models/organizer.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-organizers',
@@ -26,22 +27,41 @@ export class OrganizersComponent implements OnInit {
   followedOrganizerIds = new Set<number>();
   loading = false;
 
+  // New properties
+  isOrganizer = false;
+  userBadge: string | null = null;
+
   constructor(
     private authService: AuthService,
     private organizerService: OrganizerService,
     private router: Router,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
+    this.loadOrganizers();
+    
     this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      this.userBalance = user?.wallet?.balance || 0;
+      this.currentUser = user; 
+      this.userBalance = user?.wallet?.balance || 0; 
+
       if (user) {
-        this.checkMyFollowing();
+        this.checkMyFollowing(); 
+        
+        this.organizerService.checkIfOrganizer().subscribe({
+          next: (res) => {
+            this.isOrganizer = res.is_organizer;
+            this.cd.detectChanges();
+          },
+          error: (err) => {
+            this.isOrganizer = false;
+          }
+        });
+      } else {
+        this.isOrganizer = false;
       }
     });
-    this.loadOrganizers();
   }
 
   loadOrganizers() {
@@ -59,7 +79,6 @@ export class OrganizersComponent implements OnInit {
           this.organizers = res.organizers;
         } else {
           this.organizers = [];
-          console.error('Invalid response format', res);
         }
         this.loading = false;
         this.cd.detectChanges();
@@ -77,7 +96,6 @@ export class OrganizersComponent implements OnInit {
         this.followedOrganizerIds = new Set(res.following.map(o => o.id));
      });
   }
-
   toggleFollow(org: Organizer) {
     if (!this.currentUser) {
        this.router.navigate(['/login']);
@@ -112,6 +130,13 @@ export class OrganizersComponent implements OnInit {
            this.followedOrganizerIds.delete(org.id);
            org.followers--;
         }
+
+        // Display error message via Toast
+        if (err.error && err.error.message) {
+          this.toastService.error(err.error.message);
+        } else {
+          this.toastService.error("Une erreur est survenue.");
+        }
       }
     });
   }
@@ -135,7 +160,25 @@ export class OrganizersComponent implements OnInit {
       cta: 'Commencer Gratuitement',
       isPopular: false,
       color: 'slate',
-      badge: false
+      badge: false,
+      type: 'standard'
+    },
+    {
+      name: 'Organisateur Vérifié',
+      price: '5.000 FCFA',
+      priceDetail: '10 🪙 (Frais unique)',
+      features: [
+        'Tout du plan Standard',
+        'Badge "Vérifié" 🛡️',
+        'Validation d\'identité',
+        'Plus de confiance',
+        'Support standard'
+      ],
+      cta: 'Devenir Vérifié',
+      isPopular: false,
+      color: 'emerald',
+      badge: true,
+      type: 'verified'
     },
     {
       name: 'Organisateur Certifié',
@@ -151,7 +194,8 @@ export class OrganizersComponent implements OnInit {
       cta: 'Devenir Certifié',
       isPopular: true,
       color: 'blue',
-      badge: true
+      badge: true,
+      type: 'certified'
     }
   ];
 
@@ -197,11 +241,20 @@ export class OrganizersComponent implements OnInit {
     }
   }
 
+  get isAlreadyCertified(): boolean {
+    return this.isOrganizer;
+  }
+
   handleCertifiedClick() {
-    if (!this.currentUser) {
-      this.router.navigate(['/register'], { queryParams: { role: 'organizer', type: 'certified' } });
+    if (this.isAlreadyCertified) {
       return;
     }
+
+    if (!this.authService.isAuthenticated()) {
+      this.toastService.info('Veuillez vous connecter pour devenir un organisateur certifié.');
+      return;
+    }
+    
     this.showModal = true;
   }
 
@@ -209,11 +262,28 @@ export class OrganizersComponent implements OnInit {
     this.showModal = false;
   }
 
+  showSuccessModal = false;
+
   confirmPayment() {
-    this.closeModal();
-    // In a real app, this would call a service to deduct coins and update role
-    console.log('Payment confirmed');
-    alert('Félicitations ! Vous avez souscrit au pack Organisateur Certifié.');
+    this.organizerService.subscribeToCertified().subscribe({
+      next: (res) => {
+        this.closeModal(); 
+        this.showSuccessModal = true;
+        
+        this.authService.getCurrentUser().subscribe();
+        this.loadOrganizers();
+      },
+      error: (err) => {
+        console.error('Subscription error', err);
+        this.closeModal();
+        const msg = err.error?.message || 'Une erreur est survenue lors de la souscription. Veuillez réessayer.';
+        this.toastService.error(msg);
+      }
+    });
+  }
+
+  closeSuccessModal() {
+    this.showSuccessModal = false;
   }
 
   get canAfford(): boolean {

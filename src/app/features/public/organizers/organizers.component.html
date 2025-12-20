@@ -21,86 +21,47 @@
       <p class="text-slate-400">Choisissez le statut qui vous correspond.</p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      <!-- Standard Plan -->
-      <div class="bg-slate-900/50 border border-slate-800 rounded-3xl p-8 relative hover:border-slate-700 transition-all group">
-         <div class="mb-8">
-            <h3 class="text-xl font-bold text-white mb-2">Organisateur Standard</h3>
-            <div class="flex items-baseline gap-2">
-               <span class="text-3xl font-bold text-white">Gratuit</span>
-            </div>
-            <p class="text-slate-500 text-sm mt-2">Pour commencer et animer votre communauté.</p>
-         </div>
-         <ul class="space-y-4 mb-8">
-            <li class="flex items-center gap-3 text-slate-300">
-               <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-               Création de tournois illimitée
-            </li>
-            <li class="flex items-center gap-3 text-slate-300">
-               <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-               Tournois <span class="text-white font-bold">Gratuits</span> uniquement
-            </li>
-            <li class="flex items-center gap-3 text-slate-300">
-               <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-               Gestion des brackets automatique
-            </li>
-            <li class="flex items-center gap-3 text-slate-500">
-               <svg class="w-5 h-5 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-               Pas de cashprize
-            </li>
-            <li class="flex items-center gap-3 text-slate-500">
-               <svg class="w-5 h-5 text-slate-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-               Pas de badge certifié
-            </li>
-         </ul>
-         <a routerLink="/register" class="block w-full py-4 rounded-xl text-center font-bold bg-slate-800 text-white hover:bg-slate-700 transition-all">
-            Commencer Gratuitement
-         </a>
-      </div>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+       <div *ngFor="let plan of plans" 
+            class="rounded-3xl p-8 relative transition-all group border"
+            [ngClass]="plan.isPopular ? 'bg-slate-900 border-blue-500/30 hover:border-blue-500/50 shadow-xl shadow-blue-900/10' : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'">
+            
+          <!-- Popular Badge -->
+          <div *ngIf="plan.isPopular" class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl shadow-lg">
+             RECOMMANDÉ
+          </div>
+          <div *ngIf="plan.isPopular" class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
 
-      <!-- Certified Plan -->
-      <div class="bg-slate-900 border border-blue-500/30 rounded-3xl p-8 relative relative overflow-hidden group hover:border-blue-500/50 transition-all shadow-xl shadow-blue-900/10">
-         <!-- Promoted Badge -->
-         <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl shadow-lg">
-            RECOMMANDÉ
-         </div>
-         <div class="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent pointer-events-none"></div>
-         
-         <div class="mb-8 relative z-10">
-            <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
-               Organisateur Certifié
-               <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-            </h3>
-            <div class="flex items-baseline gap-2">
-               <span class="text-4xl font-bold text-white">50 🪙</span>
-               <span class="text-slate-400 font-medium text-sm">/ unique</span>
-            </div>
-            <p class="text-blue-200 text-sm mt-2">Soit environ 25.000 FCFA</p>
-         </div>
-         
-         <ul class="space-y-4 mb-8 relative z-10">
-            <li class="flex items-center gap-3 text-white font-medium">
-               <div class="bg-blue-500/20 p-1 rounded-full"><svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-               Tout du plan Standard
-            </li>
-            <li class="flex items-center gap-3 text-white font-medium">
-               <div class="bg-blue-500/20 p-1 rounded-full"><svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-               Tournois avec <span class="text-yellow-400">Cashprize</span> 💰
-            </li>
-            <li class="flex items-center gap-3 text-white font-medium">
-               <div class="bg-blue-500/20 p-1 rounded-full"><svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-               Badge "Certifié" ✅
-            </li>
-            <li class="flex items-center gap-3 text-white font-medium">
-               <div class="bg-blue-500/20 p-1 rounded-full"><svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></div>
-               Contrat d'engagement de confiance
-            </li>
-         </ul>
-         
-         <button (click)="handleCertifiedClick()" class="block w-full py-4 rounded-xl text-center font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all transform hover:-translate-y-1 relative z-10 cursor-pointer">
-            Devenir Certifié
-         </button>
-      </div>
+          <div class="mb-8 relative z-10">
+             <h3 class="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                {{plan.name}}
+                <svg *ngIf="plan.type === 'certified'" class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                <svg *ngIf="plan.type === 'verified'" class="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+             </h3>
+             <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-bold text-white" [ngClass]="{'text-blue-400': plan.isPopular}">{{plan.price}}</span>
+                <span *ngIf="plan.price !== 'Gratuit'" class="text-slate-400 font-medium text-sm">/ unique</span>
+             </div>
+             <p class="text-sm mt-2" [ngClass]="plan.isPopular ? 'text-blue-200' : 'text-slate-500'">{{plan.priceDetail}}</p>
+          </div>
+
+          <ul class="space-y-4 mb-8 relative z-10">
+             <li *ngFor="let feature of plan.features" class="flex items-center gap-3 font-medium" [ngClass]="plan.isPopular ? 'text-white' : 'text-slate-300'">
+                <div [ngClass]="plan.isPopular ? 'bg-blue-500/20' : 'bg-slate-800'" class="p-1 rounded-full">
+                  <svg class="w-4 h-4" [ngClass]="plan.isPopular ? 'text-blue-400' : 'text-green-400'" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                {{feature}}
+             </li>
+          </ul>
+
+          <button (click)="handlePlanClick(plan)" 
+                  class="block w-full py-4 rounded-xl text-center font-bold transition-all relative z-10"
+                  [ngClass]="plan.isPopular 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-1' 
+                    : 'bg-slate-800 text-white hover:bg-slate-700'">
+             {{ plan.cta }}
+          </button>
+       </div>
     </div>
   </section>
 
@@ -320,6 +281,27 @@
              </a>
           </div>
        </ng-container>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div *ngIf="showSuccessModal" class="fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="closeSuccessModal()"></div>
+    <div class="relative bg-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-200 text-center">
+       <button (click)="closeSuccessModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+       </button>
+
+       <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
+          <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+       </div>
+
+       <h3 class="text-2xl font-bold text-white mb-2">Félicitations ! 🎉</h3>
+       <p class="text-slate-400 mb-6">Vous êtes maintenant un <strong class="text-white">Organisateur Certifié</strong>. Profitez de vos nouveaux avantages !</p>
+
+       <button (click)="closeSuccessModal()" class="w-full px-6 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/20">
+          Génial !
+       </button>
     </div>
   </div>
 </div>
