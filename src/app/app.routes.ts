@@ -55,25 +55,29 @@ export const routes: Routes = [
   // Organizer routes (organizer role required)
   {
     path: 'organizer',
-    loadChildren: () => import('./features/organizer/organizer.routes').then(m => m.organizerRoutes)
+    loadChildren: () => import('./features/organizer/organizer.routes').then(m => m.organizerRoutes),
+    canActivate: [authGuard]
   },
 
   // Moderator routes (moderator role required)
   {
     path: 'moderator',
-    loadChildren: () => import('./features/moderator/moderator.routes').then(m => m.moderatorRoutes)
+    loadChildren: () => import('./features/moderator/moderator.routes').then(m => m.moderatorRoutes),
+    canActivate: [authGuard]
   },
 
   // Referee routes (referee role required)
   {
     path: 'referee',
-    loadChildren: () => import('./features/referee/referee.routes').then(m => m.refereeRoutes)
+    loadChildren: () => import('./features/referee/referee.routes').then(m => m.refereeRoutes),
+    canActivate: [authGuard]
   },
 
   // Admin routes (admin role required)
   {
     path: 'admin',
-    loadChildren: () => import('./features/admin/admin.routes').then(m => m.adminRoutes)
+    loadChildren: () => import('./features/admin/admin.routes').then(m => m.adminRoutes),
+    canActivate: [authGuard]
   },
 
   // Redirect unknown routes to home

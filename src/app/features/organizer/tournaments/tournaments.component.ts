@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
@@ -16,7 +16,7 @@ export class TournamentsComponent implements OnInit {
   loading = true;
   activeFilter: 'all' | 'open' | 'in_progress' | 'completed' = 'all';
 
-  constructor(private tournamentService: TournamentService) {}
+  constructor(private tournamentService: TournamentService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadTournaments();
@@ -26,13 +26,16 @@ export class TournamentsComponent implements OnInit {
     this.loading = true;
     this.tournamentService.getMyTournaments().subscribe({
       next: (tournaments) => {
-        this.tournaments = tournaments || [];
+        this.tournaments = tournaments;
+        console.log(this.tournaments);
         this.applyFilter('all');
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching tournaments', err);
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }

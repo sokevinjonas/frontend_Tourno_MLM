@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -24,7 +24,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private tournamentService: TournamentService
+    private tournamentService: TournamentService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -37,26 +38,60 @@ export class DashboardComponent implements OnInit {
   loadDashboardData() {
     this.loading = true;
     this.tournamentService.getMyTournaments().subscribe({
-      next: (tournaments) => {
-        this.tournaments = tournaments || [];
-        this.calculateStats();
+      next: (res) => {
+        // Robust mapping of data from different possible API structures
+        const data = res;
+        
+        this.tournaments = data.map((t: any) => ({
+          ...t,
+          // Calculate participants from registrations if field is missing
+          current_participants: t.registrations ? t.registrations.length : (t.current_participants || 0)
+        }));
+        
+        console.log('Dashboard tournaments mapped:', this.tournaments);
+        
+        try {
+          this.calculateStats();
+        } catch (error) {
+          console.error('Error calculating dashboard stats:', error);
+        }
+        
         this.loading = false;
+        this.cd.detectChanges(); // Force UI update even on hard refresh
       },
       error: (err) => {
         console.error('Error loading dashboard data', err);
         this.loading = false;
+        this.tournaments = [];
+        this.cd.detectChanges();
       }
     });
   }
 
   calculateStats() {
+    if (!this.tournaments || !Array.isArray(this.tournaments)) {
+      this.resetStats();
+      return;
+    }
+
     this.stats.total = this.tournaments.length;
-    this.stats.active = this.tournaments.filter(t => ['open', 'in_progress'].includes(t.status)).length;
-    this.stats.participants = this.tournaments.reduce((acc, t) => acc + (t.current_participants || 0), 0);
+    this.stats.active = this.tournaments.filter(t => 
+      t && ['open', 'in_progress'].includes(t.status)
+    ).length;
+    
+    this.stats.participants = this.tournaments.reduce((acc, t) => 
+      acc + (t.current_participants || 0), 0
+    );
+    
     this.stats.prizePool = this.tournaments.reduce((acc, t) => {
-        const fee = parseFloat(t.entry_fee) || 0;
-        return acc + (fee * (t.current_participants || 0));
+      const fee = typeof t.entry_fee === 'string' ? parseFloat(t.entry_fee) : (t.entry_fee || 0);
+      const participants = t.current_participants || 0;
+      return acc + (fee * participants);
     }, 0);
+  }
+
+  private resetStats() {
+    this.stats = { total: 0, active: 0, participants: 0, prizePool: 0 };
   }
 
   getStatusBadgeClass(status: string): string {

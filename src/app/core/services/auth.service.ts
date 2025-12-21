@@ -93,7 +93,8 @@ export class AuthService {
    * GET /user
    */
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/user`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/user`).pipe(
+      map(res => res.data || res),
       tap(user => {
         this.currentUserSubject.next(user);
       })

@@ -59,8 +59,8 @@ export class TournamentService {
    * GET /tournaments
    */
   getTournaments(): Observable<Tournament[]> {
-    return this.http.get<TournamentResponse>(`${this.apiUrl}/tournaments`).pipe(
-      map(response => response.tournaments)
+    return this.http.get<any>(`${this.apiUrl}/tournaments`).pipe(
+      map(response => response.data?.tournaments || response.tournaments || response.data || response)
     );
   }
 
@@ -105,8 +105,8 @@ export class TournamentService {
    * GET /tournaments/my/tournaments
    */
   getMyTournaments(): Observable<Tournament[]> {
-    return this.http.get<TournamentResponse>(`${this.apiUrl}/tournaments/my/tournaments`).pipe(
-      map(response => response.tournaments)
+    return this.http.get<any>(`${this.apiUrl}/tournaments/my/tournaments`).pipe(
+      map(response => response.data?.tournaments || response.tournaments || response.data || response)
     );
   }
 }

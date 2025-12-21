@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
@@ -23,7 +23,8 @@ export class TournamentDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private tournamentService: TournamentService,
     private matchService: MatchService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -41,12 +42,14 @@ export class TournamentDetailComponent implements OnInit {
         if (t.status !== 'open') {
           this.loadMatches(id);
         }
-        this.loading = false;
+        this.loading = false; 
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error loading tournament', err);
         this.toastService.error('Impossible de charger le tournoi.');
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }
@@ -55,6 +58,7 @@ export class TournamentDetailComponent implements OnInit {
     this.matchService.getTournamentMatches(id).subscribe({
       next: (matches) => {
         this.matches = matches;
+        this.cd.detectChanges();
       }
     });
   }
@@ -78,6 +82,7 @@ export class TournamentDetailComponent implements OnInit {
       next: () => {
         this.toastService.success('Inscriptions fermées.');
         this.loadTournament(this.tournament!.id);
+        this.cd.detectChanges();
       },
       error: (err) => this.toastService.error(err.error?.message || 'Erreur.')
     });
