@@ -54,11 +54,12 @@
           </ul>
 
           <button (click)="handlePlanClick(plan)" 
-                  class="block w-full py-4 rounded-xl text-center font-bold transition-all relative z-10"
+                  [disabled]="(plan.type === 'certified' && userBadge === 'certified') || (plan.type === 'verified' && userBadge === 'verified')"
+                  class="block w-full py-4 rounded-xl text-center font-bold transition-all relative z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                   [ngClass]="plan.isPopular 
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-500/25 hover:-translate-y-1' 
                     : 'bg-slate-800 text-white hover:bg-slate-700'">
-             {{ plan.cta }}
+             {{ getPlanCta(plan) }}
           </button>
        </div>
     </div>

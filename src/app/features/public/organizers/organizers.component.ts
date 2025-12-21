@@ -53,10 +53,12 @@ export class OrganizersComponent implements OnInit {
         this.organizerService.checkIfOrganizer().subscribe({
           next: (res) => {
             this.isOrganizer = res.is_organizer;
+            this.userBadge = res.badge;
             this.cd.detectChanges();
           },
           error: (err) => {
             this.isOrganizer = false;
+            this.userBadge = null;
           }
         });
       } else {
@@ -268,6 +270,16 @@ export class OrganizersComponent implements OnInit {
       case 'partner': return 'Partenaire officiel de Tourno.';
       default: return '';
     }
+  }
+
+  getPlanCta(plan: any): string {
+    if (this.userBadge === 'certified' && plan.type === 'certified') {
+      return 'Déjà Certifié';
+    }
+    if (this.userBadge === 'verified' && plan.type === 'verified') {
+      return 'Déjà Vérifié';
+    }
+    return plan.cta;
   }
 
   closeModal() {
