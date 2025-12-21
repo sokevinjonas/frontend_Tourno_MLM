@@ -278,14 +278,13 @@ export class OrganizersComponent implements OnInit {
   showSuccessModal = false;
 
   confirmPayment() {
-    if (!this.selectedPlan) return;
+    const planType = this.selectedPlan.type;
 
-    // Use subscribeToPlan with the type
-    this.organizerService.subscribeToPlan(this.selectedPlan.type).subscribe({
+    this.organizerService.subscribeToPlan(planType).subscribe({
       next: (res) => {
         this.closeModal(); 
         
-        if (this.selectedPlan.type === 'verified') {
+        if (planType === 'verified') {
              this.toastService.success('Paiement réussi ! Vous devez maintenant compléter votre vérification.');
              this.authService.getCurrentUser().subscribe(() => {
                  this.router.navigate(['/profile']);
@@ -293,7 +292,7 @@ export class OrganizersComponent implements OnInit {
         } else {
              this.showSuccessModal = true;
              this.authService.getCurrentUser().subscribe();
-             this.toastService.success("Paiement réussi !, Vous pouvez maintenant créer des tournois");
+             this.toastService.success("Paiement réussi ! Vous pouvez maintenant créer des tournois.");
              this.loadOrganizers();
         }
       },

@@ -31,20 +31,31 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private readonly TOKEN_KEY = 'auth_token';
 
   constructor(private http: HttpClient) {
-    this.getCurrentUser().subscribe({
-        error: () => this.doLogoutCleanup()
-    });
+    this.initializeAuth();
   }
 
-  /**
-   * Initialise le cookie CSRF pour Sanctum
-   * GET /sanctum/csrf-cookie
-   */
-  getCsrfCookie(): Observable<any> {
-    const csrfUrl = this.apiUrl.replace('/api', '/sanctum/csrf-cookie');
-    return this.http.get(csrfUrl);
+  private initializeAuth() {
+    const token = this.getToken();
+    if (token) {
+      this.getCurrentUser().subscribe({
+        error: () => this.doLogoutCleanup()
+      });
+    }
+  }
+
+  setToken(token: string) {
+    localStorage.setItem(this.TOKEN_KEY, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  removeToken() {
+    localStorage.removeItem(this.TOKEN_KEY);
   }
 
   /**
@@ -61,15 +72,10 @@ export class AuthService {
    */
   sendMagicLink(email: string, redirectUrl?: string): Observable<any> {
     const defaultRedirect = window.location.origin + '/auth/verify';
-    // On s'assure d'avoir le cookie CSRF avant d'envoyer (même si moins critique pour send, nécessaire pour verify)
-    return this.getCsrfCookie().pipe(
-      switchMap(() => {
-        return this.http.post(`${this.apiUrl}/auth/magic-link/send`, {
-          email,
-          redirect_url: redirectUrl || defaultRedirect
-        });
-      })
-    );
+    return this.http.post(`${this.apiUrl}/auth/magic-link/send`, {
+      email,
+      redirect_url: redirectUrl || defaultRedirect
+    });
   }
 
   /**
@@ -77,10 +83,7 @@ export class AuthService {
    * POST /auth/magic-link/verify
    */
   verifyMagicLink(token: string): Observable<AuthResponse> {
-    return this.getCsrfCookie().pipe(
-      switchMap(() => {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/auth/magic-link/verify`, { token });
-      }),
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/magic-link/verify`, { token }).pipe(
       tap(response => this.handleAuthSuccess(response))
     );
   }
@@ -116,13 +119,17 @@ export class AuthService {
   }
 
   doLogoutCleanup() {
-      this.currentUserSubject.next(null);
+    this.currentUserSubject.next(null);
+    this.removeToken();
   }
 
   /**
    * Gère la réponse d'authentification réussie
    */
   private handleAuthSuccess(response: AuthResponse): void {
+    if (response.token) {
+      this.setToken(response.token);
+    }
     if (response.user) {
       this.currentUserSubject.next(response.user);
     }
@@ -132,7 +139,7 @@ export class AuthService {
    * Vérifie si l'utilisateur est connecté (Vérification locale du user subject)
    */
   isAuthenticated(): boolean {
-    return !!this.currentUserSubject.value; // Simple check if we have user data
+    return !!this.currentUserSubject.value && !!this.getToken();
   }
 
   /**
@@ -140,6 +147,7 @@ export class AuthService {
    * GET /is-authenticated
    */
   checkSession(): Observable<boolean> {
+    if (!this.getToken()) return of(false);
     return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/is-authenticated`).pipe(
       map(res => res.authenticated),
       catchError(() => {
