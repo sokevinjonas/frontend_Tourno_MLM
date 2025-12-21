@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 
@@ -17,7 +17,7 @@ export class LoginComponent {
   emailSent: boolean = false;
   error: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     if (!this.email) return;
@@ -27,8 +27,7 @@ export class LoginComponent {
 
     this.authService.sendMagicLink(this.email).subscribe({
       next: () => {
-        this.emailSent = true;
-        this.loading = false;
+        this.router.navigate(['/auth/verify'], { queryParams: { email: this.email, sent: true } });
       },
       error: (err) => {
         console.error('Magic Link Error:', err);
