@@ -30,6 +30,7 @@ export class OrganizersComponent implements OnInit {
   // New properties
   isOrganizer = false;
   userBadge: string | null = null;
+  selectedPlan: any = null;
 
   constructor(
     private authService: AuthService,
@@ -161,7 +162,8 @@ export class OrganizersComponent implements OnInit {
       isPopular: false,
       color: 'slate',
       badge: false,
-      type: 'standard'
+      type: 'standard',
+      cost: 0
     },
     {
       name: 'Organisateur Certifié',
@@ -178,7 +180,8 @@ export class OrganizersComponent implements OnInit {
       isPopular: true,
       color: 'blue',
       badge: true,
-      type: 'certified'
+      type: 'certified',
+      cost: 50
     },
     {
       name: 'Organisateur Vérifié',
@@ -190,12 +193,13 @@ export class OrganizersComponent implements OnInit {
         'Validation d\'identité',
         'Plus de confiance',
         'Support standard'
-      ],
+      ], 
       cta: 'Devenir Vérifié',
       isPopular: false,
       color: 'emerald',
       badge: true,
-      type: 'verified'
+      type: 'verified',
+      cost: 200
     }
   ];
 
@@ -205,13 +209,21 @@ export class OrganizersComponent implements OnInit {
       return;
     }
 
-    if (plan.type === 'verified') {
-       this.toastService.info('La certification "Vérifié" sera bientôt disponible !');
-       return;
+    if (!this.authService.isAuthenticated()) {
+      this.toastService.info('Veuillez vous connecter pour choisir un plan.');
+      this.router.navigate(['/login']);
+      return;
     }
 
-    if (plan.type === 'certified') {
-       this.handleCertifiedClick();
+    // Logic for paid plans
+    if (plan.type === 'certified' || plan.type === 'verified') {
+        if (this.isOrganizer && plan.type === 'certified' && this.userBadge === 'certified') {
+            this.toastService.info('Vous êtes déjà Organisateur Certifié.');
+            return;
+        }
+        // Open payment modal
+        this.selectedPlan = plan;
+        this.showModal = true;
     }
   }
 
@@ -257,37 +269,31 @@ export class OrganizersComponent implements OnInit {
     }
   }
 
-  get isAlreadyCertified(): boolean {
-    return this.isOrganizer;
-  }
-
-  handleCertifiedClick() {
-    if (this.isAlreadyCertified) {
-      return;
-    }
-
-    if (!this.authService.isAuthenticated()) {
-      this.toastService.info('Veuillez vous connecter pour devenir un organisateur certifié.');
-      return;
-    }
-    
-    this.showModal = true;
-  }
-
   closeModal() {
     this.showModal = false;
+    this.selectedPlan = null;
   }
 
   showSuccessModal = false;
 
   confirmPayment() {
-    this.organizerService.subscribeToCertified().subscribe({
+    if (!this.selectedPlan) return;
+
+    // Use subscribeToPlan with the type
+    this.organizerService.subscribeToPlan(this.selectedPlan.type).subscribe({
       next: (res) => {
         this.closeModal(); 
-        this.showSuccessModal = true;
         
-        this.authService.getCurrentUser().subscribe();
-        this.loadOrganizers();
+        if (this.selectedPlan.type === 'verified') {
+             this.toastService.success('Paiement réussi ! Vous devez maintenant compléter votre vérification.');
+             this.authService.getCurrentUser().subscribe(() => {
+                 this.router.navigate(['/profile']);
+             });
+        } else {
+             this.showSuccessModal = true;
+             this.authService.getCurrentUser().subscribe();
+             this.loadOrganizers();
+        }
       },
       error: (err) => {
         console.error('Subscription error', err);
@@ -302,7 +308,12 @@ export class OrganizersComponent implements OnInit {
     this.showSuccessModal = false;
   }
 
+  get requiredAmount(): number {
+      return this.selectedPlan?.cost || 0;
+  }
+
   get canAfford(): boolean {
-    return this.userBalance >= this.REQUIRED_AMOUNT;
+    return this.userBalance >= this.requiredAmount;
   }
 }
+

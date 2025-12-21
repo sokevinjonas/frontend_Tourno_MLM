@@ -221,13 +221,13 @@
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
              </div>
              <h3 class="text-2xl font-bold text-white mb-2">Confirmation</h3>
-             <p class="text-slate-400">Vous êtes sur le point de devenir <strong class="text-white">Organisateur Certifié</strong>.</p>
+             <p class="text-slate-400">Vous êtes sur le point de devenir <strong class="text-white">{{selectedPlan?.name}}</strong>.</p>
           </div>
           
           <div class="bg-slate-800/50 rounded-xl p-4 mb-6 border border-slate-700">
              <div class="flex justify-between items-center mb-2">
                 <span class="text-slate-400">Coût de la certification</span>
-                <span class="font-bold text-white">{{REQUIRED_AMOUNT}} 🪙</span>
+                <span class="font-bold text-white">{{requiredAmount}} 🪙</span>
              </div>
              <div class="flex justify-between items-center mb-2">
                 <span class="text-slate-400">Votre solde actuel</span>
@@ -236,7 +236,7 @@
              <div class="h-px bg-slate-700 my-2"></div>
              <div class="flex justify-between items-center">
                 <span class="text-white font-bold">Solde après achat</span>
-                <span class="font-bold text-blue-400">{{userBalance - REQUIRED_AMOUNT}} 🪙</span>
+                <span class="font-bold text-blue-400">{{userBalance - requiredAmount}} 🪙</span>
              </div>
           </div>
   
@@ -263,7 +263,7 @@
           <div class="bg-slate-800/50 rounded-xl p-4 mb-6 border border-slate-700">
              <div class="flex justify-between items-center mb-2">
                 <span class="text-slate-400">Coût requis</span>
-                <span class="font-bold text-white">{{REQUIRED_AMOUNT}} 🪙</span>
+                <span class="font-bold text-white">{{requiredAmount}} 🪙</span>
              </div>
              <div class="flex justify-between items-center">
                 <span class="text-slate-400">Votre solde</span>

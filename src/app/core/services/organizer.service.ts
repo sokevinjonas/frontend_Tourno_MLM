@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Organizer, OrganizersResponse, FollowResponse, FollowingStatus, MyFollowingResponse } from '../models/organizer.model';
+import { Organizer, FollowResponse, FollowingStatus, MyFollowingResponse } from '../models/organizer.model';
 
 // Extend the model to include OrganizerDetails locally if needed or import if separately defined
 // Since I forgot to add OrganizerDetails in the previous file, I will add it via a separate edit or just include it here if the compiler complains, 
@@ -67,7 +67,20 @@ export class OrganizerService {
     return this.http.post(`${this.apiUrl}/upgrade`, { type: 'certified' });
   }
 
-  checkIfOrganizer(): Observable<{ is_organizer: boolean; role: string }> {
-    return this.http.get<{ is_organizer: boolean; role: string }>(`${this.apiUrl}/check-if-organizer`);
+  checkIfOrganizer(): Observable<{ is_organizer: boolean; role: string; badge: string | null; status: string | null }> {
+    return this.http.get<{ is_organizer: boolean; role: string; badge: string | null; status: string | null }>(`${this.apiUrl}/check-if-organizer`);
+  }
+
+  /**
+   * Subscribe/Upgrade to a specific plan
+   */
+  subscribeToPlan(type: 'certified' | 'verified'): Observable<any> {
+    return this.http.post(`${this.apiUrl}/upgrade`, { type }); // Assuming backend handles type in body as per existing subscribeToCertified
+  }
+
+  submitVerification(data: any): Observable<any> {
+    // Backend likely expects multipart/form-data when files are involved, consistent with PlayerService
+    return this.http.post(`${this.apiUrl}/verification/submit`, data);
   }
 }
+

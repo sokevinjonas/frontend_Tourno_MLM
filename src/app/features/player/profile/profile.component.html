@@ -114,8 +114,8 @@
           </div>
        </div>
 
-       <!-- Linked Games List (Preview) -->
-       <div class="bg-slate-800 rounded-3xl p-6 border border-slate-700">
+       <!-- Linked Games List (Preview) - HIDDEN if organizer -->
+       <div class="bg-slate-800 rounded-3xl p-6 border border-slate-700" *ngIf="user.role !== 'organizer'">
          <div class="flex items-center justify-between mb-6">
             <h3 class="text-lg font-bold text-white flex items-center gap-2">
                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>
@@ -142,6 +142,108 @@
                Aucun compte de jeu associé.
             </div>
          </ng-template>
+       </div>
+
+       <!-- Organizer Badge / Verification Section - SHOWN if organizer -->
+       <div class="bg-slate-800 rounded-3xl p-6 border border-slate-700" *ngIf="user.role === 'organizer'">
+          <div class="flex items-center justify-between mb-6">
+             <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                Mon Badge Organisateur
+             </h3>
+             <span class="text-xs bg-slate-700 text-slate-300 px-2 py-1 rounded-lg border border-slate-600">
+                {{ organizerStatus?.badge ? (organizerStatus.badge | titlecase) : 'Non Vérifié' }}
+             </span>
+          </div>
+
+          <div *ngIf="loadingOrganizerStatus" class="py-8 flex justify-center">
+             <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+
+          <div *ngIf="!loadingOrganizerStatus && organizerStatus">
+              <!-- STATUS DISPLAY -->
+              <div class="mb-6">
+                 <!-- Certified -->
+                 <div *ngIf="organizerStatus.badge === 'certified'" class="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl flex items-start gap-4">
+                    <svg class="w-6 h-6 text-blue-500 mt-1 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    <div>
+                        <h4 class="font-bold text-blue-400">Organisateur Certifié</h4>
+                        <p class="text-sm text-slate-300">Votre statut est actif. Vous avez accès à toutes les fonctionnalités.</p>
+                    </div>
+                 </div>
+
+                 <!-- Verified / Validated -->
+                 <div *ngIf="(organizerStatus.badge === 'verified' || organizerStatus.badge === 'partner') && organizerStatus.status === 'valider'" class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-xl flex items-start gap-4">
+                    <svg class="w-6 h-6 text-emerald-500 mt-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <h4 class="font-bold text-emerald-400">Compte Vérifié</h4>
+                        <p class="text-sm text-slate-300">Vos documents ont été validés. Merci de votre confiance.</p>
+                    </div>
+                 </div>
+
+                 <!-- Pending -->
+                 <div *ngIf="organizerStatus.status === 'attente'" class="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl flex items-start gap-4">
+                    <svg class="w-6 h-6 text-yellow-500 mt-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <h4 class="font-bold text-yellow-400">Vérification en cours</h4>
+                        <p class="text-sm text-slate-300">Vos documents sont en cours d'examen par notre équipe. Vous recevrez une notification une fois traité.</p>
+                    </div>
+                 </div>
+
+                 <!-- Rejected -->
+                 <div *ngIf="organizerStatus.status === 'rejeter'" class="bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-start gap-4 mb-4">
+                    <svg class="w-6 h-6 text-red-500 mt-1 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <div>
+                        <h4 class="font-bold text-red-400">Vérification refusée</h4>
+                        <p class="text-sm text-slate-300">Votre demande a été rejetée. Veuillez vérifier vos documents et soumettre à nouveau.</p>
+                    </div>
+                 </div>
+              </div>
+
+              <!-- VERIFICATION FORM -->
+              <div *ngIf="(!organizerStatus.badge || organizerStatus.status === 'rejeter' || organizerStatus.status === null) && organizerStatus.badge !== 'certified'" class="border-t border-slate-700/50 pt-6">
+                 <h4 class="text-white font-bold mb-4">Soumettre mes documents</h4>
+                 <p class="text-xs text-slate-400 mb-4">Pour obtenir le badge "Vérifié", veuillez fournir les documents suivants (URLs valides).</p>
+                 
+                 <form (ngSubmit)="submitVerification()" class="space-y-4">
+                    <div>
+                       <label class="block text-xs font-bold text-slate-400 mb-1">Type de Document</label>
+                       <select [(ngModel)]="verificationForm.nature_document" name="nature" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none">
+                          <option value="cnib">Carte Nationale d'Identité (CNIB)</option>
+                          <option value="permis">Permis de conduire</option>
+                          <option value="passport">Passeport</option>
+                       </select>
+                    </div>
+
+                    <div>
+                       <label class="block text-xs font-bold text-slate-400 mb-1">Document Recto (Fichier)</label>
+                       <input type="file" (change)="onFileChange($event, 'doc_recto')" accept="image/jpeg,image/png,application/pdf" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20">
+                    </div>
+
+                    <div>
+                       <label class="block text-xs font-bold text-slate-400 mb-1">Document Verso (Fichier)</label>
+                       <input type="file" (change)="onFileChange($event, 'doc_verso')" accept="image/jpeg,image/png,application/pdf" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20">
+                    </div>
+
+                    <div>
+                       <label class="block text-xs font-bold text-slate-400 mb-1">Contrat Signé (Fichier PDF/Image)</label>
+                       <div class="space-y-2">
+                           <div class="flex gap-2 items-center">
+                              <input type="file" (change)="onFileChange($event, 'contrat_signer')" accept="image/jpeg,image/png,application/pdf" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm focus:border-purple-500 focus:outline-none file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-500/10 file:text-purple-400 hover:file:bg-purple-500/20">
+                              <a href="#" class="shrink-0 flex items-center justify-center p-2 bg-slate-700 rounded-xl text-white hover:bg-slate-600" title="Télécharger le modèle de contrat">
+                                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                              </a>
+                           </div>
+                       </div>
+                       <p class="text-[10px] text-slate-500 mt-1">Téléchargez le modèle de contrat, signez-le (numériquement ou imprimé/scanné) et uploadez-le ici.</p>
+                    </div>
+
+                    <button type="submit" [disabled]="submitting" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                       {{ submitting ? 'Envoi en cours...' : 'Soumettre la demande' }}
+                    </button>
+                 </form>
+              </div>
+          </div>
        </div>
     </div>
 
