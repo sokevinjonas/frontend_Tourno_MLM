@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -32,7 +32,8 @@ export class CreateTournamentComponent implements OnInit {
     private fb: FormBuilder,
     private tournamentService: TournamentService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private cd: ChangeDetectorRef
   ) {
     this.tournamentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
@@ -79,13 +80,15 @@ export class CreateTournamentComponent implements OnInit {
 
     this.tournamentService.previewSchedule(previewData).subscribe({
       next: (res) => {
-        this.schedulePreview = res.data;
+        this.schedulePreview = res.data || res;
         this.loadingPreview = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error previewing schedule', err);
         this.toastService.error('Échec de la prévisualisation du calendrier.');
         this.loadingPreview = false;
+        this.cd.detectChanges();
       }
     });
   }
@@ -119,6 +122,7 @@ export class CreateTournamentComponent implements OnInit {
         const msg = err.error?.message || 'Une erreur est survenue lors de la création.';
         this.toastService.error(msg);
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }

@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { Tournament, TournamentService } from '../../../core/services/tournament.service';
+import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 
 @Component({
   selector: 'app-tournaments',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe],
   templateUrl: './tournaments.component.html',
   styleUrls: ['./tournaments.component.css']
 })
@@ -131,15 +132,5 @@ export class TournamentsComponent implements OnInit {
        case 'dream_league_soccer': return 'Dream League';
        default: return game;
      }
-  }
-
-  getStatusDisplayName(status: string): string {
-      switch(status) {
-          case 'open': return 'Inscriptions ouvertes';
-          case 'in_progress': return 'En cours';
-          case 'completed': return 'Terminé';
-          case 'cancelled': return 'Annulé';
-          default: return status;
-      }
   }
 }

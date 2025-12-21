@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { MatchService, Match } from '../../../core/services/match.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 
 @Component({
   selector: 'app-tournament-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TournamentStatusPipe],
   templateUrl: './tournament-detail.component.html',
   styleUrls: ['./tournament-detail.component.css']
 })

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
@@ -20,7 +20,7 @@ export class StatsComponent implements OnInit {
     avgParticipants: 0
   };
 
-  constructor(private tournamentService: TournamentService) {}
+  constructor(private tournamentService: TournamentService, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadStats();
@@ -33,10 +33,12 @@ export class StatsComponent implements OnInit {
         this.tournaments = tournaments || [];
         this.calculateDetailedStats();
         this.loading = false;
+        this.cd.detectChanges();
       },
       error: (err) => {
         console.error('Error fetching stats', err);
         this.loading = false;
+        this.cd.detectChanges();
       }
     });
   }

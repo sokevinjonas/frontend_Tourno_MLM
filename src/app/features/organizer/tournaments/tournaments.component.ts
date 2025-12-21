@@ -2,11 +2,12 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
+import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 
 @Component({
   selector: 'app-tournaments',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TournamentStatusPipe],
   templateUrl: './tournaments.component.html',
   styleUrls: ['./tournaments.component.css']
 })
@@ -55,16 +56,6 @@ export class TournamentsComponent implements OnInit {
       case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'completed': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
       default: return 'bg-slate-700/50 text-slate-500 border-slate-700';
-    }
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'open': return 'Inscriptions';
-      case 'in_progress': return 'En cours';
-      case 'completed': return 'Terminé';
-      case 'cancelled': return 'Annulé';
-      default: return status;
     }
   }
 }

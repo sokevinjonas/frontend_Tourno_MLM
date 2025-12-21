@@ -102,7 +102,7 @@
             <div class="text-slate-400 text-sm">{{ t.current_participants || 0 }}/{{ t.max_participants }}</div>
             <div>
               <span class="badge" [ngClass]="getStatusBadgeClass(t.status)">
-                {{ getStatusLabel(t.status) }}
+                {{ t.status | tournamentStatus }}
               </span>
             </div>
             <div class="flex justify-end">

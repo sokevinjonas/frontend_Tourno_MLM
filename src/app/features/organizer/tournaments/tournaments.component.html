@@ -35,7 +35,7 @@
           <span class="text-4xl">🎮</span>
           <div class="absolute top-4 right-4">
              <span class="badge" [ngClass]="getStatusBadgeClass(t.status)">
-                {{ getStatusLabel(t.status) }}
+                  {{ t.status | tournamentStatus }}
              </span>
           </div>
         </div>

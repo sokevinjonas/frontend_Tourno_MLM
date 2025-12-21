@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -55,11 +55,20 @@ export class TournamentService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Récupère la liste de tous les tournois
+   * Récupère la liste de tous les tournois avec filtres optionnels
    * GET /tournaments
    */
-  getTournaments(): Observable<Tournament[]> {
-    return this.http.get<any>(`${this.apiUrl}/tournaments`).pipe(
+  getTournaments(filters?: any): Observable<Tournament[]> {
+    let params = new HttpParams();
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        if (filters[key] !== null && filters[key] !== undefined && filters[key] !== 'Tous') {
+          params = params.set(key, filters[key]);
+        }
+      });
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/tournaments`, { params }).pipe(
       map(response => response.data?.tournaments || response.tournaments || response.data || response)
     );
   }
