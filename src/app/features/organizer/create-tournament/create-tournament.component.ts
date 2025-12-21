@@ -22,6 +22,12 @@ export class CreateTournamentComponent implements OnInit {
     { value: 'dream_league_soccer', label: 'Dream League Soccer' }
   ];
 
+  formats = [
+    { value: 'single_elimination', label: 'Coupe (Élimination directe)' },
+    { value: 'swiss', label: 'Rondes Suisses' },
+    { value: 'champions_league', label: 'Ligue des Champions' }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private tournamentService: TournamentService,
@@ -31,16 +37,16 @@ export class CreateTournamentComponent implements OnInit {
     this.tournamentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required]],
-      game_type: ['efootball', [Validators.required]],
-      max_participants: [8, [Validators.required]],
-      entry_fee: [0, [Validators.required, Validators.min(0)]],
-      prize_pool: [0, [Validators.required, Validators.min(0)]],
+      game: ['efootball', [Validators.required]],
+      format: ['single_elimination', [Validators.required]],
+      max_participants: [16, [Validators.required]],
+      entry_fee: [5, [Validators.required, Validators.min(0)]],
       visibility: ['public', [Validators.required]],
       auto_managed: [true],
-      registration_start: ['', [Validators.required]],
-      registration_end: ['', [Validators.required]],
       start_date: ['', [Validators.required]],
-      end_date: ['', [Validators.required]],
+      tournament_duration_days: [4, [Validators.required, Validators.min(1)]],
+      time_slot: ['evening', [Validators.required]],
+      match_deadline_minutes: [60, [Validators.required, Validators.min(15)]],
       rules: ['', [Validators.required]],
       prize_distribution: this.fb.group({
         '1': [0, [Validators.required]],
@@ -50,7 +56,39 @@ export class CreateTournamentComponent implements OnInit {
     });
   }
 
+  schedulePreview: any = null;
+  loadingPreview = false;
+
   ngOnInit() {}
+
+  onPreviewSchedule() {
+    if (this.tournamentForm.invalid) {
+      this.toastService.error('Veuillez remplir les informations de base pour la prévisualisation.');
+      return;
+    }
+
+    this.loadingPreview = true;
+    const previewData = {
+      format: this.tournamentForm.value.format,
+      max_participants: this.tournamentForm.value.max_participants,
+      start_date: this.tournamentForm.value.start_date,
+      tournament_duration_days: this.tournamentForm.value.tournament_duration_days,
+      time_slot: this.tournamentForm.value.time_slot,
+      match_deadline_minutes: this.tournamentForm.value.match_deadline_minutes
+    };
+
+    this.tournamentService.previewSchedule(previewData).subscribe({
+      next: (res) => {
+        this.schedulePreview = res.data;
+        this.loadingPreview = false;
+      },
+      error: (err) => {
+        console.error('Error previewing schedule', err);
+        this.toastService.error('Échec de la prévisualisation du calendrier.');
+        this.loadingPreview = false;
+      }
+    });
+  }
 
   onSubmit() {
     if (this.tournamentForm.invalid) {
@@ -60,23 +98,14 @@ export class CreateTournamentComponent implements OnInit {
 
     // Basic date validation
     const val = this.tournamentForm.value;
-    if (new Date(val.registration_end) <= new Date(val.registration_start)) {
-      this.toastService.error('La fin des inscriptions doit être après le début.');
-      return;
-    }
-    if (new Date(val.start_date) < new Date(val.registration_end)) {
-      this.toastService.error('Le tournoi doit commencer après la fin des inscriptions.');
-      return;
-    }
-    if (val.end_date && new Date(val.end_date) <= new Date(val.start_date)) {
-      this.toastService.error('La fin du tournoi doit être après le début.');
+    if (new Date(val.start_date) < new Date()) {
+      this.toastService.error('La date de début ne peut pas être dans le passé.');
       return;
     }
 
     this.loading = true;
     const formData = {
       ...this.tournamentForm.value,
-      format: 'single_elimination',
       prize_distribution: JSON.stringify(this.tournamentForm.value.prize_distribution)
     };
 

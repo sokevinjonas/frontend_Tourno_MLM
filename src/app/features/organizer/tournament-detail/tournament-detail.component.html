@@ -20,7 +20,7 @@
                 {{ tournament.status | uppercase }}
               </span>
             </div>
-            <p class="text-slate-400 capitalize">{{ tournament.game_type.replace('_', ' ') }} • {{ tournament.start_date | date:'medium' }}</p>
+            <p class="text-slate-400 capitalize">{{ tournament.game.replace('_', ' ') }} • {{ tournament.start_date | date:'medium' }}</p>
           </div>
         </div>
 
@@ -134,7 +134,7 @@
                         <div class="score-display">
                             {{ match.player1_score ?? '-' }} : {{ match.player2_score ?? '-' }}
                         </div>
-                        <span class="badge" [ngClass]="match.status === 'pending' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-400'">
+                        <span class="badge" [ngClass]="match.status === 'scheduled' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-400'">
                            {{ match.status | uppercase }}
                         </span>
                     </div>

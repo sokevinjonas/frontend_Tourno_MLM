@@ -6,15 +6,17 @@ import { environment } from '../../../environments/environment';
 export interface Match {
   id: number;
   tournament_id: number;
-  player1_id: number;
-  player2_id: number;
-  player1_score?: number;
-  player2_score?: number;
-  status: 'pending' | 'ongoing' | 'completed' | 'reported' | 'disputed';
-  round: number;
-  table_number?: number;
-  player1?: any;
-  player2?: any;
+  round_number: number;
+  player1_id: number | null;
+  player2_id: number | null;
+  player1_score: number | null;
+  player2_score: number | null;
+  winner_id: number | null;
+  status: 'scheduled' | 'in_progress' | 'pending_validation' | 'completed' | 'disputed' | 'expired';
+  scheduled_at: string;
+  deadline_at: string;
+  player1?: { id: number; name: string };
+  player2?: { id: number; name: string };
 }
 
 @Injectable({

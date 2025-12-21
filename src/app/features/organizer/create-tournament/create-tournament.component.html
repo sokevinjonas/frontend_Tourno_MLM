@@ -27,8 +27,15 @@
 
           <div class="form-group">
             <label class="label-text">Jeu</label>
-            <select formControlName="game_type" class="form-input">
+            <select formControlName="game" class="form-input">
               <option *ngFor="let g of games" [value]="g.value">{{ g.label }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="label-text">Format du tournoi</label>
+            <select formControlName="format" class="form-input">
+              <option *ngFor="let f of formats" [value]="f.value">{{ f.label }}</option>
             </select>
           </div>
 
@@ -37,7 +44,7 @@
             <textarea formControlName="description" rows="4" placeholder="Décrivez votre tournoi..." class="form-input"></textarea>
           </div>
 
-          <div class="grid grid-cols-2">
+          <div class="grid grid-cols-2 gap-4">
             <div class="form-group">
               <label class="label-text">Participants Max</label>
               <select formControlName="max_participants" class="form-input">
@@ -50,10 +57,6 @@
             <div class="form-group">
               <label class="label-text">Frais d'entrée (🪙)</label>
               <input type="number" formControlName="entry_fee" class="form-input">
-            </div>
-            <div class="form-group">
-              <label class="label-text">Prize Pool Total (🪙)</label>
-              <input type="number" formControlName="prize_pool" class="form-input">
             </div>
           </div>
 
@@ -82,23 +85,28 @@
           </h2>
 
           <div class="form-group">
-            <label class="label-text">Début des inscriptions</label>
-            <input type="datetime-local" formControlName="registration_start" class="form-input">
-          </div>
-
-          <div class="form-group">
-            <label class="label-text">Fin des inscriptions</label>
-            <input type="datetime-local" formControlName="registration_end" class="form-input">
-          </div>
-
-          <div class="form-group">
             <label class="label-text">Date de début du tournoi</label>
             <input type="datetime-local" formControlName="start_date" class="form-input">
           </div>
 
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="label-text">Durée (jours)</label>
+              <input type="number" formControlName="tournament_duration_days" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="label-text">Créneau Horaire</label>
+              <select formControlName="time_slot" class="form-input">
+                <option value="morning">Matin (9h-12h)</option>
+                <option value="afternoon">Après-midi (13h-16h)</option>
+                <option value="evening">Soirée (18h-23h)</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form-group">
-            <label class="label-text">Date de fin prévue</label>
-            <input type="datetime-local" formControlName="end_date" class="form-input">
+            <label class="label-text">Deadline par match (minutes)</label>
+            <input type="number" formControlName="match_deadline_minutes" class="form-input" placeholder="Défaut: 60">
           </div>
 
           <div class="form-group">
@@ -109,30 +117,44 @@
 
       </div>
 
-      <!-- Section 3: Prize Pool -->
-      <div class="mt-12">
-        <h2 class="text-xl font-semibold text-white flex items-center gap-2 mb-6">
-          <span class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-500 flex items-center justify-center text-sm">3</span>
-          Distribution des Prix (🪙)
-        </h2>
-        
-        <div class="prize-section grid md:grid-cols-3 gap-6" formGroupName="prize_distribution">
-          <div class="form-group">
-            <label class="label-text text-amber-400">1er Place (Vainqueur)</label>
-            <input type="number" formControlName="1" class="form-input border-amber-500/30">
+      <!-- Section 4: Schedule Preview -->
+      <div class="mt-12 p-6 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold text-white flex items-center gap-2">
+            <span class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-sm">4</span>
+            Prévisualisation du Calendrier
+          </h2>
+          <button type="button" (click)="onPreviewSchedule()" [disabled]="loadingPreview" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-all border border-slate-600">
+            <span *ngIf="!loadingPreview">Générer l'aperçu</span>
+            <span *ngIf="loadingPreview" class="flex items-center gap-2">
+               <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+               Calcul...
+            </span>
+          </button>
+        </div>
+
+        <div *ngIf="schedulePreview" class="space-y-6">
+          <div class="flex flex-wrap gap-4 text-sm text-slate-400">
+             <span class="px-3 py-1 bg-slate-800 rounded-full border border-slate-700">Durée recommandée: <b>{{schedulePreview.recommended_duration_days}} jours</b></span>
+             <span class="px-3 py-1 bg-slate-800 rounded-full border border-slate-700">Nombre de tours: <b>{{schedulePreview.total_rounds}}</b></span>
           </div>
-          <div class="form-group">
-            <label class="label-text text-slate-300">2e Place</label>
-            <input type="number" formControlName="2" class="form-input">
-          </div>
-          <div class="form-group">
-            <label class="label-text text-amber-700">3e Place</label>
-            <input type="number" formControlName="3" class="form-input">
+
+          <div class="grid gap-4 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
+            <div *ngFor="let round of schedulePreview.schedule" class="p-4 bg-slate-800/50 rounded-xl border border-slate-700">
+               <h4 class="text-blue-400 font-bold mb-3">Tour {{round.round_number}} - {{round.start_date | date:'dd MMM'}}</h4>
+               <div class="grid sm:grid-cols-2 gap-3">
+                  <div *ngFor="let m of round.matches" class="text-xs p-2 bg-slate-900/50 rounded-lg border border-slate-700/50 flex justify-between">
+                     <span class="text-slate-500">Match {{m.match_number}}</span>
+                     <span class="text-slate-300 font-medium">{{m.scheduled_at | date:'HH:mm'}} (Deadline: {{m.deadline_at | date:'HH:mm'}})</span>
+                  </div>
+               </div>
+            </div>
           </div>
         </div>
-        <p class="text-slate-500 text-xs mt-4">
-          * Le prize pool total dépendra du nombre final d'inscrits si vous utilisez les frais d'inscription comme base.
-        </p>
+
+        <div *ngIf="!schedulePreview && !loadingPreview" class="text-center py-8 text-slate-500 italic">
+          Cliquez sur "Générer l'aperçu" pour voir comment les matches seront programmés.
+        </div>
       </div>
 
       <button type="submit" [disabled]="tournamentForm.invalid || loading" class="btn-submit">

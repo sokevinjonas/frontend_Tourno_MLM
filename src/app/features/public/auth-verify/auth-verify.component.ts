@@ -87,7 +87,11 @@ export class AuthVerifyComponent implements OnInit, OnDestroy {
           // Assuming profile complete route exists or will exist
           this.router.navigate(['/profile/complete']); 
       } else {
-        this.router.navigate(['/']);
+        this.authService.getCurrentUser().subscribe(user => {
+          if (user) {
+            this.router.navigate(['/']);
+          }
+        });
       }
     }, 1500);
   }

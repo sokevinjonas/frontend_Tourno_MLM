@@ -18,8 +18,8 @@
               <span [class]="'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border ' + getStatusClass(tournament.status)">
                   {{getStatusDisplayName(tournament.status)}}
               </span>
-              <span [class]="'font-bold text-sm ' + getGameColor(tournament.game_type)">
-                  {{getGameDisplayName(tournament.game_type)}}
+              <span [class]="'font-bold text-sm ' + getGameColor(tournament.game)">
+                  {{getGameDisplayName(tournament.game)}}
               </span>
             </div>
             <h1 class="text-xl md:text-4xl font-bold text-white mb-2 break-words">{{tournament.name}}</h1>
@@ -207,7 +207,7 @@
                  </div>
                  <div class="min-w-0">
                     <div class="text-sm text-slate-400 mb-1">Plateforme</div>
-                    <div class="font-semibold text-white break-words">{{getGameDisplayName(tournament.game_type)}} | Mobile</div>
+                    <div class="font-semibold text-white break-words">{{getGameDisplayName(tournament.game)}} | Mobile</div>
                  </div>
               </div>
 

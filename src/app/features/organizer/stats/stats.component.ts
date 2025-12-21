@@ -60,10 +60,10 @@ export class StatsComponent implements OnInit {
   getGameDistribution() {
     const dist: { [key: string]: number } = {};
     this.tournaments.forEach(t => {
-      dist[t.game_type] = (dist[t.game_type] || 0) + 1;
+      dist[t.game] = (dist[t.game] || 0) + 1;
     });
-    return Object.entries(dist).map(([game_type, count]) => ({
-      game: game_type,
+    return Object.entries(dist).map(([game, count]) => ({
+      game,
       count,
       percentage: Math.round((count / this.tournaments.length) * 100)
     }));

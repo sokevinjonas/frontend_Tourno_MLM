@@ -82,9 +82,9 @@ export class TournamentsComponent implements OnInit {
       let gameMatch = isGameAll;
       
       if (!isGameAll) {
-         if (this.selectedGame === 'E-football' && t.game_type === 'efootball') gameMatch = true;
-         else if (this.selectedGame === 'FC Mobile' && t.game_type === 'fc_mobile') gameMatch = true;
-         else if (this.selectedGame === 'Dream League' && t.game_type === 'dream_league_soccer') gameMatch = true;
+         if (this.selectedGame === 'E-football' && t.game === 'efootball') gameMatch = true;
+         else if (this.selectedGame === 'FC Mobile' && t.game === 'fc_mobile') gameMatch = true;
+         else if (this.selectedGame === 'Dream League' && t.game === 'dream_league_soccer') gameMatch = true;
       }
 
       // Status Filter
@@ -101,7 +101,7 @@ export class TournamentsComponent implements OnInit {
     });
   }
 
-  getGameIcon(game_type: string): SafeHtml {
+  getGameIcon(game: string): SafeHtml {
     // Return specific icons per game if needed, or generic
     return this.sanitize(this.icons.trophy); // Placeholder
   }
@@ -115,8 +115,8 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  getGameColor(game_type: string): string {
-    switch(game_type) {
+  getGameColor(game: string): string {
+    switch(game) {
       case 'efootball': return 'text-blue-400';
       case 'fc_mobile': return 'text-cyan-400';
       case 'dream_league_soccer': return 'text-purple-400';
@@ -124,12 +124,12 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  getGameDisplayName(game_type: string): string {
-     switch(game_type) {
+  getGameDisplayName(game: string): string {
+     switch(game) {
        case 'efootball': return 'E-football';
        case 'fc_mobile': return 'FC Mobile';
        case 'dream_league_soccer': return 'Dream League';
-       default: return game_type;
+       default: return game;
      }
   }
 

@@ -6,34 +6,39 @@ import { environment } from '../../../environments/environment';
 
 export interface Tournament {
   id: number;
-  name: string;
-  description?: string;
-  game_type: 'efootball' | 'fc_mobile' | 'dream_league_soccer' | 'other';
+  organizer_id: number;
   organizer: {
     id: number;
     name: string;
     email: string;
     verified?: boolean;
   };
-  start_date: string;
-  end_date?: string;
-  registration_start: string;
-  registration_end: string;
-  entry_fee: string;
-  prize_pool: string;
-  prize_distribution: string | any;
+  name: string;
+  description?: string;
+  game: string; // Reverted from game_type
+  format: 'single_elimination' | 'swiss' | 'champions_league';
   max_participants: number;
-  registrations_count?: number;
-  current_participants?: number; 
+  entry_fee: string;
+  prize_distribution: string | any;
   status: 'draft' | 'open' | 'in_progress' | 'completed' | 'payout_pending' | 'payouts_completed' | 'cancelled';
   visibility: 'public' | 'private';
   unique_url?: string;
   auto_managed: boolean;
+  start_date: string;
+  tournament_duration_days?: number;
+  time_slot?: 'morning' | 'afternoon' | 'evening';
+  match_deadline_minutes?: number;
+  total_rounds?: number;
+  current_round?: number;
+  registrations_count?: number;
+  current_participants?: number;
   rules?: string;
   image?: string;
   is_featured?: boolean;
   registrations?: any[];
   rounds?: any[];
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface TournamentResponse {
@@ -81,6 +86,10 @@ export class TournamentService {
    */
   startTournament(id: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/tournaments/${id}/start`, {});
+  }
+
+  previewSchedule(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/preview-schedule`, data);
   }
 
   /**
