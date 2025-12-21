@@ -22,6 +22,8 @@ export interface Tournament {
   current_participants?: number; 
   status: 'open' | 'ongoing' | 'completed' | 'closed'; // backend sends 'open'
   prize_distribution: string; // JSON string
+  rules?: string;
+  prize_pool?: number;
   image?: string;
   is_featured?: boolean;
   registrations?: any[]; // Added to support participant count calculation
@@ -57,5 +59,39 @@ export class TournamentService {
    */
   getTournament(id: number): Observable<Tournament> {
     return this.http.get<Tournament>(`${this.apiUrl}/tournaments/${id}`);
+  }
+
+  /**
+   * Créer un nouveau tournoi
+   * POST /tournaments
+   */
+  createTournament(data: any): Observable<Tournament> {
+    return this.http.post<Tournament>(`${this.apiUrl}/tournaments`, data);
+  }
+
+  /**
+   * Lancer le tournoi (générer les rounds)
+   * POST /tournaments/{id}/launch
+   */
+  launchTournament(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${id}/launch`, {});
+  }
+
+  /**
+   * Fermer les inscriptions manuellement
+   * POST /tournaments/{id}/close-registrations
+   */
+  closeRegistrations(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${id}/close-registrations`, {});
+  }
+
+  /**
+   * Récupère les tournois créés par l'organisateur connecté
+   * GET /tournaments/my/tournaments
+   */
+  getMyTournaments(): Observable<Tournament[]> {
+    return this.http.get<TournamentResponse>(`${this.apiUrl}/tournaments/my/tournaments`).pipe(
+      map(response => response.tournaments)
+    );
   }
 }

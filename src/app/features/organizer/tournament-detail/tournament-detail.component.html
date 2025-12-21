@@ -1,0 +1,174 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12">
+  <div class="detail-container">
+    
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <div *ngIf="!loading && tournament">
+      
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+        <div class="flex items-center gap-4">
+          <a routerLink="/organizer/tournaments" class="p-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </a>
+          <div>
+            <div class="flex items-center gap-3 mb-1">
+              <h1 class="text-3xl font-bold text-white">{{ tournament.name }}</h1>
+              <span class="badge" [ngClass]="getStatusBadgeClass(tournament.status)">
+                {{ tournament.status | uppercase }}
+              </span>
+            </div>
+            <p class="text-slate-400 capitalize">{{ tournament.game.replace('_', ' ') }} • {{ tournament.start_date | date:'medium' }}</p>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button *ngIf="tournament.status === 'open'" (click)="closeRegistrations()" class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-medium hover:bg-slate-700 transition-colors">
+            Fermer Inscriptions
+          </button>
+          <button *ngIf="tournament.status === 'open'" (click)="launchTournament()" class="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">
+            Lancer le Tournoi
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-nav">
+        <button (click)="activeTab = 'overview'" [class.active]="activeTab === 'overview'" class="tab-btn">Vue d'ensemble</button>
+        <button (click)="activeTab = 'participants'" [class.active]="activeTab === 'participants'" class="tab-btn">Participants ({{ tournament.current_participants || 0 }})</button>
+        <button (click)="activeTab = 'matches'" [class.active]="activeTab === 'matches'" class="tab-btn">Matches & Brackets</button>
+        <button (click)="activeTab = 'settings'" [class.active]="activeTab === 'settings'" class="tab-btn">Paramètres</button>
+      </div>
+
+      <!-- Tab Content -->
+      <div [ngSwitch]="activeTab" class="control-panel">
+        
+        <!-- Overview Tab -->
+        <div *ngSwitchCase="'overview'" class="grid md:grid-cols-3 gap-8">
+            <div class="md:col-span-2 space-y-8">
+                <div>
+                   <h3 class="text-lg font-bold text-white mb-4">À propos du tournoi</h3>
+                   <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed">
+                      {{ tournament.description }}
+                   </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Règlement</h3>
+                    <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed italic">
+                       {{ tournament.rules }}
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <div class="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                    <h4 class="text-blue-400 font-bold mb-4">Résumé des Inscriptions</h4>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-slate-400">Places occupées</span>
+                        <span class="text-white font-bold">{{ tournament.current_participants || 0 }} / {{ tournament.max_participants }}</span>
+                    </div>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full" [style.width.%]="(tournament.current_participants || 0) / tournament.max_participants * 100"></div>
+                    </div>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                    <h4 class="text-white font-bold mb-4">Dotation (Prize Pool)</h4>
+                    <div class="text-2xl font-black text-amber-500 mb-2">
+                        {{ (parseFloat(tournament.entry_fee) * (tournament.current_participants || 0)) | number:'1.0-2' }} 🪙
+                    </div>
+                    <p class="text-xs text-slate-500">Basé sur les frais d'inscription de {{ tournament.entry_fee }} 🪙</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Participants Tab -->
+        <div *ngSwitchCase="'participants'">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">Joueurs Inscrits</h2>
+                <button class="text-blue-400 text-sm font-medium hover:underline">Exporter (.csv)</button>
+            </div>
+            
+            <div *ngIf="!tournament.registrations || tournament.registrations.length === 0" class="text-center py-12 text-slate-500 font-medium">
+                Aucun participant inscrit pour le moment.
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div *ngFor="let reg of tournament.registrations" class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white">👤</div>
+                        <div>
+                            <div class="text-white font-bold">{{ reg.user?.name }}</div>
+                            <div class="text-xs text-slate-500">{{ reg.created_at | date:'short' }}</div>
+                        </div>
+                    </div>
+                    <button class="p-2 text-slate-500 hover:text-red-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matches Tab -->
+        <div *ngSwitchCase="'matches'">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-xl font-bold text-white">Matches & Résultats</h2>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-bold">Round 1</button>
+                    <button class="px-4 py-2 rounded-lg bg-slate-900 text-slate-500 text-sm font-bold opacity-50 cursor-not-allowed">Round 2</button>
+                </div>
+            </div>
+
+            <div *ngIf="matches.length === 0" class="text-center py-20 bg-slate-900/30 rounded-3xl border border-dashed border-slate-800">
+                <p class="text-slate-500">Les matches seront générés une fois le tournoi lancé.</p>
+                <button *ngIf="tournament.status === 'open'" (click)="launchTournament()" class="mt-4 text-blue-400 font-bold hover:underline">Lancer le tournoi maintenant</button>
+            </div>
+
+            <div class="grid gap-4">
+                <div *ngFor="let match of matches" class="match-card">
+                    <div class="text-right">
+                        <div class="text-white font-bold">{{ match.player1?.name || 'A déterminer' }}</div>
+                        <div class="text-xs text-slate-500">ID: {{ match.player1?.id }}</div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <div class="score-display">
+                            {{ match.player1_score ?? '-' }} : {{ match.player2_score ?? '-' }}
+                        </div>
+                        <span class="badge" [ngClass]="match.status === 'pending' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-400'">
+                           {{ match.status | uppercase }}
+                        </span>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-white font-bold">{{ match.player2?.name || 'A déterminer' }}</div>
+                        <div class="text-xs text-slate-500">ID: {{ match.player2?.id }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div *ngSwitchCase="'settings'" class="max-w-2xl">
+            <h2 class="text-xl font-bold text-white mb-6">Actions Administratives</h2>
+            <div class="space-y-4">
+                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                    <h4 class="text-white font-bold mb-2">Annuler le tournoi</h4>
+                    <p class="text-slate-500 text-sm mb-4">Tous les frais d'inscription seront automatiquement remboursés aux participants.</p>
+                    <button class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all border border-red-500/20">
+                        Annuler Tournament
+                    </button>
+                </div>
+                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                    <h4 class="text-white font-bold mb-2">Litiges & Support</h4>
+                    <p class="text-slate-500 text-sm mb-4">Accédez à l'interface de gestion des réclamations pour ce tournoi.</p>
+                    <button class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                        Voir Litiges
+                    </button>
+                </div>
+            </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
