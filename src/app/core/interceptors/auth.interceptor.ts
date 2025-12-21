@@ -1,17 +1,10 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
-
-  if (token) {
-    const cloned = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
-    });
-    return next(cloned);
-  }
-
-  return next(req);
+  // We use cookies for authentication (Sanctum SPA)
+  // Ensure withCredentials is set to true for all requests to backend
+  const cloned = req.clone({
+    withCredentials: true
+  });
+  return next(cloned);
 };

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface User {
@@ -33,24 +33,18 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    // Charger l'utilisateur depuis localStorage au démarrage
-    const token = this.getToken();
-    
-    // Check if token is expired immediately
-    if (token && this.isTokenExpired(token)) {
-      this.doLogoutCleanup();
-    } else {
-      // If token is valid (or null), try to load user
-      const user = localStorage.getItem('user');
-      if (user) {
-        try {
-          this.currentUserSubject.next(JSON.parse(user));
-        } catch (e) {
-          console.error('Error parsing user from localStorage', e);
-          this.doLogoutCleanup();
-        }
-      }
-    }
+    this.getCurrentUser().subscribe({
+        error: () => this.doLogoutCleanup()
+    });
+  }
+
+  /**
+   * Initialise le cookie CSRF pour Sanctum
+   * GET /sanctum/csrf-cookie
+   */
+  getCsrfCookie(): Observable<any> {
+    const csrfUrl = this.apiUrl.replace('/api', '/sanctum/csrf-cookie');
+    return this.http.get(csrfUrl);
   }
 
   /**
@@ -67,10 +61,15 @@ export class AuthService {
    */
   sendMagicLink(email: string, redirectUrl?: string): Observable<any> {
     const defaultRedirect = window.location.origin + '/auth/verify';
-    return this.http.post(`${this.apiUrl}/auth/magic-link/send`, {
-      email,
-      redirect_url: redirectUrl || defaultRedirect
-    });
+    // On s'assure d'avoir le cookie CSRF avant d'envoyer (même si moins critique pour send, nécessaire pour verify)
+    return this.getCsrfCookie().pipe(
+      switchMap(() => {
+        return this.http.post(`${this.apiUrl}/auth/magic-link/send`, {
+          email,
+          redirect_url: redirectUrl || defaultRedirect
+        });
+      })
+    );
   }
 
   /**
@@ -78,10 +77,12 @@ export class AuthService {
    * POST /auth/magic-link/verify
    */
   verifyMagicLink(token: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/magic-link/verify`, { token })
-      .pipe(
-        tap(response => this.handleAuthSuccess(response))
-      );
+    return this.getCsrfCookie().pipe(
+      switchMap(() => {
+        return this.http.post<AuthResponse>(`${this.apiUrl}/auth/magic-link/verify`, { token });
+      }),
+      tap(response => this.handleAuthSuccess(response))
+    );
   }
 
   /**
@@ -91,7 +92,6 @@ export class AuthService {
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/user`).pipe(
       tap(user => {
-        localStorage.setItem('user', JSON.stringify(user));
         this.currentUserSubject.next(user);
       })
     );
@@ -116,8 +116,6 @@ export class AuthService {
   }
 
   doLogoutCleanup() {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('user');
       this.currentUserSubject.next(null);
   }
 
@@ -125,43 +123,28 @@ export class AuthService {
    * Gère la réponse d'authentification réussie
    */
   private handleAuthSuccess(response: AuthResponse): void {
-    if (response.token) {
-      localStorage.setItem('auth_token', response.token);
-    }
     if (response.user) {
-      localStorage.setItem('user', JSON.stringify(response.user));
       this.currentUserSubject.next(response.user);
     }
   }
 
   /**
-   * Retourne le token stocké
-   */
-  getToken(): string | null {
-    return localStorage.getItem('auth_token');
-  }
-
-  /**
-   * Vérifie si l'utilisateur est connecté
+   * Vérifie si l'utilisateur est connecté (Vérification locale du user subject)
    */
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-
-    if (this.isTokenExpired(token)) {
-      this.doLogoutCleanup();
-      return false;
-    }
-    return true;
+    return !!this.currentUserSubject.value; // Simple check if we have user data
   }
 
   /**
-   * Vérifie si le token est expiré
+   * Vérifie si la session est toujours active côté serveur
+   * GET /is-authenticated
    */
-  private isTokenExpired(token: string): boolean {
-    // Avec Sanctum, les tokens sont opaques (non JWT).
-    // On ne peut pas vérifier l'expiration côté client.
-    // On considère le token valide tant que l'API ne renvoie pas 401.
-    return false;
+  checkSession(): Observable<boolean> {
+    return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/is-authenticated`).pipe(
+      map(res => res.authenticated),
+      catchError(() => {
+        return of(false);
+      })
+    );
   }
 }

@@ -204,6 +204,7 @@ export class OrganizersComponent implements OnInit {
   ];
 
   handlePlanClick(plan: any) {
+    // Check standard plan
     if (plan.type === 'standard') {
       this.router.navigate(['/register']);
       return;
@@ -292,6 +293,7 @@ export class OrganizersComponent implements OnInit {
         } else {
              this.showSuccessModal = true;
              this.authService.getCurrentUser().subscribe();
+             this.toastService.success("Paiement réussi !, Vous pouvez maintenant créer des tournois");
              this.loadOrganizers();
         }
       },

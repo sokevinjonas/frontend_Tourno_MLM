@@ -12,10 +12,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      console.log('Interceptor caught error:', error.status, error.message);
+      // Catch global 401 Unauthorized errors
+      // This eliminates the need to check session before every request
       if (error.status === 401) {
-        // console.log('401 detected, redirecting to login...');
-        // Token expired or unauthorized
         authService.doLogoutCleanup();
         toastService.error('Votre session a expiré. Veuillez vous reconnecter.');
         router.navigate(['/login']);
