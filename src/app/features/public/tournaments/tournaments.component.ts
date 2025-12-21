@@ -5,11 +5,14 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { Tournament, TournamentService } from '../../../core/services/tournament.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
+import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
+import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
+import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 
 @Component({
   selector: 'app-tournaments',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe],
+  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe, GameNamePipe, GameColorPipe, TournamentStatusClassPipe],
   templateUrl: './tournaments.component.html',
   styleUrls: ['./tournaments.component.css']
 })
@@ -34,9 +37,30 @@ export class TournamentsComponent implements OnInit {
     this.loadTournaments();
   }
 
+  onFilterChange() {
+    this.loadTournaments();
+  }
+
   loadTournaments() {
     this.isLoading = true;
-    this.tournamentService.getTournaments().subscribe({
+    
+    const filters: any = {};
+    
+    // Map Game Filter
+    if (this.selectedGame !== 'Tous') {
+      if (this.selectedGame === 'E-football') filters.game = 'efootball';
+      else if (this.selectedGame === 'FC Mobile') filters.game = 'fc_mobile';
+      else if (this.selectedGame === 'Dream League') filters.game = 'dream_league_soccer';
+    }
+
+    // Map Status Filter
+    if (this.selectedStatus !== 'Tous') {
+      if (this.selectedStatus === 'Inscriptions ouvertes') filters.status = 'open';
+      else if (this.selectedStatus === 'En cours') filters.status = 'in_progress';
+      else if (this.selectedStatus === 'Terminé') filters.status = 'completed';
+    }
+
+    this.tournamentService.getTournaments(filters).subscribe({
       next: (data) => {
         // Calculate current_participants for each tournament
         this.tournaments = data.map(t => ({
@@ -76,61 +100,8 @@ export class TournamentsComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 
-  get filteredTournaments() {
-    return this.tournaments.filter(t => {
-      // Game Filter
-      const isGameAll = this.selectedGame === 'Tous';
-      let gameMatch = isGameAll;
-      
-      if (!isGameAll) {
-         if (this.selectedGame === 'E-football' && t.game === 'efootball') gameMatch = true;
-         else if (this.selectedGame === 'FC Mobile' && t.game === 'fc_mobile') gameMatch = true;
-         else if (this.selectedGame === 'Dream League' && t.game === 'dream_league_soccer') gameMatch = true;
-      }
-
-      // Status Filter
-      const isStatusAll = this.selectedStatus === 'Tous';
-      let statusMatch = isStatusAll;
-
-      if (!isStatusAll) {
-          if (this.selectedStatus === 'Inscriptions ouvertes' && t.status === 'open') statusMatch = true;
-          else if (this.selectedStatus === 'En cours' && t.status === 'in_progress') statusMatch = true;
-          else if (this.selectedStatus === 'Terminé' && t.status === 'completed') statusMatch = true;
-      }
-      
-      return gameMatch && statusMatch;
-    });
-  }
-
   getGameIcon(game: string): SafeHtml {
     // Return specific icons per game if needed, or generic
     return this.sanitize(this.icons.trophy); // Placeholder
-  }
-
-  getStatusClass(status: string): string {
-    switch(status) {
-      case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
-      default: return 'bg-slate-700/50 text-slate-400';
-    }
-  }
-
-  getGameColor(game: string): string {
-    switch(game) {
-      case 'efootball': return 'text-blue-400';
-      case 'fc_mobile': return 'text-cyan-400';
-      case 'dream_league_soccer': return 'text-purple-400';
-      default: return 'text-slate-400';
-    }
-  }
-
-  getGameDisplayName(game: string): string {
-     switch(game) {
-       case 'efootball': return 'E-football';
-       case 'fc_mobile': return 'FC Mobile';
-       case 'dream_league_soccer': return 'Dream League';
-       default: return game;
-     }
   }
 }

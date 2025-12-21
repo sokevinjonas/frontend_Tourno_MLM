@@ -113,8 +113,17 @@ export class TournamentService {
    * Récupère les tournois créés par l'organisateur connecté
    * GET /tournaments/my/tournaments
    */
-  getMyTournaments(): Observable<Tournament[]> {
-    return this.http.get<any>(`${this.apiUrl}/tournaments/my/tournaments`).pipe(
+  getMyTournaments(filters?: any): Observable<Tournament[]> {
+    let params = new HttpParams();
+    if (filters) {
+      Object.keys(filters).forEach(key => {
+        if (filters[key] !== null && filters[key] !== undefined && filters[key] !== 'Tous') {
+          params = params.set(key, filters[key]);
+        }
+      });
+    }
+
+    return this.http.get<any>(`${this.apiUrl}/tournaments/my/tournaments`, { params }).pipe(
       map(response => response.data?.tournaments || response.tournaments || response.data || response)
     );
   }

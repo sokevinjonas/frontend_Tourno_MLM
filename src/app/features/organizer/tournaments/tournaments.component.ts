@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
+import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
+import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
+import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 
 @Component({
   selector: 'app-tournaments',
   standalone: true,
-  imports: [CommonModule, RouterLink, TournamentStatusPipe],
+  imports: [CommonModule, RouterLink, TournamentStatusPipe, GameNamePipe, GameColorPipe, TournamentStatusClassPipe],
   templateUrl: './tournaments.component.html',
   styleUrls: ['./tournaments.component.css']
 })
@@ -50,12 +53,4 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'open': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'completed': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
-      default: return 'bg-slate-700/50 text-slate-500 border-slate-700';
-    }
-  }
 }

@@ -1,22 +1,22 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'gameName',
+  name: 'gameColor',
   standalone: true
 })
-export class GameNamePipe implements PipeTransform {
+export class GameColorPipe implements PipeTransform {
   transform(value: string): string {
-    if (!value) return '';
+    if (!value) return 'text-slate-400';
     
     switch (value.toLowerCase()) {
       case 'efootball':
-        return 'E-football';
+        return 'text-blue-400';
       case 'fc_mobile':
-        return 'FC Mobile';
+        return 'text-cyan-400';
       case 'dream_league_soccer':
-        return 'Dream League';
+        return 'text-purple-400';
       default:
-        return value.charAt(0).toUpperCase() + value.slice(1).replace('_', ' ');
+        return 'text-slate-400';
     }
   }
 }

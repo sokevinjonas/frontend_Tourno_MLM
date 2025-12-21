@@ -24,7 +24,7 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
                <div class="w-5 h-5" [innerHTML]="sanitize(icons.search)"></div>
             </div>
-            <select [(ngModel)]="selectedGame" class="appearance-none bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-3 hover:border-slate-600 transition-colors cursor-pointer min-w-[180px]">
+            <select [(ngModel)]="selectedGame" (ngModelChange)="onFilterChange()" class="appearance-none bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-3 hover:border-slate-600 transition-colors cursor-pointer min-w-[180px]">
               <option *ngFor="let game of games" [value]="game">{{game}}</option>
             </select>
             <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-500">
@@ -37,7 +37,7 @@
              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors">
                <div class="w-5 h-5" [innerHTML]="sanitize(icons.filter)"></div>
              </div>
-             <select [(ngModel)]="selectedStatus" class="appearance-none bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-3 hover:border-slate-600 transition-colors cursor-pointer min-w-[180px]">
+             <select [(ngModel)]="selectedStatus" (ngModelChange)="onFilterChange()" class="appearance-none bg-slate-900 border border-slate-700 text-white text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-3 hover:border-slate-600 transition-colors cursor-pointer min-w-[180px]">
                <option *ngFor="let status of statuses" [value]="status">{{status}}</option>
              </select>
              <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-slate-500">
@@ -47,26 +47,26 @@
         </div>
 
         <div class="text-sm text-slate-400 font-medium">
-          {{ filteredTournaments.length }} tournois trouvés
+          {{ tournaments.length }} tournois trouvés
         </div>
       </div>
     </div>
 
     <!-- Tournaments Grid -->
       <div *ngIf="!isLoading && !error" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div *ngFor="let tournament of filteredTournaments" class="group bg-slate-900/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+        <div *ngFor="let tournament of tournaments" class="group bg-slate-900/50 rounded-2xl border border-slate-700/50 overflow-hidden">
           
           <!-- Header -->
           <div class="p-6 relative">
             <div class="absolute top-4 right-4 z-10">
-              <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md ' + getStatusClass(tournament.status)">
+              <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md ' + (tournament.status | tournamentStatusClass)">
                 {{ tournament.status | tournamentStatus }}
               </span>
             </div>
 
             <div class="flex items-center gap-2 mb-3">
-            <span class="text-xs font-bold px-2 py-1 rounded bg-slate-800" [ngClass]="getGameColor(tournament.game)">
-              {{ getGameDisplayName(tournament.game) }}
+            <span class="text-xs font-bold px-2 py-1 rounded bg-slate-800" [ngClass]="tournament.game | gameColor">
+              {{ tournament.game | gameName }}
             </span>
             <span class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
               {{ tournament.max_participants }} JOUEURS
@@ -134,7 +134,7 @@
       </div>
     
     <!-- Empty State -->
-    <div *ngIf="filteredTournaments.length === 0" class="text-center py-20">
+    <div *ngIf="tournaments.length === 0" class="text-center py-20">
       <div class="inline-flex items-center justify-center w-20 h-20 bg-slate-800 rounded-full mb-6 border border-slate-700 text-slate-600">
         <div class="w-10 h-10" [innerHTML]="sanitize(icons.search)"></div>
       </div>

@@ -5,11 +5,13 @@ import { TournamentService, Tournament } from '../../../core/services/tournament
 import { MatchService, Match } from '../../../core/services/match.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
+import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
+import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 
 @Component({
   selector: 'app-tournament-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, TournamentStatusPipe],
+  imports: [CommonModule, RouterLink, TournamentStatusPipe, GameNamePipe, TournamentStatusClassPipe],
   templateUrl: './tournament-detail.component.html',
   styleUrls: ['./tournament-detail.component.css']
 })
@@ -89,12 +91,4 @@ export class TournamentDetailComponent implements OnInit {
     });
   }
 
-  getStatusBadgeClass(status: string): string {
-    switch (status) {
-      case 'open': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'completed': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
-      default: return 'bg-slate-700/50 text-slate-500 border-slate-700';
-    }
-  }
 }

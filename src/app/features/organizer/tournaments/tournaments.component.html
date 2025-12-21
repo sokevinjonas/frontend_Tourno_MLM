@@ -34,7 +34,7 @@
           <div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60"></div>
           <span class="text-4xl">🎮</span>
           <div class="absolute top-4 right-4">
-             <span class="badge" [ngClass]="getStatusBadgeClass(t.status)">
+             <span class="badge" [ngClass]="t.status | tournamentStatusClass">
                   {{ t.status | tournamentStatus }}
              </span>
           </div>
@@ -42,10 +42,12 @@
         
         <div class="card-content">
           <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{{ t.name }}</h3>
-          <div class="flex items-center gap-4 text-slate-400 text-sm mb-4">
-            <span class="flex items-center gap-1">
-              <span class="capitalize">{{ t.game.replace('_', ' ') }}</span>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-bold px-2 py-1 rounded bg-slate-800" [ngClass]="t.game | gameColor">
+              {{ t.game | gameName }}
             </span>
+          </div>
+          <div class="flex items-center gap-4 text-slate-400 text-sm mb-4">
             <span class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               {{ t.start_date | date:'shortDate' }}
