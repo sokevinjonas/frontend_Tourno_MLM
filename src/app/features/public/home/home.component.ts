@@ -54,6 +54,15 @@ export class HomeComponent implements OnInit {
      }
   }
 
+  getGameColor(game: string): string {
+    switch(game) {
+      case 'efootball': return 'text-blue-400';
+      case 'fc_mobile': return 'text-cyan-400';
+      case 'dream_league_soccer': return 'text-purple-400';
+      default: return 'text-slate-400';
+    }
+  }
+
   getParticipantCount(t: Tournament): number {
     return t.registrations ? t.registrations.length : (t.current_participants || 0);
   }

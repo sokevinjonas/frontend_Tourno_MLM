@@ -20,7 +20,7 @@
                 {{ tournament.status | uppercase }}
               </span>
             </div>
-            <p class="text-slate-400 capitalize">{{ tournament.game.replace('_', ' ') }} • {{ tournament.start_date | date:'medium' }}</p>
+            <p class="text-slate-400 capitalize">{{ tournament.game_type.replace('_', ' ') }} • {{ tournament.start_date | date:'medium' }}</p>
           </div>
         </div>
 

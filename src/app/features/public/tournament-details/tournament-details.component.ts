@@ -191,8 +191,9 @@ export class TournamentDetailsComponent implements OnInit {
       if (!status) return '';
       switch(status) {
           case 'open': return 'Inscriptions ouvertes';
-          case 'ongoing': return 'En cours';
+          case 'in_progress': return 'En cours';
           case 'completed': return 'Terminé';
+          case 'cancelled': return 'Annulé';
           default: return status;
       }
   }
@@ -201,7 +202,7 @@ export class TournamentDetailsComponent implements OnInit {
     if (!status) return '';
     switch(status) {
       case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'ongoing': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
       default: return 'bg-slate-700/50 text-slate-400';
     }

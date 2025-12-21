@@ -143,9 +143,9 @@
         <div *ngFor="let tournament of featuredTournaments" class="bg-slate-800 rounded-2xl shadow-sm border border-slate-700 overflow-hidden hover:shadow-xl hover:border-blue-500/50 transition-all hover:-translate-y-1 group relative">
            <div class="p-6">
              <div class="flex justify-between items-start mb-4">
-               <span class="inline-block px-3 py-1 bg-slate-700/50 text-slate-300 rounded-full text-[10px] font-bold uppercase tracking-wider border border-slate-600/50 backdrop-blur-sm">
-                 {{getGameDisplayName(tournament.game)}}
-               </span>
+               <div [class]="'text-xs font-bold uppercase tracking-wider mb-2 ' + getGameColor(tournament.game_type)">
+                  {{getGameDisplayName(tournament.game_type)}}
+                </div>
                <span class="text-sm font-bold text-white bg-white/10 border border-white/10 px-3 py-1 rounded-full flex items-center gap-1">
                  {{tournament.entry_fee}} <span class="text-yellow-400">🪙</span>
                </span>

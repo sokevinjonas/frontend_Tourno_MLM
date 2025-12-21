@@ -31,14 +31,17 @@ export class CreateTournamentComponent implements OnInit {
     this.tournamentForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(5)]],
       description: ['', [Validators.required]],
-      game: ['efootball', [Validators.required]],
-      max_participants: [16, [Validators.required, Validators.min(2), Validators.max(128)]],
+      game_type: ['efootball', [Validators.required]],
+      max_participants: [8, [Validators.required]],
       entry_fee: [0, [Validators.required, Validators.min(0)]],
+      prize_pool: [0, [Validators.required, Validators.min(0)]],
+      visibility: ['public', [Validators.required]],
+      auto_managed: [true],
       registration_start: ['', [Validators.required]],
       registration_end: ['', [Validators.required]],
       start_date: ['', [Validators.required]],
+      end_date: ['', [Validators.required]],
       rules: ['', [Validators.required]],
-      prize_pool: [0], // Optional, often calculated from entry fees
       prize_distribution: this.fb.group({
         '1': [0, [Validators.required]],
         '2': [0],
@@ -65,12 +68,16 @@ export class CreateTournamentComponent implements OnInit {
       this.toastService.error('Le tournoi doit commencer après la fin des inscriptions.');
       return;
     }
+    if (val.end_date && new Date(val.end_date) <= new Date(val.start_date)) {
+      this.toastService.error('La fin du tournoi doit être après le début.');
+      return;
+    }
 
     this.loading = true;
     const formData = {
-        ...val,
-        format: 'swiss', // For MVP as per documentation
-        prize_distribution: JSON.stringify(val.prize_distribution)
+      ...this.tournamentForm.value,
+      format: 'single_elimination',
+      prize_distribution: JSON.stringify(this.tournamentForm.value.prize_distribution)
     };
 
     this.tournamentService.createTournament(formData).subscribe({

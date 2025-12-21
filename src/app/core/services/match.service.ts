@@ -29,8 +29,8 @@ export class MatchService {
     return this.http.get<Match[]>(`${environment.apiUrl}/tournaments/${tournamentId}/matches`);
   }
 
-  updateScore(matchId: number, score: { player1_score: number, player2_score: number }): Observable<Match> {
-    return this.http.patch<Match>(`${this.apiUrl}/${matchId}/score`, score);
+  enterScore(matchId: number, score: { player1_score: number, player2_score: number }): Observable<Match> {
+    return this.http.post<Match>(`${this.apiUrl}/${matchId}/enter-score`, score);
   }
 
   reportResult(matchId: number, data: any): Observable<any> {

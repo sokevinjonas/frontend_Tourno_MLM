@@ -82,9 +82,9 @@ export class TournamentsComponent implements OnInit {
       let gameMatch = isGameAll;
       
       if (!isGameAll) {
-         if (this.selectedGame === 'E-football' && t.game === 'efootball') gameMatch = true;
-         else if (this.selectedGame === 'FC Mobile' && t.game === 'fc_mobile') gameMatch = true;
-         else if (this.selectedGame === 'Dream League' && t.game === 'dream_league_soccer') gameMatch = true;
+         if (this.selectedGame === 'E-football' && t.game_type === 'efootball') gameMatch = true;
+         else if (this.selectedGame === 'FC Mobile' && t.game_type === 'fc_mobile') gameMatch = true;
+         else if (this.selectedGame === 'Dream League' && t.game_type === 'dream_league_soccer') gameMatch = true;
       }
 
       // Status Filter
@@ -93,7 +93,7 @@ export class TournamentsComponent implements OnInit {
 
       if (!isStatusAll) {
           if (this.selectedStatus === 'Inscriptions ouvertes' && t.status === 'open') statusMatch = true;
-          else if (this.selectedStatus === 'En cours' && t.status === 'ongoing') statusMatch = true;
+          else if (this.selectedStatus === 'En cours' && t.status === 'in_progress') statusMatch = true;
           else if (this.selectedStatus === 'Terminé' && t.status === 'completed') statusMatch = true;
       }
       
@@ -101,7 +101,7 @@ export class TournamentsComponent implements OnInit {
     });
   }
 
-  getGameIcon(game: string): SafeHtml {
+  getGameIcon(game_type: string): SafeHtml {
     // Return specific icons per game if needed, or generic
     return this.sanitize(this.icons.trophy); // Placeholder
   }
@@ -109,14 +109,14 @@ export class TournamentsComponent implements OnInit {
   getStatusClass(status: string): string {
     switch(status) {
       case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'ongoing': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
       default: return 'bg-slate-700/50 text-slate-400';
     }
   }
 
-  getGameColor(game: string): string {
-    switch(game) {
+  getGameColor(game_type: string): string {
+    switch(game_type) {
       case 'efootball': return 'text-blue-400';
       case 'fc_mobile': return 'text-cyan-400';
       case 'dream_league_soccer': return 'text-purple-400';
@@ -124,20 +124,21 @@ export class TournamentsComponent implements OnInit {
     }
   }
 
-  getGameDisplayName(game: string): string {
-     switch(game) {
+  getGameDisplayName(game_type: string): string {
+     switch(game_type) {
        case 'efootball': return 'E-football';
        case 'fc_mobile': return 'FC Mobile';
        case 'dream_league_soccer': return 'Dream League';
-       default: return game;
+       default: return game_type;
      }
   }
 
   getStatusDisplayName(status: string): string {
       switch(status) {
           case 'open': return 'Inscriptions ouvertes';
-          case 'ongoing': return 'En cours';
+          case 'in_progress': return 'En cours';
           case 'completed': return 'Terminé';
+          case 'cancelled': return 'Annulé';
           default: return status;
       }
   }

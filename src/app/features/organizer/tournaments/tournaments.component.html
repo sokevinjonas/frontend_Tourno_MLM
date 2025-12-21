@@ -12,11 +12,10 @@
       </a>
     </div>
 
-    <!-- Filters -->
     <div class="filter-bar">
       <button (click)="applyFilter('all')" class="filter-btn" [class.active]="activeFilter === 'all'">Tout</button>
       <button (click)="applyFilter('open')" class="filter-btn" [class.active]="activeFilter === 'open'">Inscriptions</button>
-      <button (click)="applyFilter('ongoing')" class="filter-btn" [class.active]="activeFilter === 'ongoing'">En cours</button>
+      <button (click)="applyFilter('in_progress')" class="filter-btn" [class.active]="activeFilter === 'in_progress'">En cours</button>
       <button (click)="applyFilter('completed')" class="filter-btn" [class.active]="activeFilter === 'completed'">Terminés</button>
     </div>
 
@@ -45,7 +44,7 @@
           <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">{{ t.name }}</h3>
           <div class="flex items-center gap-4 text-slate-400 text-sm mb-4">
             <span class="flex items-center gap-1">
-              <span class="capitalize">{{ t.game.replace('_', ' ') }}</span>
+              <span class="capitalize">{{ t.game_type.replace('_', ' ') }}</span>
             </span>
             <span class="flex items-center gap-1">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>

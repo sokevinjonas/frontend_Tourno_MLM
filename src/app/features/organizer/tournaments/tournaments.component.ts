@@ -14,7 +14,7 @@ export class TournamentsComponent implements OnInit {
   tournaments: Tournament[] = [];
   filteredTournaments: Tournament[] = [];
   loading = true;
-  activeFilter: 'all' | 'open' | 'ongoing' | 'completed' = 'all';
+  activeFilter: 'all' | 'open' | 'in_progress' | 'completed' = 'all';
 
   constructor(private tournamentService: TournamentService) {}
 
@@ -37,7 +37,7 @@ export class TournamentsComponent implements OnInit {
     });
   }
 
-  applyFilter(filter: 'all' | 'open' | 'ongoing' | 'completed') {
+  applyFilter(filter: 'all' | 'open' | 'in_progress' | 'completed') {
     this.activeFilter = filter;
     if (filter === 'all') {
       this.filteredTournaments = [...this.tournaments];
@@ -49,7 +49,7 @@ export class TournamentsComponent implements OnInit {
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'open': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'ongoing': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'completed': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
       default: return 'bg-slate-700/50 text-slate-500 border-slate-700';
     }
@@ -58,9 +58,9 @@ export class TournamentsComponent implements OnInit {
   getStatusLabel(status: string): string {
     switch (status) {
       case 'open': return 'Inscriptions';
-      case 'ongoing': return 'En cours';
+      case 'in_progress': return 'En cours';
       case 'completed': return 'Terminé';
-      case 'closed': return 'Fermé';
+      case 'cancelled': return 'Annulé';
       default: return status;
     }
   }

@@ -98,7 +98,7 @@
 
           <div *ngFor="let t of tournaments" class="tournament-row bg-slate-800/20 md:bg-transparent rounded-xl md:rounded-none mb-3 md:mb-0">
             <div class="text-white font-medium truncate">{{ t.name }}</div>
-            <div class="text-slate-400 text-sm capitalize">{{ t.game.replace('_', ' ') }}</div>
+            <div class="text-slate-400 text-sm capitalize">{{ t.game_type.replace('_', ' ') }}</div>
             <div class="text-slate-400 text-sm">{{ t.current_participants || 0 }}/{{ t.max_participants }}</div>
             <div>
               <span class="badge" [ngClass]="getStatusBadgeClass(t.status)">

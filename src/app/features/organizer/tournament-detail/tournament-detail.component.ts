@@ -62,12 +62,12 @@ export class TournamentDetailComponent implements OnInit {
   launchTournament() {
     if (!this.tournament) return;
     if (confirm('Êtes-vous sûr de vouloir lancer le tournoi ? Cela générera les matches du Round 1.')) {
-      this.tournamentService.launchTournament(this.tournament.id).subscribe({
+      this.tournamentService.startTournament(this.tournament.id).subscribe({
         next: () => {
           this.toastService.success('Tournoi lancé avec succès !');
           this.loadTournament(this.tournament!.id);
         },
-        error: (err) => this.toastService.error(err.error?.message || 'Erreur lors du lancement.')
+        error: (err: any) => this.toastService.error(err.error?.message || 'Erreur lors du lancement.')
       });
     }
   }
@@ -86,7 +86,7 @@ export class TournamentDetailComponent implements OnInit {
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'open': return 'bg-green-500/20 text-green-400 border-green-500/30';
-      case 'ongoing': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
       case 'completed': return 'bg-slate-500/20 text-slate-400 border-slate-500/30';
       default: return 'bg-slate-700/50 text-slate-500 border-slate-700';
     }

@@ -7,27 +7,33 @@ import { environment } from '../../../environments/environment';
 export interface Tournament {
   id: number;
   name: string;
-  description?: string; // Content for "A propos"
-  game: 'efootball' | 'fc_mobile' | 'dream_league_soccer' | 'other';
+  description?: string;
+  game_type: 'efootball' | 'fc_mobile' | 'dream_league_soccer' | 'other';
   organizer: {
     id: number;
     name: string;
     email: string;
-    verified?: boolean; // Keep if we want to support it later, backend might not send it yet
+    verified?: boolean;
   };
   start_date: string;
-  entry_fee: string; // Backend sends string "4.00"
+  end_date?: string;
+  registration_start: string;
+  registration_end: string;
+  entry_fee: string;
+  prize_pool: string;
+  prize_distribution: string | any;
   max_participants: number;
-  // current_participants might be missing, assume logic in component or add optional
+  registrations_count?: number;
   current_participants?: number; 
-  status: 'open' | 'ongoing' | 'completed' | 'closed'; // backend sends 'open'
-  prize_distribution: string; // JSON string
+  status: 'draft' | 'open' | 'in_progress' | 'completed' | 'payout_pending' | 'payouts_completed' | 'cancelled';
+  visibility: 'public' | 'private';
+  unique_url?: string;
+  auto_managed: boolean;
   rules?: string;
-  prize_pool?: number;
   image?: string;
   is_featured?: boolean;
-  registrations?: any[]; // Added to support participant count calculation
-  rounds?: any[]; // Added for bracket display
+  registrations?: any[];
+  rounds?: any[];
 }
 
 interface TournamentResponse {
@@ -70,11 +76,11 @@ export class TournamentService {
   }
 
   /**
-   * Lancer le tournoi (générer les rounds)
-   * POST /tournaments/{id}/launch
+   * Démarrer le tournoi (générer les rounds)
+   * POST /tournaments/{id}/start
    */
-  launchTournament(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${id}/launch`, {});
+  startTournament(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${id}/start`, {});
   }
 
   /**
