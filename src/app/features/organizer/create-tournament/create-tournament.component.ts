@@ -69,6 +69,7 @@ export class CreateTournamentComponent implements OnInit {
     }
 
     this.loadingPreview = true;
+    this.schedulePreview = null;
     const previewData = {
       format: this.tournamentForm.value.format,
       max_participants: this.tournamentForm.value.max_participants,

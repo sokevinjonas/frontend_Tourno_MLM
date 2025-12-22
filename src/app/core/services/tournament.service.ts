@@ -78,7 +78,16 @@ export class TournamentService {
    * GET /tournaments/{id}
    */
   getTournament(id: number): Observable<Tournament> {
-    return this.http.get<Tournament>(`${this.apiUrl}/tournaments/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/tournaments/${id}`).pipe(
+      map(res => {
+        const t = res.tournament || res.data?.tournament || res.data || res;
+        // Robust calculation of participants from various possible sources in response
+        if (t) {
+          t.current_participants = t.registrations?.length || res.statistics?.total_registered || t.current_participants || 0;
+        }
+        return t;
+      })
+    );
   }
 
   /**
@@ -86,7 +95,19 @@ export class TournamentService {
    * POST /tournaments
    */
   createTournament(data: any): Observable<Tournament> {
-    return this.http.post<Tournament>(`${this.apiUrl}/tournaments`, data);
+    return this.http.post<any>(`${this.apiUrl}/tournaments`, data).pipe(
+      map(res => res.tournament || res.data?.tournament || res.data || res)
+    );
+  }
+
+  /**
+   * Mettre à jour un tournoi existant
+   * PUT /tournaments/{id}
+   */
+  updateTournament(id: number, data: any): Observable<Tournament> {
+    return this.http.put<any>(`${this.apiUrl}/tournaments/${id}`, data).pipe(
+      map(res => res.tournament || res.data?.tournament || res.data || res)
+    );
   }
 
   /**

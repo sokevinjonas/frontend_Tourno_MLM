@@ -42,6 +42,8 @@ export class TournamentDetailComponent implements OnInit {
     this.tournamentService.getTournament(id).subscribe({
       next: (t) => {
         this.tournament = t;
+        console.log(this.tournament);
+        
         if (t.status !== 'open') {
           this.loadMatches(id);
         }
