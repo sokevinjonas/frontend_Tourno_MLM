@@ -150,6 +150,9 @@ export class TournamentService {
     });
   }
 
+  checkRegistration(tournamentId: number): Observable<{ is_registered: boolean, registration: any }> {
+    return this.http.get<{ is_registered: boolean, registration: any }>(`${this.apiUrl}/tournaments/${tournamentId}/check-registration`);
+  }
   /**
    * Récupère les tournois créés par l'organisateur connecté
    * GET /tournaments/my/tournaments

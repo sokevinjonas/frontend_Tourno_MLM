@@ -57,6 +57,7 @@ export class TournamentDetailsComponent implements OnInit {
   showPaymentModal = false;
   isLoading = true;
   isRegistering = false;
+  isRegistered = false;
   selectedGameAccountId: number | null = null;
   error: string | null = null;
 
@@ -146,6 +147,16 @@ export class TournamentDetailsComponent implements OnInit {
 
               this.isLoading = false;
               this.cd.markForCheck();
+              
+              // If authenticated, check for registration
+              if (this.authService.isAuthenticated()) {
+                  this.tournamentService.checkRegistration(id).subscribe({
+                      next: (res) => {
+                          this.isRegistered = res.is_registered;
+                          this.cd.markForCheck();
+                      }
+                  });
+              }
           },
           error: (err) => {
               console.error('Error loading tournament details', err);
@@ -209,6 +220,7 @@ export class TournamentDetailsComponent implements OnInit {
     this.tournamentService.registerToTournament(this.tournament.id, this.selectedGameAccountId).subscribe({
       next: (res) => {
         this.toastService.success('Inscription réussie ! Bonne chance.');
+        this.isRegistered = true;
         this.closeModals();
         this.loadTournament(this.tournament!.id);
         // Refresh user data (for balance)
