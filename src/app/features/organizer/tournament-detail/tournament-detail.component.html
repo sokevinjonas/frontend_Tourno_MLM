@@ -79,6 +79,15 @@
                     </div>
                     <p class="text-xs text-slate-500">Basé sur les frais d'inscription de {{ tournament.entry_fee }} 🪙</p>
                 </div>
+
+                <div class="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                    <h4 class="text-amber-500 font-bold mb-4 text-xs uppercase tracking-wider">Fonds Collectés (BLOQUÉ)</h4>
+                    <div class="text-2xl font-black text-white">
+                        <span *ngIf="walletStats">{{ walletStats.total_credited | number:'1.0-2' }} 🪙</span>
+                        <span *ngIf="!walletStats">...</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2">Ces fonds seront libérés à la clôture du tournoi.</p>
+                </div>
             </div>
         </div>
 

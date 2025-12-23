@@ -29,5 +29,24 @@ export interface TransactionsResponse {
 
 export interface WalletBalance {
   balance: number;
+  blocked_balance?: number; // Added for organizer blocked funds
   currency: string;
+}
+
+export interface OrganizerWalletStats {
+  total_credited: number;
+  total_debited: number;
+  total_transactions: number;
+  current_balance: number;
+  blocked_balance?: number; // Keep as optional if not in log but needed
+}
+
+export interface WalletStatisticsResponse {
+  statistics: OrganizerWalletStats;
+}
+
+export interface TournamentWallet {
+  tournament_id: number;
+  collected_funds: number;
+  status: 'active' | 'payout_pending' | 'payouts_completed';
 }

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
+import { PaymentService } from '../../../core/services/payment.service';
+import { OrganizerWalletStats } from '../../../core/models/payment.model';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
 import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
@@ -24,10 +26,12 @@ export class DashboardComponent implements OnInit {
     participants: 0,
     prizePool: 0
   };
+  walletStats: OrganizerWalletStats | null = null;
 
   constructor(
     private authService: AuthService,
     private tournamentService: TournamentService,
+    private paymentService: PaymentService,
     private cd: ChangeDetectorRef
   ) {}
 
@@ -36,6 +40,7 @@ export class DashboardComponent implements OnInit {
       this.userName = user?.name || '';
     });
     this.loadDashboardData();
+    this.loadWalletStats();
   }
 
   loadDashboardData() {
@@ -67,6 +72,19 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
         this.tournaments = [];
         this.cd.detectChanges();
+      }
+    });
+  }
+
+  loadWalletStats() {
+    this.paymentService.getOrganizerWalletStats().subscribe({
+      next: (res) => {
+        this.walletStats = res.statistics;
+        console.log('Wallet stats:', this.walletStats);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading organizer wallet stats', err);
       }
     });
   }

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { MatchService, Match } from '../../../core/services/match.service';
+import { PaymentService } from '../../../core/services/payment.service';
+import { OrganizerWalletStats } from '../../../core/models/payment.model';
 import { ToastService } from '../../../core/services/toast.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
@@ -20,12 +22,14 @@ export class TournamentDetailComponent implements OnInit {
   tournament: Tournament | null = null;
   matches: Match[] = [];
   loading = true;
+  walletStats: OrganizerWalletStats | null = null;
   activeTab: 'overview' | 'participants' | 'matches' | 'settings' = 'overview';
 
   constructor(
     private route: ActivatedRoute,
     private tournamentService: TournamentService,
     private matchService: MatchService,
+    private paymentService: PaymentService,
     private toastService: ToastService,
     private cd: ChangeDetectorRef
   ) {}
@@ -47,6 +51,7 @@ export class TournamentDetailComponent implements OnInit {
         if (t.status !== 'open') {
           this.loadMatches(id);
         }
+        this.loadTournamentWallet();
         this.loading = false; 
         this.cd.detectChanges();
       },
@@ -64,6 +69,19 @@ export class TournamentDetailComponent implements OnInit {
       next: (matches) => {
         this.matches = matches;
         this.cd.detectChanges();
+      }
+    });
+  }
+
+  loadTournamentWallet() {
+    this.paymentService.getOrganizerWalletStats().subscribe({
+      next: (res) => {
+        this.walletStats = res.statistics;
+        console.log('Wallet stats:', this.walletStats);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error loading organizer wallet stats', err);
       }
     });
   }
