@@ -72,15 +72,21 @@ export class TournamentDetailsComponent implements OnInit {
     if (id) {
        this.loadTournament(id);
     }
+
+    // Keep currentUser updated
+    this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+      this.cd.markForCheck();
+    });
   }
 
   loadTournament(id: number) {
       this.isLoading = true;
       this.tournamentService.getTournament(id).subscribe({
           next: (data) => {
-              const response = data as any;
-              // API returns wrapped object { tournament: ..., statistics: ... }
-              this.tournament = response.tournament;
+              // Data is already unwrapped by the service mapping
+              this.tournament = data;
+              console.log('Tournament details:', this.tournament);
               
               if (this.tournament) {
                   // Map registrations to participants structure for template
@@ -145,8 +151,9 @@ export class TournamentDetailsComponent implements OnInit {
       return;
     }
     
-    const isProfileComplete = this.currentUser?.profile?.status === 'validated';
-
+    // Check if user has a complete profile
+    const isProfileComplete = this.currentUser!.profile.status === 'validated' || this.currentUser?.profile?.status === 'active';
+    
     if (!isProfileComplete) {
       this.showCompleteProfileModal = true;
     } else {
