@@ -141,6 +141,16 @@ export class TournamentService {
   }
 
   /**
+   * S'inscrire à un tournoi
+   * POST /tournaments/{id}/register
+   */
+  registerToTournament(tournamentId: number, gameAccountId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${tournamentId}/register`, {
+      game_account_id: gameAccountId
+    });
+  }
+
+  /**
    * Récupère les tournois créés par l'organisateur connecté
    * GET /tournaments/my/tournaments
    */

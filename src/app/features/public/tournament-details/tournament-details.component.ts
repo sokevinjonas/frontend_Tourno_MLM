@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../../core/services/auth.service';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 interface Tab {
   id: string;
@@ -24,10 +25,15 @@ interface ParsedTournament extends Tournament {
   current_participants?: number; // Helper
 }
 
+import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
+import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
+import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
+import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
+
 @Component({
   selector: 'app-tournament-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe, TournamentStatusClassPipe, GameNamePipe, GameColorPipe],
   templateUrl: './tournament-details.component.html',
   styleUrls: ['./tournament-details.component.css']
 })
@@ -42,6 +48,7 @@ export class TournamentDetailsComponent implements OnInit {
   private router = inject(Router);
   private location = inject(Location);
   private sanitizer = inject(DomSanitizer);
+  private toastService = inject(ToastService);
   
   currentUser$ = this.authService.currentUser$;
   currentUser: User | null = null;
@@ -49,7 +56,10 @@ export class TournamentDetailsComponent implements OnInit {
   showCompleteProfileModal = false;
   showPaymentModal = false;
   isLoading = true;
+  isRegistering = false;
+  selectedGameAccountId: number | null = null;
   error: string | null = null;
+
   tabs: Tab[] = [
     { id: 'info', label: 'Informations', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' },
     { id: 'participants', label: 'Participants', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
@@ -65,7 +75,26 @@ export class TournamentDetailsComponent implements OnInit {
     bracket: '<svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>'
   };
 
-  // ... constructor ...
+  get remainingBalance(): number {
+    if (!this.currentUser?.wallet || !this.tournament) return 0;
+    const balance = Number(this.currentUser.wallet.balance) || 0;
+    const fee = Number(this.tournament.entry_fee) || 0;
+    return balance - fee;
+  }
+
+  get filteredGameAccounts(): any[] {
+    if (!this.currentUser?.game_accounts || !this.tournament) {
+      return [];
+    }
+    const targetGame = this.tournament.game?.toLowerCase().trim();
+    const accounts = this.currentUser.game_accounts.filter(
+      (acc: any) => {
+        const accGame = (acc.game || acc.game_type)?.toLowerCase().trim();
+        return accGame === targetGame;
+      }
+    );
+    return accounts;
+  }
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -76,6 +105,10 @@ export class TournamentDetailsComponent implements OnInit {
     // Keep currentUser updated
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      console.log('Current user updated:', user ? { id: user.id, hasAccounts: !!user.game_accounts, count: user.game_accounts?.length } : 'null');
+      if (user?.game_accounts) {
+        console.log('User game accounts:', user.game_accounts.map(a => ({ id: a.id, game: a.game, type: a.game_type })));
+      }
       this.cd.markForCheck();
     });
   }
@@ -84,25 +117,19 @@ export class TournamentDetailsComponent implements OnInit {
       this.isLoading = true;
       this.tournamentService.getTournament(id).subscribe({
           next: (data) => {
-              // Data is already unwrapped by the service mapping
               this.tournament = data;
-              console.log('Tournament details:', this.tournament);
-              
               if (this.tournament) {
-                  // Map registrations to participants structure for template
                   const regs = (this.tournament as any).registrations || [];
                   this.tournament.participants = {
                       current: regs.length,
                       max: Number((this.tournament as any).max_participants) || 0,
                       list: regs.map((r: any) => ({
-                          // Fallback if user object is missing in registration
-                          name: r.game_account.game_username,
-                          email: r.user.email,
+                          name: r.game_account?.game_username || 'Participant',
+                          email: r.user?.email,
                       }))
                   };
                   this.tournament.current_participants = regs.length;
 
-                  // Parse JSON fields
                   try {
                       if (typeof this.tournament.prize_distribution === 'string') {
                           this.tournament.prizeDistributionObj = JSON.parse(this.tournament.prize_distribution);
@@ -110,11 +137,9 @@ export class TournamentDetailsComponent implements OnInit {
                           this.tournament.prizeDistributionObj = this.tournament.prize_distribution;
                       }
                   } catch (e) {
-                      console.error('Error parsing prize distribution', e);
                       this.tournament.prizeDistributionObj = {};
                   }
 
-                  // Default Mock Data for missing fields
                   this.tournament.rulesList = [
                       'Format Suisse : 5 rondes minimum',
                       'Victoire = 3 points, Nul = 1 point',
@@ -146,17 +171,25 @@ export class TournamentDetailsComponent implements OnInit {
 
   onParticipate() {
     if (!this.authService.isAuthenticated()) {
-      // Redirect to login with return URL
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/tournaments/' + this.tournament?.id } });
       return;
     }
     
-    // Check if user has a complete profile
-    const isProfileComplete = this.currentUser!.profile.status === 'validated' || this.currentUser?.profile?.status === 'active';
+    const isProfileComplete = this.currentUser?.profile?.status === 'validated' || this.currentUser?.profile?.status === 'active';
     
     if (!isProfileComplete) {
       this.showCompleteProfileModal = true;
     } else {
+      // Auto-select first matching account if available
+      const accounts = this.filteredGameAccounts;
+      console.log('onParticipate: Auto-selection check. Matching accounts:', accounts);
+      if (accounts.length > 0) {
+        this.selectedGameAccountId = accounts[0].id;
+        console.log('onParticipate: Auto-selected ID:', this.selectedGameAccountId);
+      } else {
+        this.selectedGameAccountId = null;
+        console.warn('onParticipate: No matching game account found.');
+      }
       this.showPaymentModal = true;
     }
   }
@@ -167,61 +200,42 @@ export class TournamentDetailsComponent implements OnInit {
   }
 
   confirmParticipation() {
-    // Implement payment logic here
-    alert('Participation confirmée ! ' + this.tournament?.entry_fee + ' pièces déduites.');
-    this.closeModals();
-    // Refresh data...
+    console.log('confirmParticipation! selectedGameAccountId:', this.selectedGameAccountId, 'Type:', typeof this.selectedGameAccountId);
+    if (!this.tournament || !this.selectedGameAccountId) {
+      console.error('Registration blocked: tournament or account missing', { t: !!this.tournament, acc: this.selectedGameAccountId });
+      if (!this.selectedGameAccountId) {
+        this.toastService.error(`Vous devez sélectionner un compte pour ce tournoi.`);
+      }
+      return;
+    }
+
+    if (this.remainingBalance < 0) {
+      this.toastService.error('Solde insuffisant.');
+      return;
+    }
+
+    this.isRegistering = true;
+    console.log(this.tournament.id, this.selectedGameAccountId);
+    
+    this.tournamentService.registerToTournament(this.tournament.id, this.selectedGameAccountId).subscribe({
+      next: (res) => {
+        this.toastService.success('Inscription réussie ! Bonne chance.');
+        this.closeModals();
+        this.loadTournament(this.tournament!.id);
+        // Refresh user data (for balance)
+        this.authService.getCurrentUser().subscribe();
+        this.isRegistering = false;
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Erreur lors de l\'inscription.');
+        this.isRegistering = false;
+      }
+    });
   }
 
   goToProfile() {
     this.router.navigate(['/profile/complete']);
   }
   
-  // Helpers for template logic
-  get remainingBalance() {
-    if (!this.tournament || !this.currentUser || !this.currentUser.wallet) return 0;
-    const fee = parseFloat(this.tournament.entry_fee) || 0;
-    return (this.currentUser.wallet.balance || 0) - fee;
-  }
 
-  getGameDisplayName(game: string | undefined): string {
-     if (!game) return '';
-     switch(game) {
-       case 'efootball': return 'E-football';
-       case 'fc_mobile': return 'FC Mobile';
-       case 'dream_league_soccer': return 'Dream League';
-       default: return game;
-     }
-  }
-
-  getStatusDisplayName(status: string | undefined): string {
-      if (!status) return '';
-      switch(status) {
-          case 'open': return 'Inscriptions ouvertes';
-          case 'in_progress': return 'En cours';
-          case 'completed': return 'Terminé';
-          case 'cancelled': return 'Annulé';
-          default: return status;
-      }
-  }
-
-  getStatusClass(status: string | undefined): string {
-    if (!status) return '';
-    switch(status) {
-      case 'open': return 'bg-green-500/10 text-green-400 border-green-500/20';
-      case 'in_progress': return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
-      case 'completed': return 'bg-slate-700/50 text-slate-400 border-slate-600/50';
-      default: return 'bg-slate-700/50 text-slate-400';
-    }
-  }
-
-  getGameColor(game: string | undefined): string {
-    if (!game) return '';
-    switch(game) {
-      case 'efootball': return 'text-blue-400';
-      case 'fc_mobile': return 'text-cyan-400';
-      case 'dream_league_soccer': return 'text-purple-400';
-      default: return 'text-slate-400';
-    }
-  }
 }
