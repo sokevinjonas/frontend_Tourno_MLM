@@ -70,20 +70,20 @@
            <section *ngIf="tournament.prizeDistributionObj">
               <h3 class="text-lg font-bold text-white mb-4">Récompenses</h3>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                 <div *ngIf="tournament.prizeDistributionObj['1st']" class="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['1st'] || tournament.prizeDistributionObj['1']" class="bg-gradient-to-br from-yellow-500/10 to-transparent border border-yellow-500/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥇</span>
                     <span class="text-yellow-400 font-bold mb-1">1ère Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['1st']}} 🪙</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['1st'] || tournament.prizeDistributionObj['1']}} 🪙</span>
                  </div>
-                 <div *ngIf="tournament.prizeDistributionObj['2nd']" class="bg-gradient-to-br from-slate-400/10 to-transparent border border-slate-400/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['2nd'] || tournament.prizeDistributionObj['2']" class="bg-gradient-to-br from-slate-400/10 to-transparent border border-slate-400/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥈</span>
                     <span class="text-slate-300 font-bold mb-1">2ème Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['2nd']}} 🪙</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['2nd'] || tournament.prizeDistributionObj['2']}} 🪙</span>
                  </div>
-                 <div *ngIf="tournament.prizeDistributionObj['3rd']" class="bg-gradient-to-br from-orange-700/10 to-transparent border border-orange-700/20 p-4 rounded-xl flex flex-col items-center">
+                 <div *ngIf="tournament.prizeDistributionObj['3rd'] || tournament.prizeDistributionObj['3']" class="bg-gradient-to-br from-orange-700/10 to-transparent border border-orange-700/20 p-4 rounded-xl flex flex-col items-center">
                     <span class="text-2xl mb-1">🥉</span>
                     <span class="text-orange-400 font-bold mb-1">3ème Place</span>
-                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['3rd']}} 🪙</span>
+                    <span class="text-white font-bold">{{tournament.prizeDistributionObj['3rd'] || tournament.prizeDistributionObj['3']}} 🪙</span>
                  </div>
               </div>
            </section>
