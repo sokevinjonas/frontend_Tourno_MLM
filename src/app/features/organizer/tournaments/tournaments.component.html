@@ -63,7 +63,7 @@
             <a [routerLink]="['/organizer/tournaments', t.id]" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-center py-2.5 rounded-lg text-sm font-bold transition-colors">
               Gérer
             </a>
-            <button class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 transition-colors">
+            <button (click)="openActionModal(t, $event)" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 transition-colors">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
             </button>
           </div>
@@ -71,5 +71,56 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Action Modal -->
+  <div *ngIf="showActionModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" (click)="closeActionModal()">
+    <div class="w-full max-w-sm bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden" (click)="$event.stopPropagation()">
+      <div class="p-6 border-b border-slate-800">
+        <h3 class="text-xl font-bold text-white mb-1">{{ selectedTournament?.name }}</h3>
+        <p class="text-slate-400 text-sm">Choisissez une action rapide</p>
+      </div>
+
+      <div class="p-4 space-y-2">
+        <!-- Draft -> Open -->
+        <button *ngIf="selectedTournament?.status === 'draft'" 
+                (click)="publishTournament()" 
+                [disabled]="processingAction"
+                class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-blue-600/10 text-slate-300 hover:text-blue-400 transition-all border border-transparent hover:border-blue-500/20 group">
+          <span class="w-10 h-10 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">🚀</span>
+          <div class="text-left">
+            <div class="font-bold">Ouvrir les inscriptions</div>
+            <div class="text-xs text-slate-500 group-hover:text-blue-400/60">Passe le tournoi en mode public</div>
+          </div>
+        </button>
+
+        <!-- Open -> In Progress -->
+        <button *ngIf="selectedTournament?.status === 'open'" 
+                (click)="launchTournament()" 
+                [disabled]="processingAction"
+                class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-green-600/10 text-slate-300 hover:text-green-400 transition-all border border-transparent hover:border-green-500/20 group">
+          <span class="w-10 h-10 rounded-lg bg-green-500/20 text-green-400 flex items-center justify-center font-bold">⚔️</span>
+          <div class="text-left">
+            <div class="font-bold">Lancer le tournoi</div>
+            <div class="text-xs text-slate-500 group-hover:text-green-400/60">Génère les matches et démarre le Round 1</div>
+          </div>
+        </button>
+
+        <a [routerLink]="['/organizer/tournaments', selectedTournament?.id]" 
+           class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-slate-800 text-slate-300 transition-all group">
+          <span class="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold">⚙️</span>
+          <div class="text-left">
+            <div class="font-bold">Gestion complète</div>
+            <div class="text-xs text-slate-500">Accéder à tous les réglages</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="p-4 bg-slate-900/50 border-t border-slate-800">
+        <button (click)="closeActionModal()" class="w-full py-2.5 text-slate-400 hover:text-white font-medium transition-colors">
+          Annuler
+        </button>
+      </div>
+    </div>
   </div>
 </div>

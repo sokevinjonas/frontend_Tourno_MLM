@@ -123,6 +123,16 @@ export class TournamentService {
   }
 
   /**
+   * Changer le statut d'un tournoi
+   * POST /tournaments/{id}/status
+   */
+  changeStatus(id: number, status: string): Observable<Tournament> {
+    return this.http.post<any>(`${this.apiUrl}/tournaments/${id}/status`, { status }).pipe(
+      map(res => res.tournament || res.data?.tournament || res.data || res)
+    );
+  }
+
+  /**
    * Fermer les inscriptions manuellement
    * POST /tournaments/{id}/close-registrations
    */

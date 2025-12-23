@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
 import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
@@ -19,8 +20,17 @@ export class TournamentsComponent implements OnInit {
   filteredTournaments: Tournament[] = [];
   loading = true;
   activeFilter: 'all' | 'open' | 'in_progress' | 'completed' = 'all';
+  
+  // Modal State
+  showActionModal = false;
+  selectedTournament: Tournament | null = null;
+  processingAction = false;
 
-  constructor(private tournamentService: TournamentService, private cd: ChangeDetectorRef) {}
+  constructor(
+    private tournamentService: TournamentService,
+    private cd: ChangeDetectorRef,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit() {
     this.loadTournaments();
@@ -51,6 +61,53 @@ export class TournamentsComponent implements OnInit {
     } else {
       this.filteredTournaments = this.tournaments.filter(t => t.status === filter);
     }
+  }
+
+  openActionModal(t: Tournament, event: Event) {
+    event.stopPropagation();
+    this.selectedTournament = t;
+    this.showActionModal = true;
+    this.cd.detectChanges();
+  }
+
+  closeActionModal() {
+    this.showActionModal = false;
+    this.selectedTournament = null;
+    this.cd.detectChanges();
+  }
+
+  publishTournament() {
+    if (!this.selectedTournament) return;
+    this.processingAction = true;
+    this.tournamentService.changeStatus(this.selectedTournament.id, 'open').subscribe({
+      next: () => {
+        this.toastService.success('Inscriptions ouvertes !');
+        this.loadTournaments();
+        this.closeActionModal();
+        this.processingAction = false;
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Erreur lors de la publication.');
+        this.processingAction = false;
+      }
+    });
+  }
+
+  launchTournament() {
+    if (!this.selectedTournament) return;
+    this.processingAction = true;
+    this.tournamentService.startTournament(this.selectedTournament.id).subscribe({
+      next: () => {
+        this.toastService.success('Le tournoi a été lancé avec succès !');
+        this.loadTournaments();
+        this.closeActionModal();
+        this.processingAction = false;
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Erreur lors du lancement.');
+        this.processingAction = false;
+      }
+    });
   }
 
 }
