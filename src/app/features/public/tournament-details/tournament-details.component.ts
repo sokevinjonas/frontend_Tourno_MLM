@@ -87,13 +87,12 @@ export class TournamentDetailsComponent implements OnInit {
       return [];
     }
     const targetGame = this.tournament.game?.toLowerCase().trim();
-    const accounts = this.currentUser.game_accounts.filter(
+    return this.currentUser.game_accounts.filter(
       (acc: any) => {
         const accGame = (acc.game || acc.game_type)?.toLowerCase().trim();
         return accGame === targetGame;
       }
     );
-    return accounts;
   }
 
   ngOnInit() {
@@ -105,10 +104,6 @@ export class TournamentDetailsComponent implements OnInit {
     // Keep currentUser updated
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
-      console.log('Current user updated:', user ? { id: user.id, hasAccounts: !!user.game_accounts, count: user.game_accounts?.length } : 'null');
-      if (user?.game_accounts) {
-        console.log('User game accounts:', user.game_accounts.map(a => ({ id: a.id, game: a.game, type: a.game_type })));
-      }
       this.cd.markForCheck();
     });
   }
@@ -182,13 +177,10 @@ export class TournamentDetailsComponent implements OnInit {
     } else {
       // Auto-select first matching account if available
       const accounts = this.filteredGameAccounts;
-      console.log('onParticipate: Auto-selection check. Matching accounts:', accounts);
       if (accounts.length > 0) {
         this.selectedGameAccountId = accounts[0].id;
-        console.log('onParticipate: Auto-selected ID:', this.selectedGameAccountId);
       } else {
         this.selectedGameAccountId = null;
-        console.warn('onParticipate: No matching game account found.');
       }
       this.showPaymentModal = true;
     }
@@ -200,9 +192,7 @@ export class TournamentDetailsComponent implements OnInit {
   }
 
   confirmParticipation() {
-    console.log('confirmParticipation! selectedGameAccountId:', this.selectedGameAccountId, 'Type:', typeof this.selectedGameAccountId);
     if (!this.tournament || !this.selectedGameAccountId) {
-      console.error('Registration blocked: tournament or account missing', { t: !!this.tournament, acc: this.selectedGameAccountId });
       if (!this.selectedGameAccountId) {
         this.toastService.error(`Vous devez sélectionner un compte pour ce tournoi.`);
       }
@@ -215,7 +205,6 @@ export class TournamentDetailsComponent implements OnInit {
     }
 
     this.isRegistering = true;
-    console.log(this.tournament.id, this.selectedGameAccountId);
     
     this.tournamentService.registerToTournament(this.tournament.id, this.selectedGameAccountId).subscribe({
       next: (res) => {
@@ -227,7 +216,9 @@ export class TournamentDetailsComponent implements OnInit {
         this.isRegistering = false;
       },
       error: (err) => {
-        this.toastService.error(err.error?.message || 'Erreur lors de l\'inscription.');
+        console.error('Registration API Error:', err);
+        const errorMessage = err.error?.message || err.error?.error || 'Erreur lors de l\'inscription.';
+        this.toastService.error(errorMessage);
         this.isRegistering = false;
       }
     });

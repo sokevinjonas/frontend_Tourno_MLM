@@ -303,9 +303,11 @@ export class OrganizersComponent implements OnInit {
              });
         } else {
              this.showSuccessModal = true;
-             this.authService.getCurrentUser().subscribe();
-             this.toastService.success("Paiement réussi ! Vous pouvez maintenant créer des tournois.");
              this.loadOrganizers();
+             this.authService.getCurrentUser().subscribe(() => {
+                 this.router.navigate(['/organizers/dashboard']);
+             });
+             this.toastService.success("Paiement réussi ! Vous pouvez maintenant créer des tournois.");
         }
       },
       error: (err) => {
