@@ -9,6 +9,16 @@ export interface Wallet {
   updated_at: string;
 }
 
+export interface GameAccount {
+  id: number;
+  user_id: number;
+  game: string;
+  game_username: string;
+  team_screenshot_path: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface User {
   id: number;
   name: string;
@@ -22,6 +32,7 @@ export interface User {
   ban_reason?: string | null;
   profile?: UserProfile;
   wallet?: Wallet;
+  game_accounts?: GameAccount[];
   created_at: string;
   updated_at?: string;
 }

@@ -30,7 +30,7 @@
       <!-- Validation Button -->
       <button 
         *ngIf="user.profile?.status === 'pending'"
-        (click)="validateProfile()"
+        (click)="openValidateModal()"
         [disabled]="submitting"
         class="flex-1 min-w-[200px] py-4 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
       >
@@ -41,12 +41,12 @@
       <!-- Ban/Unban Buttons -->
       <button 
         *ngIf="!user.is_banned"
-        (click)="banUser()"
+        (click)="openBanModal()"
         [disabled]="submitting"
         class="flex-1 min-w-[200px] py-4 px-6 bg-slate-900 border border-red-500/30 hover:bg-red-500 hover:text-white text-red-500 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-        Bannir l'Utilisateur
+        Refuser le Profil
       </button>
 
       <button 
@@ -188,4 +188,67 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Validation Confirmation Modal -->
+<div *ngIf="showValidateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeValidateModal()"></div>
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Valider Profil</h3>
+        <p class="text-slate-400 text-sm">Confirmez-vous la validation du profil de <strong class="text-white">{{ user?.name }}</strong> ? Cela lui permettra de participer aux tournois.</p>
+      </div>
+  
+      <div class="flex gap-4">
+        <button (click)="closeValidateModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+        <button 
+          (click)="confirmValidation()" 
+          [disabled]="submitting"
+          class="flex-1 py-4 px-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          Confirmer
+        </button>
+      </div>
+    </div>
+</div>
+
+<!-- Ban Reason Modal -->
+<div *ngIf="showBanModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeBanModal()"></div>
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+        </div>
+        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Refuser le Profil</h3>
+        <p class="text-slate-400 text-sm">Veuillez indiquer la raison du refus pour <strong class="text-white">{{ user?.name }}</strong>.</p>
+      </div>
+  
+      <div class="space-y-6 mb-8">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Raison du refus</label>
+          <textarea 
+            [(ngModel)]="banReason"
+            placeholder="Ex: Comportement inapproprié, fraude, etc..."
+            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-red-500 transition-colors h-32 resize-none"
+          ></textarea>
+        </div>
+      </div>
+  
+      <div class="flex gap-4">
+        <button (click)="closeBanModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+        <button 
+          (click)="confirmBan()" 
+          [disabled]="submitting || !banReason"
+          class="flex-1 py-4 px-4 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all shadow-lg shadow-red-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+        >
+          <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+          Refuser
+        </button>
+      </div>
+    </div>
 </div>

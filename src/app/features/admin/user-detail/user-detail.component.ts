@@ -2,20 +2,25 @@ import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
-import { User, PaginatedResponse } from '../../../core/models/user.model';
+import { User } from '../../../core/models/user.model';
 import { ToastService } from '../../../core/services/toast.service';
+import { FormsModule } from '@angular/forms';
 import { ModeratorService } from '../../../core/services/moderator.service';
 
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './user-detail.component.html'
 })
 export class UserDetailComponent implements OnInit {
   user: User | null = null;
   loading = true;
   submitting = false;
+
+  showValidateModal = false;
+  showBanModal = false;
+  banReason = '';
 
   private cd = inject(ChangeDetectorRef);
   constructor(
@@ -49,7 +54,15 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
-  validateProfile() {
+  openValidateModal() {
+    this.showValidateModal = true;
+  }
+
+  closeValidateModal() {
+    this.showValidateModal = false;
+  }
+
+  confirmValidation() {
     if (!this.user?.profile) return;
     
     this.submitting = true;
@@ -58,6 +71,7 @@ export class UserDetailComponent implements OnInit {
         this.toastService.success('Profil validé avec succès.');
         this.loadUser(this.user!.id);
         this.submitting = false;
+        this.closeValidateModal();
       },
       error: (err) => {
         console.error('Error validating profile', err);
@@ -68,18 +82,25 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
-  banUser() {
-    if (!this.user) return;
-    
-    const reason = prompt('Raison du bannissement :');
-    if (reason === null) return; // Cancelled
+  openBanModal() {
+    this.banReason = '';
+    this.showBanModal = true;
+  }
 
+  closeBanModal() {
+    this.showBanModal = false;
+  }
+
+  confirmBan() {
+    if (!this.user?.profile) return;
+    
     this.submitting = true;
-    this.adminService.banUser(this.user.id, reason || 'Non spécifiée').subscribe({
+    this.moderatorService.rejectProfile(this.user.profile.id, this.banReason || 'Non spécifiée').subscribe({
       next: () => {
-        this.toastService.success('Utilisateur banni.');
+        this.toastService.success('Profil refusé avec succès.');
         this.loadUser(this.user!.id);
         this.submitting = false;
+        this.closeBanModal();
       },
       error: (err) => {
         console.error('Error banning user', err);
