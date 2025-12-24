@@ -173,4 +173,20 @@ export class TournamentService {
       map(response => response.data?.tournaments || response.tournaments || response.data || response)
     );
   }
+
+  /**
+   * Récupère les informations détaillées sur les rounds d'un tournoi
+   * GET /tournaments/{id}/rounds-info
+   */
+  getRoundsInfo(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/tournaments/${id}/rounds-info`);
+  }
+
+  /**
+   * Passe au round suivant
+   * POST /tournaments/{id}/next-round
+   */
+  nextRound(id: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/tournaments/${id}/next-round`, {});
+  }
 }

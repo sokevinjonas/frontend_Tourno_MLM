@@ -22,12 +22,16 @@ export class TournamentDetailComponent implements OnInit {
   parseFloat = parseFloat;
   tournament: Tournament | null = null;
   matches: Match[] = [];
+  rounds: any[] = [];
+  selectedRoundId: number | null = null;
+  roundInfo: any = null;
   loading = true;
   submitting = false;
   walletStats: OrganizerWalletStats | null = null;
   activeTab: 'overview' | 'participants' | 'matches' | 'settings' = 'overview';
 
-  // Score submission state
+  // Modal states
+  showLaunchModal = false;
   showScoreModal = false;
   selectedMatch: Match | null = null;
   score1: number | null = null;
@@ -54,10 +58,20 @@ export class TournamentDetailComponent implements OnInit {
     this.tournamentService.getTournament(id).subscribe({
       next: (t) => {
         this.tournament = t;
-        console.log(this.tournament);
+        console.log('Tournament data:', this.tournament);
         
+        // Handle rounds
+        this.rounds = (t as any).rounds || [];
+        if (this.rounds.length > 0) {
+          // Select either current_round or the first round
+          const currentRoundNum = (t as any).current_round || 1;
+          const currentRound = this.rounds.find(r => r.round_number === currentRoundNum) || this.rounds[0];
+          this.selectedRoundId = currentRound.id;
+        }
+
         if (t.status !== 'open') {
           this.loadMatches(id);
+          this.loadRoundsInfo(id);
         }
         this.loadTournamentWallet();
         this.loading = false; 
@@ -72,12 +86,53 @@ export class TournamentDetailComponent implements OnInit {
     });
   }
 
+  loadRoundsInfo(id: number) {
+     this.tournamentService.getRoundsInfo(id).subscribe({
+       next: (res) => {
+         this.roundInfo = res.data;
+         this.cd.detectChanges();
+       }
+     });
+  }
+
+  goToNextRound() {
+     if (!this.tournament) return;
+     if (this.roundInfo?.current_round?.pending_matches > 0) {
+        this.toastService.error(`Il reste ${this.roundInfo.current_round.pending_matches} match(es) à terminer.`);
+        return;
+     }
+
+     this.submitting = true;
+     this.tournamentService.nextRound(this.tournament.id).subscribe({
+        next: (res) => {
+           this.toastService.success('Round suivant généré avec succès !');
+           this.loadTournament(this.tournament!.id);
+           this.submitting = false;
+        },
+        error: (err) => {
+           console.error('Error generating next round', err);
+           this.toastService.error(err.error?.message || 'Erreur lors du passage au round suivant.');
+           this.submitting = false;
+           this.cd.detectChanges();
+        }
+     });
+  }
+
+  get filteredMatches(): Match[] {
+    if (!this.selectedRoundId) return this.matches;
+    return this.matches.filter(m => (m as any).round_id === this.selectedRoundId);
+  }
+
+  selectRound(roundId: number) {
+    this.selectedRoundId = roundId;
+    this.cd.detectChanges();
+  }
+
   loadMatches(id: number) {
     this.matchService.getTournamentMatches(id).subscribe({
       next: (matches) => {
         this.matches = matches.data;
-        console.log(this.matches);
-        
+        console.log('Matches:', this.matches);
         this.cd.detectChanges();
       }
     });
@@ -97,16 +152,25 @@ export class TournamentDetailComponent implements OnInit {
   }
 
   launchTournament() {
+    this.showLaunchModal = true;
+  }
+
+  confirmLaunchTournament() {
     if (!this.tournament) return;
-    if (confirm('Êtes-vous sûr de vouloir lancer le tournoi ? Cela générera les matches du Round 1.')) {
-      this.tournamentService.startTournament(this.tournament.id).subscribe({
-        next: () => {
-          this.toastService.success('Tournoi lancé avec succès !');
-          this.loadTournament(this.tournament!.id);
-        },
-        error: (err: any) => this.toastService.error(err.error?.message || 'Erreur lors du lancement.')
-      });
-    }
+    this.submitting = true;
+    this.tournamentService.startTournament(this.tournament.id).subscribe({
+      next: () => {
+        this.toastService.success('Tournoi lancé avec succès !');
+        this.loadTournament(this.tournament!.id);
+        this.showLaunchModal = false;
+        this.submitting = false;
+      },
+      error: (err: any) => {
+        this.toastService.error(err.error?.message || 'Erreur lors du lancement.');
+        this.showLaunchModal = false;
+        this.submitting = false;
+      }
+    });
   }
 
   closeRegistrations() {
