@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { BadgeType } from '../models/organizer.model';
 
 export interface Tournament {
   id: number;
@@ -11,6 +12,7 @@ export interface Tournament {
     id: number;
     name: string;
     email: string;
+    badge?: BadgeType;
     verified?: boolean;
   };
   name: string;

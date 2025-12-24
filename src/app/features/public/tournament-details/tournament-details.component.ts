@@ -29,11 +29,12 @@ import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pi
 import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
 import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
+import { OrganizerBadgeComponent } from '../../../shared/components/organizer-badge/organizer-badge.component';
 
 @Component({
   selector: 'app-tournament-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe, TournamentStatusClassPipe, GameNamePipe, GameColorPipe],
+  imports: [CommonModule, RouterModule, FormsModule, TournamentStatusPipe, TournamentStatusClassPipe, GameNamePipe, GameColorPipe, OrganizerBadgeComponent],
   templateUrl: './tournament-details.component.html',
   styleUrls: ['./tournament-details.component.css']
 })

@@ -24,8 +24,8 @@
             </div>
             <h1 class="text-xl md:text-4xl font-bold text-white mb-2 break-words">{{tournament.name}}</h1>
             <div class="flex items-center gap-2 text-slate-400 flex-wrap">
+               <app-organizer-badge [badge]="tournament.organizer.badge" size="sm"></app-organizer-badge>
                <span class="truncate max-w-[150px] sm:max-w-none">Par {{tournament.organizer.name}}</span>
-               <span *ngIf="tournament.organizer.verified" [innerHTML]="sanitize(icons.verified)"></span>
             </div>
          </div>
 

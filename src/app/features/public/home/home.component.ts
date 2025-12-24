@@ -86,11 +86,6 @@ export class HomeComponent implements OnInit {
       icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
       title: '100% Sécurisé',
       description: 'Vos données et celles de vos joueurs sont protégées. Système de validation des scores pour éviter les tricheries.'
-    },
-    {
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M16 12h2"/><path d="M8 8v8"/><path d="M18 8v8"/></svg>',
-      title: 'Multi-Jeux',
-      description: 'Compatible avec tous vos jeux compétitifs favoris : FIFA, Call of Duty, League of Legends, et bien d\'autres.'
     }
   ];
 

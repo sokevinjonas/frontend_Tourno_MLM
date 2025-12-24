@@ -5,11 +5,12 @@ import { AuthService, User } from '../../../core/services/auth.service';
 import { OrganizerService } from '../../../core/services/organizer.service';
 import { Organizer } from '../../../core/models/organizer.model';
 import { ToastService } from '../../../core/services/toast.service';
+import { OrganizerBadgeComponent } from '../../../shared/components/organizer-badge/organizer-badge.component';
 
 @Component({
   selector: 'app-organizers',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, OrganizerBadgeComponent],
   templateUrl: './organizers.component.html'
 })
 export class OrganizersComponent implements OnInit {
