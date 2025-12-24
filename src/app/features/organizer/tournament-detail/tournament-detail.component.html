@@ -134,22 +134,36 @@
             </div>
 
             <div class="grid gap-4">
-                <div *ngFor="let match of matches" class="match-card">
-                    <div class="text-right">
-                        <div class="text-white font-bold">{{ match.player1?.name || 'A déterminer' }}</div>
-                        <div class="text-xs text-slate-500">ID: {{ match.player1?.id }}</div>
+                <div *ngFor="let match of matches" class="match-card group relative">
+                    <div class="text-right flex-1">
+                        <div class="text-white font-bold truncate">{{ match.player1?.name || 'À déterminer' }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 1</div>
                     </div>
-                    <div class="flex flex-col items-center gap-2">
+                    
+                    <div class="flex flex-col items-center gap-3 px-8">
                         <div class="score-display">
                             {{ match.player1_score ?? '-' }} : {{ match.player2_score ?? '-' }}
                         </div>
-                        <span class="badge" [ngClass]="match.status === 'scheduled' ? 'bg-amber-500/10 text-amber-500' : 'bg-green-500/10 text-green-400'">
+                        <span class="badge" [ngClass]="{
+                            'bg-amber-500/10 text-amber-500': match.status === 'scheduled',
+                            'bg-blue-500/10 text-blue-400': match.status === 'in_progress',
+                            'bg-green-500/10 text-green-400': match.status === 'completed',
+                            'bg-red-500/10 text-red-400': match.status === 'disputed'
+                        }">
                            {{ match.status | uppercase }}
                         </span>
                     </div>
-                    <div class="text-left">
-                        <div class="text-white font-bold">{{ match.player2?.name || 'A déterminer' }}</div>
-                        <div class="text-xs text-slate-500">ID: {{ match.player2?.id }}</div>
+
+                    <div class="text-left flex-1">
+                        <div class="text-white font-bold truncate">{{ match.player2?.name || 'À déterminer' }}</div>
+                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 2</div>
+                    </div>
+
+                    <!-- Action Hover Overlay -->
+                    <div *ngIf="match.status !== 'completed' && match.player1 && match.player2" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all rounded-3xl">
+                        <button (click)="openScoreModal(match)" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transform scale-90 group-hover:scale-100 transition-all shadow-xl shadow-blue-600/20">
+                            Saisir les Scores
+                        </button>
                     </div>
                 </div>
             </div>
@@ -180,4 +194,59 @@
 
     </div>
   </div>
+</div>
+
+<!-- Score Submission Modal -->
+<div *ngIf="showScoreModal && selectedMatch" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="closeScoreModal()"></div>
+    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="text-center mb-10">
+            <h3 class="text-3xl font-black text-white mb-2 uppercase tracking-tight">Enregistrer le Score</h3>
+            <p class="text-slate-500 text-sm">Entrez les résultats finaux de la rencontre</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8 mb-10">
+            <!-- Player 1 Score -->
+            <div class="space-y-4 text-center">
+                <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player1?.name }}</div>
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        [(ngModel)]="score1"
+                        min="0"
+                        class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
+                        placeholder="0"
+                    >
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P1</div>
+                </div>
+            </div>
+
+            <!-- Player 2 Score -->
+            <div class="space-y-4 text-center">
+                <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player2?.name }}</div>
+                <div class="relative">
+                    <input 
+                        type="number" 
+                        [(ngModel)]="score2"
+                        min="0"
+                        class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
+                        placeholder="0"
+                    >
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex gap-4">
+            <button (click)="closeScoreModal()" class="flex-1 py-5 px-6 rounded-2xl border border-slate-800 text-slate-400 font-bold hover:bg-slate-800 transition-all uppercase tracking-widest text-xs">Annuler</button>
+            <button 
+                (click)="submitScore()" 
+                [disabled]="submitting || score1 === null || score2 === null"
+                class="flex-1 py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+            >
+                <svg *ngIf="submitting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                {{ submitting ? 'Enregistrement...' : 'Confirmer' }}
+            </button>
+        </div>
+    </div>
 </div>

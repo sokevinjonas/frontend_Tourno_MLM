@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { MatchService, Match } from '../../../core/services/match.service';
 import { PaymentService } from '../../../core/services/payment.service';
@@ -13,7 +14,7 @@ import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-stat
 @Component({
   selector: 'app-tournament-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, TournamentStatusPipe, GameNamePipe, TournamentStatusClassPipe],
+  imports: [CommonModule, RouterLink, FormsModule, TournamentStatusPipe, GameNamePipe, TournamentStatusClassPipe],
   templateUrl: './tournament-detail.component.html',
   styleUrls: ['./tournament-detail.component.css']
 })
@@ -22,8 +23,15 @@ export class TournamentDetailComponent implements OnInit {
   tournament: Tournament | null = null;
   matches: Match[] = [];
   loading = true;
+  submitting = false;
   walletStats: OrganizerWalletStats | null = null;
   activeTab: 'overview' | 'participants' | 'matches' | 'settings' = 'overview';
+
+  // Score submission state
+  showScoreModal = false;
+  selectedMatch: Match | null = null;
+  score1: number | null = null;
+  score2: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -113,4 +121,41 @@ export class TournamentDetailComponent implements OnInit {
     });
   }
 
+  openScoreModal(match: Match) {
+    this.selectedMatch = match;
+    this.score1 = match.player1_score;
+    this.score2 = match.player2_score;
+    this.showScoreModal = true;
+  }
+
+  closeScoreModal() {
+    this.showScoreModal = false;
+    this.selectedMatch = null;
+    this.score1 = null;
+    this.score2 = null;
+  }
+
+  submitScore() {
+    if (!this.selectedMatch || this.score1 === null || this.score2 === null) return;
+    
+    this.submitting = true;
+    this.matchService.enterScore(this.selectedMatch.id, {
+      player1_score: this.score1,
+      player2_score: this.score2
+    }).subscribe({
+      next: () => {
+        this.toastService.success('Score enregistré !');
+        this.loadMatches(this.tournament!.id);
+        this.closeScoreModal();
+        this.submitting = false;
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error submitting score', err);
+        this.toastService.error(err.error?.message || 'Erreur lors de l\'enregistrement.');
+        this.submitting = false;
+        this.cd.detectChanges();
+      }
+    });
+  }
 }
