@@ -20,7 +20,9 @@ export class UserDetailComponent implements OnInit {
 
   showValidateModal = false;
   showBanModal = false;
-  banReason = '';
+  showImageModal = false;
+  selectedImageUrl = '';
+  rejection_reason = '';
 
   private cd = inject(ChangeDetectorRef);
   constructor(
@@ -29,6 +31,21 @@ export class UserDetailComponent implements OnInit {
     private moderatorService: ModeratorService,
     private toastService: ToastService
   ) {}
+
+  getScreenshotUrl(path: string): string {
+    const baseUrl = 'http://localhost:8000/storage'; // Assuming /storage is the link to app/public
+    return `${baseUrl}/${path}`;
+  }
+
+  openImageModal(url: string) {
+    this.selectedImageUrl = url;
+    this.showImageModal = true;
+  }
+
+  closeImageModal() {
+    this.showImageModal = false;
+    this.selectedImageUrl = '';
+  }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -83,7 +100,7 @@ export class UserDetailComponent implements OnInit {
   }
 
   openBanModal() {
-    this.banReason = '';
+    this.rejection_reason = '';
     this.showBanModal = true;
   }
 
@@ -95,7 +112,9 @@ export class UserDetailComponent implements OnInit {
     if (!this.user?.profile) return;
     
     this.submitting = true;
-    this.moderatorService.rejectProfile(this.user.profile.id, this.banReason || 'Non spécifiée').subscribe({
+    console.log(this.rejection_reason, this.user.profile.id);
+    
+    this.moderatorService.rejectProfile(this.user.profile.id, this.rejection_reason || 'Non spécifiée').subscribe({
       next: () => {
         this.toastService.success('Profil refusé avec succès.');
         this.loadUser(this.user!.id);
