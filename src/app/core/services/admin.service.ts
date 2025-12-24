@@ -40,6 +40,20 @@ export class AdminService {
     return this.http.get<PaginatedResponse<User>>(`${this.apiUrl}/users`, { params });
   }
 
+  getUserById(id: number): Observable<User> {
+    return this.http.get<{ user: User }>(`${this.apiUrl}/users/${id}`).pipe(
+      map(res => res.user)
+    );
+  }
+
+  banUser(id: number, reason: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${id}/ban`, { ban_reason: reason });
+  }
+
+  unbanUser(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${id}/unban`, {});
+  }
+
   /**
    * gestion globale des tournois
    */

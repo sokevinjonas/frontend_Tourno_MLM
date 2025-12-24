@@ -25,6 +25,7 @@ export class UsersComponent implements OnInit {
   filters = {
     search: '',
     role: '',
+    profile_status: '',
     page: 1
   };
 
@@ -60,6 +61,11 @@ export class UsersComponent implements OnInit {
   }
 
   onRoleChange() {
+    this.filters.page = 1;
+    this.loadUsers();
+  }
+
+  onStatusChange() {
     this.filters.page = 1;
     this.loadUsers();
   }
