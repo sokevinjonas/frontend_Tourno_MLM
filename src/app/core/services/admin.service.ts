@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { User } from '../models/user.model';
+import { User, PaginatedResponse } from '../models/user.model';
 import { Tournament } from './tournament.service';
 
 @Injectable({
@@ -28,30 +28,42 @@ export class AdminService {
   /**
    * gestion des utilisateurs
    */
-  getUsers(filters?: any): Observable<User[]> {
+  getUsers(filters?: any): Observable<PaginatedResponse<User>> {
     let params = new HttpParams();
     if (filters) {
       Object.keys(filters).forEach(key => {
-        if (filters[key]) params = params.set(key, filters[key]);
+        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+          params = params.set(key, filters[key]);
+        }
       });
     }
-    return this.http.get<{ data: User[] } | User[]>(`${this.apiUrl}/users`, { params }).pipe(
-      map(res => (res as any).data || res)
-    );
+    return this.http.get<PaginatedResponse<User>>(`${this.apiUrl}/users`, { params });
   }
 
   /**
    * gestion globale des tournois
    */
-  getGlobalTournaments(filters?: any): Observable<Tournament[]> {
+  getGlobalTournaments(filters?: any): Observable<PaginatedResponse<Tournament>> {
     let params = new HttpParams();
     if (filters) {
       Object.keys(filters).forEach(key => {
-        if (filters[key]) params = params.set(key, filters[key]);
+        if (filters[key] !== undefined && filters[key] !== null && filters[key] !== '') {
+          params = params.set(key, filters[key]);
+        }
       });
     }
     return this.http.get<any>(`${this.apiUrl}/tournaments`, { params }).pipe(
-      map(res => res.data?.tournaments || res.tournaments || res.data || res)
+      map(res => {
+        // If the backend returns { data: { tournaments: [], pagination: {} } } 
+        // or { data: [], pagination: {} }
+        if (res.data?.tournaments) {
+          return { data: res.data.tournaments, pagination: res.pagination || res.data.pagination };
+        }
+        if (Array.isArray(res.data)) {
+          return { data: res.data, pagination: res.pagination || res.meta || { current_page: 1, last_page: 1, per_page: 20, total: res.data.length } };
+        }
+        return res;
+      })
     );
   }
 

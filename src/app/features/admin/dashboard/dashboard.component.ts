@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
+import { User, PaginatedResponse } from '../../../core/models/user.model';
+import { Tournament } from '../../../core/services/tournament.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,12 +33,14 @@ export class DashboardComponent implements OnInit {
     Promise.all([
       this.adminService.getUsers().toPromise(),
       this.adminService.getGlobalTournaments().toPromise()
-    ]).then(([users, tournaments]) => {
+    ]).then(([usersRes, tourneysRes]) => {
+      const users: User[] = usersRes?.data || [];
+      const tourneys: Tournament[] = tourneysRes?.data || [];
       this.stats = {
-        totalUsers: users?.length || 0,
-        activeTournaments: tournaments?.filter(t => t.status === 'in_progress' || t.status === 'open').length || 0,
+        totalUsers: users.length,
+        activeTournaments: tourneys.filter((t: Tournament) => t.status === 'in_progress' || t.status === 'open').length,
         totalTransactions: 0, // Placeholder
-        activeOrganizers: users?.filter(u => u.role === 'organizer').length || 0
+        activeOrganizers: users.filter((u: User) => u.role === 'organizer').length
       };
       this.loading = false;
       this.cd.markForCheck();

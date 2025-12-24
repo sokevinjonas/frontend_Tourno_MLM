@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
-import { User } from '../../../core/models/user.model';
+import { User, PaginatedResponse } from '../../../core/models/user.model';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -32,8 +32,10 @@ export class UserDetailComponent implements OnInit {
   loadUser(id: number) {
     this.loading = true;
     this.adminService.getUsers().subscribe({
-      next: (users) => {
-        this.user = users.find(u => u.id === id) || null;
+      next: (res: PaginatedResponse<User>) => {
+        this.user = res.data.find((u: User) => u.id === id) || null;
+        console.log(this.user);
+        
         if (!this.user) {
           this.toastService.error('Utilisateur non trouvé.');
         }

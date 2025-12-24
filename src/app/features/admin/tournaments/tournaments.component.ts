@@ -7,6 +7,9 @@ import { RouterLink } from '@angular/router';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 import { FormsModule } from '@angular/forms';
+import { User, PaginatedResponse, PaginationMeta } from '../../../core/models/user.model';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tournaments',
@@ -18,13 +21,18 @@ export class TournamentsComponent implements OnInit {
 
   private cd = inject(ChangeDetectorRef);
   tournaments: Tournament[] = [];
+  pagination: PaginationMeta | null = null;
   loading = true;
   submitting = false;
 
   filters = {
+    search: '',
     status: '',
-    game: ''
+    game: '',
+    page: 1
   };
+
+  private searchSubject = new Subject<string>();
 
   constructor(
     private adminService: AdminService,
@@ -34,13 +42,46 @@ export class TournamentsComponent implements OnInit {
 
   ngOnInit() {
     this.loadTournaments();
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.filters.search = value;
+      this.filters.page = 1;
+      this.loadTournaments();
+    });
+  }
+
+  onSearchChange(event: any) {
+    this.searchSubject.next(event.target.value);
+  }
+
+  onFilterChange() {
+    this.filters.page = 1;
+    this.loadTournaments();
+  }
+
+  onPageChange(page: number) {
+    this.filters.page = page;
+    this.loadTournaments();
+  }
+
+  getPages(): number[] {
+    if (!this.pagination) return [];
+    return Array.from({ length: this.pagination.last_page }, (_, i) => i + 1);
+  }
+
+  mathMin(a: number, b: number): number {
+    return Math.min(a, b);
   }
 
   loadTournaments() {
     this.loading = true;
     this.adminService.getGlobalTournaments(this.filters).subscribe({
-      next: (tournaments) => {
-        this.tournaments = tournaments;
+      next: (res: PaginatedResponse<Tournament>) => {
+        this.tournaments = res.data;
+        this.pagination = res.pagination;
         this.loading = false;
         this.cd.markForCheck();
       },
