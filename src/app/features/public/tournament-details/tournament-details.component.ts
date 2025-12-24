@@ -91,7 +91,7 @@ export class TournamentDetailsComponent implements OnInit {
     const targetGame = this.tournament.game?.toLowerCase().trim();
     return this.currentUser.game_accounts.filter(
       (acc: any) => {
-        const accGame = (acc.game || acc.game_type)?.toLowerCase().trim();
+        const accGame = (acc.game || acc.game)?.toLowerCase().trim();
         return accGame === targetGame;
       }
     );
@@ -115,6 +115,8 @@ export class TournamentDetailsComponent implements OnInit {
       this.tournamentService.getTournament(id).subscribe({
           next: (data) => {
               this.tournament = data;
+              console.log(this.tournament);
+              
               if (this.tournament) {
                   const regs = (this.tournament as any).registrations || [];
                   this.tournament.participants = {

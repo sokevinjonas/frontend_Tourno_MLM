@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { PaginatedResponse } from '../models/user.model';
 
 export interface Match {
   id: number;
@@ -27,8 +28,8 @@ export class MatchService {
 
   constructor(private http: HttpClient) {}
 
-  getTournamentMatches(tournamentId: number): Observable<Match[]> {
-    return this.http.get<Match[]>(`${environment.apiUrl}/tournaments/${tournamentId}/matches`);
+  getTournamentMatches(tournamentId: number): Observable<PaginatedResponse<Match>> {
+    return this.http.get<PaginatedResponse<Match>>(`${environment.apiUrl}/tournaments/${tournamentId}/matches`);
   }
 
   enterScore(matchId: number, score: { player1_score: number, player2_score: number }): Observable<Match> {

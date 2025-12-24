@@ -67,7 +67,9 @@ export class TournamentDetailComponent implements OnInit {
   loadMatches(id: number) {
     this.matchService.getTournamentMatches(id).subscribe({
       next: (matches) => {
-        this.matches = matches;
+        this.matches = matches.data;
+        console.log(this.matches);
+        
         this.cd.detectChanges();
       }
     });
