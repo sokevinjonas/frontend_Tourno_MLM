@@ -1,15 +1,29 @@
 export type UserRole = 'player' | 'organizer' | 'moderator' | 'admin';
 
+export interface Wallet {
+  id: number;
+  user_id: number;
+  balance: string;
+  blocked_balance: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface User {
   id: number;
   name: string;
   email: string;
   role: UserRole;
   badge?: string;
+  avatar_url?: string | null;
   verified?: boolean;
+  is_banned: boolean;
+  banned_until?: string | null;
+  ban_reason?: string | null;
   profile?: UserProfile;
-  wallet?: any;
-  created_at?: string;
+  wallet?: Wallet;
+  created_at: string;
+  updated_at?: string;
 }
 
 export interface UserProfile {

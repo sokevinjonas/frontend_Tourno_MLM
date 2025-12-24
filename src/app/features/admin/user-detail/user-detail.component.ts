@@ -34,7 +34,6 @@ export class UserDetailComponent implements OnInit {
     this.adminService.getUsers().subscribe({
       next: (res: PaginatedResponse<User>) => {
         this.user = res.data.find((u: User) => u.id === id) || null;
-        console.log(this.user);
         
         if (!this.user) {
           this.toastService.error('Utilisateur non trouvé.');
