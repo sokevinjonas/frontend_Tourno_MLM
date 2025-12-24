@@ -19,10 +19,12 @@ export class UserDetailComponent implements OnInit {
   submitting = false;
 
   showValidateModal = false;
+  showRejectModal = false;
   showBanModal = false;
   showImageModal = false;
   selectedImageUrl = '';
   rejection_reason = '';
+  banReason = '';
 
   private cd = inject(ChangeDetectorRef);
   constructor(
@@ -99,8 +101,37 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
-  openBanModal() {
+  openRejectModal() {
     this.rejection_reason = '';
+    this.showRejectModal = true;
+  }
+
+  closeRejectModal() {
+    this.showRejectModal = false;
+  }
+
+  confirmReject() {
+    if (!this.user?.profile) return;
+    
+    this.submitting = true;
+    this.moderatorService.rejectProfile(this.user.profile.id, this.rejection_reason || 'Non spécifiée').subscribe({
+      next: () => {
+        this.toastService.success('Profil refusé avec succès.');
+        this.loadUser(this.user!.id);
+        this.submitting = false;
+        this.closeRejectModal();
+      },
+      error: (err) => {
+        console.error('Error rejecting profile', err);
+        this.toastService.error('Erreur lors du refus.');
+        this.submitting = false;
+        this.cd.markForCheck();
+      }
+    });
+  }
+
+  openBanModal() {
+    this.banReason = '';
     this.showBanModal = true;
   }
 
@@ -109,14 +140,12 @@ export class UserDetailComponent implements OnInit {
   }
 
   confirmBan() {
-    if (!this.user?.profile) return;
+    if (!this.user) return;
     
     this.submitting = true;
-    console.log(this.rejection_reason, this.user.profile.id);
-    
-    this.moderatorService.rejectProfile(this.user.profile.id, this.rejection_reason || 'Non spécifiée').subscribe({
+    this.adminService.banUser(this.user.id, this.banReason || 'Non spécifiée').subscribe({
       next: () => {
-        this.toastService.success('Profil refusé avec succès.');
+        this.toastService.success('Utilisateur banni.');
         this.loadUser(this.user!.id);
         this.submitting = false;
         this.closeBanModal();

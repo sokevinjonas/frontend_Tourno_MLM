@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModeratorService } from '../../../core/services/moderator.service';
 import { RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
+  private cd = inject(ChangeDetectorRef);
   stats = {
     pendingProfiles: 0,
     disputedMatches: 0,
@@ -38,9 +39,11 @@ export class DashboardComponent implements OnInit {
         pendingVerifications: verifications?.length || 0
       };
       this.loading = false;
+      this.cd.markForCheck();
     }).catch(err => {
       console.error('Error loading moderator stats', err);
       this.loading = false;
+      this.cd.markForCheck();
     });
   }
 }

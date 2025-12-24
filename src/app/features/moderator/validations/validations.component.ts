@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModeratorService } from '../../../core/services/moderator.service';
 import { UserProfile, OrganizerVerification } from '../../../core/models/user.model';
@@ -12,6 +12,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './validations.component.html'
 })
 export class ValidationsComponent implements OnInit {
+  
+  private cd = inject(ChangeDetectorRef);
   activeTab: 'profiles' | 'organizers' = 'profiles';
   
   pendingProfiles: UserProfile[] = [];
@@ -52,10 +54,12 @@ export class ValidationsComponent implements OnInit {
       next: (profiles) => {
         this.pendingProfiles = profiles;
         this.loading = false;
+        this.cd.markForCheck();
       },
       error: (err) => {
         this.toastService.error('Erreur lors du chargement des profils.');
         this.loading = false;
+        this.cd.markForCheck();
       }
     });
   }
@@ -65,10 +69,12 @@ export class ValidationsComponent implements OnInit {
       next: (verifs) => {
         this.pendingVerifications = verifs;
         this.loading = false;
+        this.cd.markForCheck();
       },
       error: (err) => {
         this.toastService.error('Erreur lors du chargement des vérifications.');
         this.loading = false;
+        this.cd.markForCheck();
       }
     });
   }
@@ -82,10 +88,12 @@ export class ValidationsComponent implements OnInit {
         this.toastService.success(`Profil de ${profile.user?.name} validé.`);
         this.pendingProfiles = this.pendingProfiles.filter(p => p.id !== profile.id);
         this.submitting = false;
+        this.cd.markForCheck();
       },
       error: () => {
         this.toastService.error('Erreur lors de la validation.');
         this.submitting = false;
+        this.cd.markForCheck();
       }
     });
   }
@@ -99,10 +107,12 @@ export class ValidationsComponent implements OnInit {
         this.toastService.success(`Organisateur ${verif.user?.name} validé.`);
         this.pendingVerifications = this.pendingVerifications.filter(v => v.id !== verif.id);
         this.submitting = false;
+        this.cd.markForCheck();
       },
       error: () => {
         this.toastService.error('Erreur lors de la validation.');
         this.submitting = false;
+        this.cd.markForCheck();
       }
     });
   }
@@ -130,10 +140,12 @@ export class ValidationsComponent implements OnInit {
           this.pendingProfiles = this.pendingProfiles.filter(p => p.id !== this.selectedItem.id);
           this.closeRejectModal();
           this.submitting = false;
+          this.cd.markForCheck();
         },
         error: () => {
           this.toastService.error('Erreur lors du rejet.');
           this.submitting = false;
+          this.cd.markForCheck();
         }
       });
     } else {
@@ -143,10 +155,12 @@ export class ValidationsComponent implements OnInit {
           this.pendingVerifications = this.pendingVerifications.filter(v => v.id !== this.selectedItem.id);
           this.closeRejectModal();
           this.submitting = false;
+          this.cd.markForCheck();
         },
         error: () => {
           this.toastService.error('Erreur lors du rejet.');
           this.submitting = false;
+          this.cd.markForCheck();
         }
       });
     }
