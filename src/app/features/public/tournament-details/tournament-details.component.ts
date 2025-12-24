@@ -145,7 +145,37 @@ export class TournamentDetailsComponent implements OnInit {
                       'Screenshot du score final obligatoire', 
                       'Fair-play exigé'
                   ];
-                  this.tournament.roundsList = []; 
+
+                  // Map rounds and matches for the tree/bracket view
+                  if ((this.tournament as any).rounds && (this.tournament as any).matches) {
+                      const allMatches = (this.tournament as any).matches || [];
+                      const allRounds = (this.tournament as any).rounds || [];
+                      const regs = (this.tournament as any).registrations || [];
+                      
+                      // Create a map for quick username lookup
+                      const playerMap: { [key: number]: string } = {};
+                      regs.forEach((r: any) => {
+                          if (r.user_id) {
+                              playerMap[r.user_id] = r.game_account?.game_username || r.user?.name || 'Joueur ' + r.user_id;
+                          }
+                      });
+
+                      this.tournament.rounds = allRounds.sort((a: any, b: any) => a.round_number - b.round_number).map((r: any) => {
+                          const roundMatches = allMatches.filter((m: any) => m.round_id === r.id);
+                          return {
+                              id: r.id,
+                              name: `Ronde ${r.round_number}`,
+                              matches: roundMatches.map((m: any) => ({
+                                  id: m.id,
+                                  p1: playerMap[m.player1_id] || 'TBD',
+                                  p2: playerMap[m.player2_id] || 'TBD',
+                                  s1: m.player1_score,
+                                  s2: m.player2_score,
+                                  status: m.status
+                              }))
+                          };
+                      });
+                  }
               }
 
               this.isLoading = false;
