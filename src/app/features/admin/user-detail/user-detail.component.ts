@@ -1,15 +1,51 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AdminService } from '../../../core/services/admin.service';
+import { User } from '../../../core/models/user.model';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-user-detail',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">UserDetailComponent</h1>
-      <p class="text-gray-600">This feature is under construction.</p>
-    </div>
-  `
+  imports: [CommonModule, RouterLink],
+  templateUrl: './user-detail.component.html'
 })
-export class UserDetailComponent {}
+export class UserDetailComponent implements OnInit {
+  user: User | null = null;
+  loading = true;
+
+  private cd = inject(ChangeDetectorRef);
+  constructor(
+    private route: ActivatedRoute,
+    private adminService: AdminService,
+    private toastService: ToastService
+  ) {}
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.loadUser(Number(id));
+    }
+  }
+
+  loadUser(id: number) {
+    this.loading = true;
+    this.adminService.getUsers().subscribe({
+      next: (users) => {
+        this.user = users.find(u => u.id === id) || null;
+        if (!this.user) {
+          this.toastService.error('Utilisateur non trouvé.');
+        }
+        this.loading = false;
+        this.cd.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error loading user detail', err);
+        this.toastService.error('Erreur lors du chargement des détails.');
+        this.loading = false;
+        this.cd.markForCheck();
+      }
+    });
+  }
+}

@@ -1,0 +1,104 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Supervision des Tournois</h1>
+        <p class="text-slate-400">Gérez l'ensemble des compétitions de la plateforme.</p>
+      </div>
+      <button (click)="loadTournaments()" class="px-6 py-2.5 bg-slate-900 border border-slate-700 text-slate-300 rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2 font-bold">
+        <svg class="w-4 h-4" [class.animate-spin]="loading" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Actualiser
+      </button>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 mb-8 flex flex-wrap gap-4 items-center">
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Filtrer par statut</label>
+        <select 
+          [(ngModel)]="filters.status" 
+          (change)="loadTournaments()"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"
+        >
+          <option value="">Tous les statuts</option>
+          <option value="draft">Brouillon</option>
+          <option value="open">Ouvert</option>
+          <option value="in_progress">En cours</option>
+          <option value="completed">Terminé</option>
+          <option value="cancelled">Annulé</option>
+        </select>
+      </div>
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Filtrer par jeu</label>
+        <select 
+          [(ngModel)]="filters.game" 
+          (change)="loadTournaments()"
+          class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-blue-500"
+        >
+          <option value="">Tous les jeux</option>
+          <option value="efootball">eFootball</option>
+          <option value="fc_mobile">FC Mobile</option>
+          <option value="dream_league_soccer">Dream League Soccer</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tournaments List -->
+    <div class="space-y-4">
+      <div *ngIf="loading" class="flex justify-center p-20">
+        <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+
+      <div *ngIf="!loading && tournaments.length === 0" class="text-center py-20 bg-slate-900/30 rounded-3xl border border-slate-800 border-dashed">
+        <p class="text-slate-500 italic">Aucun tournoi trouvé avec ces critères.</p>
+      </div>
+
+      <div *ngFor="let tournament of tournaments" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors group relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-6 justify-between">
+          <div class="flex items-center gap-6">
+            <div class="w-16 h-16 rounded-xl bg-slate-800 overflow-hidden shrink-0 border border-slate-700">
+              <img *ngIf="tournament.image" [src]="tournament.image" class="w-full h-full object-cover">
+              <div *ngIf="!tournament.image" class="w-full h-full flex items-center justify-center text-slate-600">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{{ tournament.name }}</h3>
+              <div class="flex items-center gap-3 mt-1">
+                <span [class]="tournament.status | tournamentStatusClass" class="text-[10px] font-black uppercase px-2 py-0.5 rounded border border-current">
+                  {{ tournament.status | tournamentStatus }}
+                </span>
+                <span class="text-xs text-slate-500 font-medium">Par Organisateur #{{ tournament.organizer_id }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2 lg:justify-end">
+            <!-- View link -->
+            <a [routerLink]="['/tournaments', tournament.id]" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-bold rounded-lg border border-slate-700 hover:bg-slate-700 transition-colors">
+              Voir la page
+            </a>
+            
+            <!-- Quick Actions -->
+            <button 
+              *ngIf="tournament.status !== 'cancelled' && tournament.status !== 'completed'"
+              (click)="changeStatus(tournament.id, 'cancelled')"
+              class="px-4 py-2 bg-red-500/10 text-red-500 text-xs font-bold rounded-lg border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
+            >
+              Annuler
+            </button>
+
+            <button 
+              *ngIf="tournament.status === 'draft' || tournament.status === 'cancelled'"
+              (click)="deleteTournament(tournament.id)"
+              class="px-4 py-2 bg-slate-900 text-slate-500 text-xs font-bold rounded-lg border border-slate-800 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

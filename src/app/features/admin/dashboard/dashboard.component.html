@@ -1,0 +1,101 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1 class="text-3xl font-bold text-white mb-2">Administration Système</h1>
+      <p class="text-slate-400">Vue d'ensemble et contrôle global de la plateforme Tourno.</p>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Users -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-colors">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </div>
+          <span class="text-slate-400 font-bold text-sm uppercase">Utilisateurs</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <p class="text-3xl font-black text-white">{{ stats.totalUsers }}</p>
+          <span class="text-xs text-slate-500">au total</span>
+        </div>
+      </div>
+
+      <!-- Tournaments -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-colors">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-purple-500/10 text-purple-500 rounded-2xl flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <span class="text-slate-400 font-bold text-sm uppercase">Tournois</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <p class="text-3xl font-black text-white">{{ stats.activeTournaments }}</p>
+          <span class="text-xs text-slate-500">actifs</span>
+        </div>
+      </div>
+
+      <!-- Financials -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-colors">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <span class="text-slate-400 font-bold text-sm uppercase">Flux financier</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <p class="text-3xl font-black text-white">---</p>
+          <span class="text-xs text-slate-500">FCFA</span>
+        </div>
+      </div>
+
+      <!-- Organizers -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-colors">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 bg-orange-500/10 text-orange-500 rounded-2xl flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <span class="text-slate-400 font-bold text-sm uppercase">Organisateurs</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <p class="text-3xl font-black text-white">{{ stats.activeOrganizers }}</p>
+          <span class="text-xs text-slate-500">Vérifiés</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- User Management link -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 group">
+        <h3 class="text-xl font-bold text-white mb-4">Gestion des Utilisateurs</h3>
+        <p class="text-slate-400 text-sm mb-8 leading-relaxed">Gérez les comptes, ajustez les soldes des portefeuilles et modifiez les rôles.</p>
+        <button routerLink="/admin/users" class="w-full py-4 bg-white text-black font-bold rounded-2xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2">
+          Liste des utilisateurs
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Tournament Management link -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 group">
+        <h3 class="text-xl font-bold text-white mb-4">Gestion des Tournois</h3>
+        <p class="text-slate-400 text-sm mb-8 leading-relaxed">Supervision globale, annulation forcée ou modification de n'importe quel tournoi.</p>
+        <button routerLink="/admin/tournaments" class="w-full py-4 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-700 transition-colors flex items-center justify-center gap-2 border border-slate-700">
+          Superviser les tournois
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Financial link -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 group">
+        <h3 class="text-xl font-bold text-white mb-4">Finances & Stats</h3>
+        <p class="text-slate-400 text-sm mb-8 leading-relaxed">Suivez les revenus, les transactions et téléchargez les rapports financiers.</p>
+        <button routerLink="/admin/finances" class="w-full py-4 bg-slate-800 text-white font-bold rounded-2xl hover:bg-slate-700 transition-colors flex items-center justify-center gap-2 border border-slate-700">
+          Rapports financiers
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

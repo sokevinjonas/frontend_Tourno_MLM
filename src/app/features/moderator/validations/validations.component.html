@@ -1,0 +1,125 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Validations en attente</h1>
+        <p class="text-slate-400">Gérez les approbations des profils et des organisateurs.</p>
+      </div>
+      <button (click)="refreshData()" class="px-4 py-2 bg-slate-900 border border-slate-700 text-slate-300 rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" [class.animate-spin]="loading" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Actualiser
+      </button>
+    </div>
+
+    <!-- Tab System -->
+    <div class="flex gap-2 mb-8 p-1 bg-slate-900 border border-slate-800 rounded-2xl w-fit">
+      <button 
+        (click)="setTab('profiles')"
+        [class.bg-blue-600]="activeTab === 'profiles'"
+        [class.text-white]="activeTab === 'profiles'"
+        [class.text-slate-400]="activeTab !== 'profiles'"
+        class="px-6 py-2 rounded-xl transition-all font-bold text-sm flex items-center gap-2"
+      >
+        Profils Utilisateurs
+        <span *ngIf="pendingProfiles.length > 0" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">{{ pendingProfiles.length }}</span>
+      </button>
+      <button 
+        (click)="setTab('organizers')"
+        [class.bg-emerald-600]="activeTab === 'organizers'"
+        [class.text-white]="activeTab === 'organizers'"
+        [class.text-slate-400]="activeTab !== 'organizers'"
+        class="px-6 py-2 rounded-xl transition-all font-bold text-sm flex items-center gap-2"
+      >
+        Vérifications Organisateurs
+        <span *ngIf="pendingVerifications.length > 0" class="bg-white/20 px-1.5 py-0.5 rounded text-[10px]">{{ pendingVerifications.length }}</span>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && activeTab === 'profiles' && pendingProfiles.length === 0" class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800 border-dashed">
+      <div class="w-16 h-16 bg-slate-800 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <p class="text-slate-400">Aucun profil utilisateur en attente.</p>
+    </div>
+
+    <div *ngIf="!loading && activeTab === 'organizers' && pendingVerifications.length === 0" class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800 border-dashed">
+      <div class="w-16 h-16 bg-slate-800 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <p class="text-slate-400">Aucune demande d'organisateur en attente.</p>
+    </div>
+
+    <!-- Profiles Grid -->
+    <div *ngIf="!loading && activeTab === 'profiles' && pendingProfiles.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let profile of pendingProfiles" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors group">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-xl font-bold text-slate-500 border border-slate-700 uppercase">
+            {{ profile.user?.name?.charAt(0) }}
+          </div>
+          <div>
+            <h3 class="text-white font-bold">{{ profile.user?.name }}</h3>
+            <p class="text-[10px] text-slate-500">{{ profile.user?.email }}</p>
+          </div>
+        </div>
+        <div class="space-y-3 mb-8 text-sm">
+          <p class="text-slate-300">📱 <span class="ml-1">{{ profile.whatsapp_number }}</span></p>
+          <p class="text-slate-300">🌍 <span class="ml-1">{{ profile.country }}, {{ profile.city }}</span></p>
+        </div>
+        <div class="flex gap-3">
+          <button (click)="openRejectModal(profile)" class="flex-1 py-2.5 bg-slate-800 text-red-400 font-bold rounded-xl hover:bg-red-500/10 transition-colors text-xs border border-slate-700">Rejeter</button>
+          <button (click)="validateProfile(profile)" [disabled]="submitting" class="flex-1 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transition-colors text-xs disabled:opacity-50">Valider</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organizer Verifications Grid -->
+    <div *ngIf="!loading && activeTab === 'organizers' && pendingVerifications.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let verif of pendingVerifications" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors group">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-xl font-bold text-emerald-500 border border-emerald-500/20 uppercase">
+            {{ verif.user?.name?.charAt(0) }}
+          </div>
+          <div>
+            <h3 class="text-white font-bold">{{ verif.user?.name }}</h3>
+            <p class="text-[10px] text-slate-500">{{ verif.user?.email }}</p>
+          </div>
+        </div>
+        <div class="mb-8">
+            <p class="text-[10px] text-slate-500 font-bold uppercase mb-2">Document de vérification</p>
+            <a [href]="verif.verification_document" target="_blank" class="block p-3 bg-slate-950 border border-slate-800 rounded-xl text-blue-400 hover:text-blue-300 text-xs truncate">
+                📄 Voir le document
+            </a>
+        </div>
+        <div class="flex gap-3">
+          <button (click)="openRejectModal(verif)" class="flex-1 py-2.5 bg-slate-800 text-red-400 font-bold rounded-xl hover:bg-red-500/10 transition-colors text-xs border border-slate-700">Rejeter</button>
+          <button (click)="validateOrganizer(verif)" [disabled]="submitting" class="flex-1 py-2.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-500 transition-colors text-xs disabled:opacity-50">Approuver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rejection Modal -->
+<div *ngIf="showRejectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeRejectModal()"></div>
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-md w-full relative z-10 shadow-2xl animate-in zoom-in duration-200">
+    <h3 class="text-xl font-bold text-white mb-2">Motif du rejet</h3>
+    <p class="text-slate-400 text-sm mb-6">Indiquez pourquoi cette demande est rejetée.</p>
+    <textarea 
+        [(ngModel)]="rejectionReason"
+        placeholder="Informations incorrectes ou document illisible..."
+        class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-red-500 transition-colors h-32 resize-none mb-6"
+    ></textarea>
+    <div class="flex gap-4">
+      <button (click)="closeRejectModal()" class="flex-1 py-3 px-4 rounded-xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+      <button (click)="confirmReject()" [disabled]="submitting || !rejectionReason" class="flex-1 py-3 px-4 rounded-xl bg-red-600 text-white font-bold hover:bg-red-500 transition-colors disabled:opacity-50">Confirmer</button>
+    </div>
+  </div>
+</div>

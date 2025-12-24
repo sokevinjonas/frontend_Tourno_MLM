@@ -1,15 +1,84 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModeratorService } from '../../../core/services/moderator.service';
+import { MatchService, Match } from '../../../core/services/match.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-complaints',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">ComplaintsComponent</h1>
-      <p class="text-gray-600">This feature is under construction.</p>
-    </div>
-  `
+  imports: [CommonModule, FormsModule],
+  templateUrl: './complaints.component.html'
 })
-export class ComplaintsComponent {}
+export class ComplaintsComponent implements OnInit {
+  disputedMatches: Match[] = [];
+  loading = true;
+  submitting = false;
+
+  showResolveModal = false;
+  selectedMatch: Match | null = null;
+  
+  resolveForm = {
+    winner_id: 0,
+    player1_score: 0,
+    player2_score: 0
+  };
+
+  constructor(
+    private moderatorService: ModeratorService,
+    private toastService: ToastService
+  ) {}
+
+  ngOnInit() {
+    this.loadDisputedMatches();
+  }
+
+  loadDisputedMatches() {
+    this.loading = true;
+    this.moderatorService.getDisputedMatches().subscribe({
+      next: (matches) => {
+        this.disputedMatches = matches;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error loading disputed matches', err);
+        this.toastService.error('Erreur lors du chargement des litiges.');
+        this.loading = false;
+      }
+    });
+  }
+
+  openResolveModal(match: Match) {
+    this.selectedMatch = match;
+    this.resolveForm = {
+      winner_id: match.winner_id || 0,
+      player1_score: match.player1_score || 0,
+      player2_score: match.player2_score || 0
+    };
+    this.showResolveModal = true;
+  }
+
+  closeResolveModal() {
+    this.showResolveModal = false;
+    this.selectedMatch = null;
+  }
+
+  confirmResolve() {
+    if (!this.selectedMatch) return;
+    this.submitting = true;
+
+    this.moderatorService.validateMatchResult(this.selectedMatch.id, this.resolveForm).subscribe({
+      next: () => {
+        this.toastService.success('Litige résolu avec succès.');
+        this.disputedMatches = this.disputedMatches.filter(m => m.id !== this.selectedMatch?.id);
+        this.closeResolveModal();
+        this.submitting = false;
+      },
+      error: (err) => {
+        this.toastService.error('Erreur lors de la résolution du litige.');
+        this.submitting = false;
+      }
+    });
+  }
+}

@@ -1,0 +1,142 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Gestion des Litiges</h1>
+        <p class="text-slate-400">Arbitrez les matchs disputés et validez les résultats finaux.</p>
+      </div>
+      <button (click)="loadDisputedMatches()" class="px-4 py-2 bg-slate-900 border border-slate-700 text-slate-300 rounded-xl hover:bg-slate-800 transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" [class.animate-spin]="loading" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Actualiser
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && disputedMatches.length === 0" class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800 border-dashed">
+      <div class="w-20 h-20 bg-slate-800 text-slate-600 rounded-full flex items-center justify-center mx-auto mb-6">
+        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">Aucun litige</h3>
+      <p class="text-slate-400">Tous les matchs se sont déroulés sans incident majeur.</p>
+    </div>
+
+    <!-- Matches List -->
+    <div *ngIf="!loading && disputedMatches.length > 0" class="space-y-4">
+      <div *ngFor="let match of disputedMatches" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors group">
+        <div class="flex flex-col lg:grid lg:grid-cols-4 gap-6 items-center">
+          <!-- Tournament Info -->
+          <div class="lg:col-span-1 border-r border-slate-800 pr-6 w-full">
+            <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1 block">Tournoi #{{ match.tournament_id }}</span>
+            <h3 class="text-white font-bold mb-1">Match disputé</h3>
+            <p class="text-xs text-slate-500">Round {{ match.round_number }}</p>
+          </div>
+
+          <!-- Players & Scores -->
+          <div class="lg:col-span-2 flex items-center justify-center gap-8 w-full">
+            <!-- Player 1 -->
+            <div class="text-center flex-1">
+              <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-400 font-bold border border-slate-700">
+                {{ match.player1?.name?.charAt(0) }}
+              </div>
+              <p class="text-sm font-medium text-white truncate">{{ match.player1?.name }}</p>
+              <p class="text-2xl font-black text-slate-500 mt-1">{{ match.player1_score || 0 }}</p>
+            </div>
+
+            <div class="text-xl font-bold text-slate-700 italic">VS</div>
+
+            <!-- Player 2 -->
+            <div class="text-center flex-1">
+              <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-2 text-slate-400 font-bold border border-slate-700">
+                {{ match.player2?.name?.charAt(0) }}
+              </div>
+              <p class="text-sm font-medium text-white truncate">{{ match.player2?.name }}</p>
+              <p class="text-2xl font-black text-slate-500 mt-1">{{ match.player2_score || 0 }}</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="lg:col-span-1 flex justify-end w-full">
+            <button (click)="openResolveModal(match)" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20 w-full lg:w-auto">
+              Arbitrer le match
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Resolution Modal -->
+<div *ngIf="showResolveModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="closeResolveModal()"></div>
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 max-w-lg w-full relative z-10 shadow-2xl animate-in zoom-in duration-200">
+    <div class="text-center mb-8">
+      <h3 class="text-2xl font-bold text-white mb-2">Arbitrage du match</h3>
+      <p class="text-slate-400 font-medium italic">Entrez le résultat officiel après vérification des preuves.</p>
+    </div>
+
+    <div class="space-y-8 mb-8">
+      <!-- Winner Selection -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">Désigner le vainqueur</label>
+        <div class="grid grid-cols-2 gap-4">
+          <button 
+            (click)="resolveForm.winner_id = selectedMatch?.player1_id || 0"
+            [class.bg-blue-600]="resolveForm.winner_id === selectedMatch?.player1_id"
+            [class.border-blue-500]="resolveForm.winner_id === selectedMatch?.player1_id"
+            [class.bg-slate-950]="resolveForm.winner_id !== selectedMatch?.player1_id"
+            class="p-4 rounded-xl border border-slate-800 text-white font-bold transition-all"
+          >
+            {{ selectedMatch?.player1?.name }}
+          </button>
+          <button 
+            (click)="resolveForm.winner_id = selectedMatch?.player2_id || 0"
+            [class.bg-blue-600]="resolveForm.winner_id === selectedMatch?.player2_id"
+            [class.border-blue-500]="resolveForm.winner_id === selectedMatch?.player2_id"
+            [class.bg-slate-950]="resolveForm.winner_id !== selectedMatch?.player2_id"
+            class="p-4 rounded-xl border border-slate-800 text-white font-bold transition-all"
+          >
+            {{ selectedMatch?.player2?.name }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Score Entry -->
+      <div class="grid grid-cols-2 gap-8">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Score {{ selectedMatch?.player1?.name }}</label>
+          <input 
+            type="number" 
+            [(ngModel)]="resolveForm.player1_score"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-center text-2xl font-black text-white focus:outline-none focus:border-blue-500"
+          >
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Score {{ selectedMatch?.player2?.name }}</label>
+          <input 
+            type="number" 
+            [(ngModel)]="resolveForm.player2_score"
+            class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-center text-2xl font-black text-white focus:outline-none focus:border-blue-500"
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="flex gap-4">
+      <button (click)="closeResolveModal()" class="flex-1 py-4 px-4 rounded-xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Fermer</button>
+      <button 
+        (click)="confirmResolve()" 
+        [disabled]="submitting || !resolveForm.winner_id"
+        class="flex-1 py-4 px-4 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-50"
+      >
+        Valider le résultat
+      </button>
+    </div>
+  </div>
+</div>

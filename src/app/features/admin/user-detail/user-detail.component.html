@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Back Link -->
+    <a routerLink="/admin/users" class="flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 group w-fit">
+      <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Retour à la liste
+    </a>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
+
+    <!-- User Profile Card -->
+    <div *ngIf="!loading && user" class="space-y-8">
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8">
+            <span 
+                [ngClass]="{
+                    'bg-blue-500/10 text-blue-500': user.role === 'admin',
+                    'bg-purple-500/10 text-purple-500': user.role === 'moderator',
+                    'bg-orange-500/10 text-orange-500': user.role === 'organizer',
+                    'bg-slate-500/10 text-slate-500': user.role === 'player'
+                }"
+                class="px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border border-current"
+            >
+                {{ user.role }}
+            </span>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+          <div class="w-32 h-32 rounded-3xl bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-2 border-slate-700 shadow-2xl">
+            {{ user.name.charAt(0).toUpperCase() }}
+          </div>
+          <div class="flex-1 pt-2">
+            <h1 class="text-4xl font-black text-white mb-2">{{ user.name }}</h1>
+            <p class="text-slate-400 text-lg mb-6">{{ user.email }}</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">ID Utilisateur</p>
+                <p class="text-white font-mono font-bold">#{{ user.id }}</p>
+              </div>
+              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Membre depuis</p>
+                <p class="text-white font-bold">{{ user.created_at | date:'MMM yyyy' }}</p>
+              </div>
+              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Status</p>
+                <p class="text-emerald-500 font-bold">Actif</p>
+              </div>
+              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Vérifié</p>
+                <p class="text-blue-500 font-bold">{{ user.verified ? 'Oui' : 'Non' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Tabs Placeholder -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Wallet Summary -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+          <h3 class="text-xl font-bold text-white mb-6">Résumé du Portefeuille</h3>
+          <div class="bg-gradient-to-br from-slate-950 to-slate-900 border border-white/5 rounded-2xl p-6 mb-6">
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Solde Actuel</p>
+            <p class="text-4xl font-black text-white flex items-center gap-3">
+              {{ user.wallet?.balance || 0 }} 
+              <span class="text-xs text-slate-500 font-bold">FCFA</span>
+            </p>
+          </div>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-500">Total déposé</span>
+                <span class="text-white font-bold">---</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-slate-500">Dernière transaction</span>
+                <span class="text-white font-bold">---</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Summary (Placeholder) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+            <h3 class="text-xl font-bold text-white mb-6">Activité Récente</h3>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 text-slate-400 italic text-sm">
+                    Aucune activité récente enregistrée pour cet utilisateur.
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
