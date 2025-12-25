@@ -32,6 +32,8 @@ export class TournamentDetailComponent implements OnInit {
 
   // Modal states
   showLaunchModal = false;
+  showNextRoundModal = false;
+  showCloseRegistrationsModal = false;
   showScoreModal = false;
   selectedMatch: Match | null = null;
   score1: number | null = null;
@@ -101,17 +103,23 @@ export class TournamentDetailComponent implements OnInit {
         this.toastService.error(`Il reste ${this.roundInfo.current_round.pending_matches} match(es) à terminer.`);
         return;
      }
+     this.showNextRoundModal = true;
+  }
 
+  confirmNextRound() {
+     if (!this.tournament) return;
      this.submitting = true;
      this.tournamentService.nextRound(this.tournament.id).subscribe({
         next: (res) => {
            this.toastService.success('Round suivant généré avec succès !');
            this.loadTournament(this.tournament!.id);
+           this.showNextRoundModal = false;
            this.submitting = false;
         },
         error: (err) => {
            console.error('Error generating next round', err);
            this.toastService.error(err.error?.message || 'Erreur lors du passage au round suivant.');
+           this.showNextRoundModal = false;
            this.submitting = false;
            this.cd.detectChanges();
         }
@@ -174,14 +182,26 @@ export class TournamentDetailComponent implements OnInit {
   }
 
   closeRegistrations() {
+    this.showCloseRegistrationsModal = true;
+  }
+
+  confirmCloseRegistrations() {
     if (!this.tournament) return;
+    this.submitting = true;
     this.tournamentService.closeRegistrations(this.tournament.id).subscribe({
       next: () => {
         this.toastService.success('Inscriptions fermées.');
         this.loadTournament(this.tournament!.id);
+        this.showCloseRegistrationsModal = false;
+        this.submitting = false;
         this.cd.detectChanges();
       },
-      error: (err) => this.toastService.error(err.error?.message || 'Erreur.')
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Erreur.');
+        this.showCloseRegistrationsModal = false;
+        this.submitting = false;
+        this.cd.detectChanges();
+      }
     });
   }
 

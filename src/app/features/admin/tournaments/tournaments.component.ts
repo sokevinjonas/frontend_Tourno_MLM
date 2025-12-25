@@ -32,6 +32,9 @@ export class TournamentsComponent implements OnInit {
     page: 1
   };
 
+  showDeleteModal = false;
+  selectedTournamentId: number | null = null;
+
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -95,18 +98,27 @@ export class TournamentsComponent implements OnInit {
   }
 
   deleteTournament(id: number) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce tournoi ? Tous les participants seront remboursés.')) return;
+    this.selectedTournamentId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete() {
+    if (this.selectedTournamentId === null) return;
     
     this.submitting = true;
-    this.adminService.deleteTournament(id).subscribe({
+    this.adminService.deleteTournament(this.selectedTournamentId).subscribe({
       next: () => {
         this.toastService.success('Tournoi supprimé avec succès.');
-        this.tournaments = this.tournaments.filter(t => t.id !== id);
+        this.tournaments = this.tournaments.filter(t => t.id !== this.selectedTournamentId);
+        this.showDeleteModal = false;
+        this.selectedTournamentId = null;
         this.submitting = false;
         this.cd.markForCheck();
       },
       error: (err) => {
         this.toastService.error('Erreur lors de la suppression.');
+        this.showDeleteModal = false;
+        this.selectedTournamentId = null;
         this.submitting = false;
         this.cd.markForCheck();
       }

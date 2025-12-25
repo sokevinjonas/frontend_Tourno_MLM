@@ -297,6 +297,70 @@
         </div>
     </div>
 </div>
+<!-- Next Round Modal -->
+<div *ngIf="showNextRoundModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showNextRoundModal = false"></div>
+    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+        </div>
+        
+        <div class="text-center mb-10">
+            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Passer au Round Suivant ?</h3>
+            <p class="text-slate-500 leading-relaxed mb-4">
+                Tous les matchs du Round actuel sont terminés. Vous allez générer les nouveaux affrontements.
+            </p>
+            <div *ngIf="roundInfo" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl text-blue-400 font-bold text-sm">
+                Round {{ roundInfo.current_round_number }} <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg> Round {{ roundInfo.current_round_number + 1 }}
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <button 
+                (click)="confirmNextRound()" 
+                [disabled]="submitting"
+                class="w-full py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+            >
+                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                {{ submitting ? 'Génération...' : 'Confirmer le Passage' }}
+            </button>
+            <button (click)="showNextRoundModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Close Registrations Modal -->
+<div *ngIf="showCloseRegistrationsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showCloseRegistrationsModal = false"></div>
+    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="w-20 h-20 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m4-3a4 4 0 11-8 0 4 4 0 018 0zM12 9V7"/></svg>
+        </div>
+        
+        <div class="text-center mb-10">
+            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Clôturer les Inscriptions ?</h3>
+            <p class="text-slate-500 leading-relaxed">
+                Plus aucun nouveau participant ne pourra s'inscrire à ce tournoi. Cette action est irréversible avant le lancement.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <button 
+                (click)="confirmCloseRegistrations()" 
+                [disabled]="submitting"
+                class="w-full py-5 px-6 rounded-2xl bg-amber-600 text-white font-black hover:bg-amber-500 transition-all shadow-xl shadow-amber-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+            >
+                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                {{ submitting ? 'Clôture...' : 'Confirmer la Clôture' }}
+            </button>
+            <button (click)="showCloseRegistrationsModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- Launch Tournament Modal -->
 <div *ngIf="showLaunchModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">

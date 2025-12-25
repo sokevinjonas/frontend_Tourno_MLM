@@ -25,6 +25,7 @@ export class ProfileCompleteComponent implements OnInit {
   currentStep = 1;
   isLoading = false;
   showAccountModal = false;
+  showSuccessModal = false;
 
   toastMessage: string | null = null;
   toastType: 'success' | 'error' = 'success';
@@ -112,9 +113,12 @@ export class ProfileCompleteComponent implements OnInit {
 
   onAccountAdded() {
     this.showAccountModal = false;
-    if (confirm('Compte ajouté ! Voulez-vous aller au tableau de bord ?')) {
-       this.finish();
-    }
+    this.showSuccessModal = true;
+  }
+
+  goToDashboard() {
+    this.showSuccessModal = false;
+    this.finish();
   }
 
   skipGameAccounts() {
