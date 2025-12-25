@@ -170,7 +170,16 @@ export class TournamentService {
     }
 
     return this.http.get<any>(`${this.apiUrl}/tournaments/my/tournaments`, { params }).pipe(
-      map(response => response.data?.tournaments || response.tournaments || response.data || response)
+      map(response => {
+        const tours = response.data?.tournaments || response.tournaments || response.data || response;
+        if (Array.isArray(tours)) {
+          return tours.map(t => ({
+            ...t,
+            current_participants: t.registrations?.length || t.registrations_count || t.current_participants || 0
+          }));
+        }
+        return tours;
+      })
     );
   }
 
