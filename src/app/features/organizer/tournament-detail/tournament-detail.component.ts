@@ -34,6 +34,7 @@ export class TournamentDetailComponent implements OnInit {
   showLaunchModal = false;
   showNextRoundModal = false;
   showCloseRegistrationsModal = false;
+  showCompleteModal = false;
   showScoreModal = false;
   selectedMatch: Match | null = null;
   score1: number | null = null;
@@ -237,6 +238,30 @@ export class TournamentDetailComponent implements OnInit {
       error: (err) => {
         console.error('Error submitting score', err);
         this.toastService.error(err.error?.message || 'Erreur lors de l\'enregistrement.');
+        this.submitting = false;
+        this.cd.detectChanges();
+      }
+    });
+  }
+
+  completeTournament() {
+    this.showCompleteModal = true;
+  }
+
+  confirmCompleteTournament() {
+    if (!this.tournament) return;
+    this.submitting = true;
+    this.tournamentService.completeTournament(this.tournament.id).subscribe({
+      next: () => {
+        this.toastService.success('Tournoi finalisé ! Les récompenses ont été distribuées.');
+        this.loadTournament(this.tournament!.id);
+        this.showCompleteModal = false;
+        this.submitting = false;
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        this.toastService.error(err.error?.message || 'Erreur lors de la clôture.');
+        this.showCompleteModal = false;
         this.submitting = false;
         this.cd.detectChanges();
       }

@@ -187,6 +187,10 @@ export class TournamentService {
    * POST /tournaments/{id}/next-round
    */
   nextRound(id: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/tournaments/${id}/next-round`, {});
+    return this.http.post(`${this.apiUrl}/tournaments/${id}/next-round`, {});
+  }
+
+  completeTournament(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${id}/complete`, {});
   }
 }
