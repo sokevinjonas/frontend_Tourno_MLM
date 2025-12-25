@@ -183,6 +183,43 @@
            </div>
         </div>
 
+        <!-- Rankings Tab -->
+        <div *ngIf="activeTab === 'rankings'" class="space-y-6 animate-fade-in">
+           <div *ngIf="loadingRankings" class="space-y-4">
+              <div *ngFor="let i of [1,2,3,4]" class="h-20 bg-slate-900/50 rounded-2xl border border-slate-800 animate-pulse"></div>
+           </div>
+
+           <div *ngIf="!loadingRankings && (!tournamentRankings || !tournamentRankings.rankings || tournamentRankings.rankings.length === 0)" class="py-12 text-center bg-slate-900/50 rounded-2xl border border-slate-700 border-dashed">
+              <h3 class="text-white font-bold mb-2">Classement non disponible</h3>
+              <p class="text-slate-500 text-sm">Le classement sera affiché une fois le tournoi terminé.</p>
+           </div>
+
+           <div *ngIf="!loadingRankings && tournamentRankings && tournamentRankings.rankings && tournamentRankings.rankings.length > 0" class="space-y-3">
+              <div *ngFor="let reg of tournamentRankings.rankings" 
+                   class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center justify-between hover:border-slate-700 transition-all">
+                 <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold"
+                         [ngClass]="{
+                           'bg-yellow-500/20 text-yellow-500 border border-yellow-500/20': reg.rank === 1,
+                           'bg-slate-400/20 text-slate-300 border border-slate-400/20': reg.rank === 2,
+                           'bg-orange-700/20 text-orange-500 border border-orange-700/20': reg.rank === 3,
+                           'bg-slate-800 text-slate-500': reg.rank > 3
+                         }">
+                       {{reg.rank === 1 ? '🥇' : reg.rank === 2 ? '🥈' : reg.rank === 3 ? '🥉' : '#' + reg.rank}}
+                    </div>
+                    <div>
+                       <div class="text-white font-bold">{{reg.user.name}}</div>
+                       <div class="text-[10px] text-slate-500 uppercase font-black tracking-widest">{{reg.stats.wins}}V - {{reg.stats.losses}}D</div>
+                    </div>
+                 </div>
+                 <div class="text-right">
+                    <div class="text-blue-400 font-bold">{{reg.stats.prize_won || 0}} 🪙</div>
+                    <div class="text-[10px] text-slate-500 uppercase font-black tracking-widest">Points: {{reg.stats.tournament_points}}</div>
+                 </div>
+              </div>
+           </div>
+        </div>
+
       </div>
 
       <!-- Sidebar / Action Card -->

@@ -1,1 +1,187 @@
-<p>Rankings Component Works</p>
+<div class="min-h-screen pt-24 pb-12 overflow-x-hidden">
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div class="animate-fade-in-up">
+        <button (click)="goBack()" class="flex items-center gap-2 text-slate-500 hover:text-white mb-6 transition-colors group">
+          <div class="w-5 h-5 group-hover:-translate-x-1 transition-transform" [innerHTML]="sanitize(icons.back)"></div>
+          Retour
+        </button>
+        <h1 class="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-2">
+            Classements <span class="text-blue-500">Communauté</span>
+        </h1>
+        <p class="text-slate-400 text-lg font-medium">L'élite des joueurs s'affronte ici. Dominez l'arène.</p>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4 animate-fade-in">
+        <div class="text-right">
+          <div class="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Système de Points</div>
+          <div class="text-white font-bold text-sm bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">ELO Adaptatif</div>
+        </div>
+        <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 border border-blue-500/20">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-900/50 backdrop-blur-xl border border-slate-800 rounded-3xl p-2 mb-8 shadow-2xl flex overflow-x-auto no-scrollbar gap-2">
+      <button *ngFor="let tab of tabs" 
+              (click)="changeTab(tab.id)"
+              class="flex items-center gap-3 px-6 py-4 rounded-2xl font-bold text-sm transition-all whitespace-nowrap"
+              [ngClass]="activeTab === tab.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-500 hover:text-white hover:bg-slate-800'">
+          <span>{{ tab.icon }}</span>
+          {{ tab.label }}
+      </button>
+    </div>
+
+    <!-- Main Leaderboard Section -->
+    <div class="relative min-h-[500px]">
+        
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="space-y-4">
+            <div *ngFor="let i of [1,2,3,4,5,6]" class="h-20 bg-slate-900/50 rounded-2xl border border-slate-800 animate-pulse"></div>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="!isLoading && error" class="py-20 text-center bg-slate-900/50 rounded-[2.5rem] border border-slate-800 border-dashed">
+            <div class="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-500 border border-rose-500/20">
+                <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">{{ error }}</h3>
+            <button (click)="fetchLeaderboard()" class="text-blue-500 hover:underline font-bold uppercase tracking-widest text-xs">Réessayer</button>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && !error && leaderboard.length === 0" class="py-24 text-center bg-slate-900/50 rounded-[2.5rem] border border-slate-800 border-dashed">
+            <div class="w-24 h-24 bg-slate-800 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-slate-600">
+                <div class="w-12 h-12" [innerHTML]="sanitize(icons.trophy)"></div>
+            </div>
+            <h3 class="text-2xl font-black text-white mb-4 uppercase tracking-tight">Le trône est vide</h3>
+            <p class="text-slate-500 max-w-sm mx-auto">Soyez le premier à participer et inscrivez votre nom dans la légende.</p>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div *ngIf="!isLoading && !error && leaderboard.length > 0" class="space-y-3 animate-fade-in">
+            <!-- Table Header (Desktop) -->
+            <div class="hidden lg:grid grid-cols-12 gap-4 px-8 py-4 text-[10px] text-slate-500 font-black uppercase tracking-widest border-b border-slate-800/50">
+                <div class="col-span-1">Rang</div>
+                <div class="col-span-4">Joueur</div>
+                <div class="col-span-2 text-center">Rating</div>
+                <div class="col-span-2 text-center">Tournois (V/P)</div>
+                <div class="col-span-1 text-center">Win Rate</div>
+                <div class="col-span-2 text-right">Gains Totaux</div>
+            </div>
+
+            <!-- Rank List -->
+            <div *ngFor="let entry of leaderboard" 
+                 class="group bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800 hover:border-blue-500/30 rounded-[1.5rem] transition-all duration-300 relative overflow-hidden">
+                
+                <!-- Rank Gradient Background -->
+                <div class="absolute inset-y-0 left-0 w-1 flex flex-col" [class.bg-blue-600]="entry.rank > 3" 
+                     [class.bg-gradient-to-b]="entry.rank <= 3"
+                     [class.from-amber-200]="entry.rank === 1" [class.to-amber-500]="entry.rank === 1"
+                     [class.from-slate-300]="entry.rank === 2" [class.to-slate-500]="entry.rank === 2"
+                     [class.from-orange-300]="entry.rank === 3" [class.to-orange-500]="entry.rank === 3">
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center p-4 lg:px-8">
+                    <!-- Rank -->
+                    <div class="col-span-1 flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg transition-transform group-hover:scale-110"
+                             [ngClass]="getRankClass(entry.rank)"
+                             [class.bg-slate-800]="entry.rank > 3"
+                             [class.text-slate-400]="entry.rank > 3">
+                            {{ entry.rank }}
+                        </div>
+                        <span class="lg:hidden text-[10px] text-slate-500 font-black uppercase tracking-widest">Rang Actuel</span>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="col-span-4 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-slate-800 border-2 border-slate-700 overflow-hidden shrink-0 shadow-lg group-hover:border-blue-500/50 transition-colors">
+                            <img *ngIf="entry.user.avatar_url" [src]="entry.user.avatar_url" class="w-full h-full object-cover">
+                            <div *ngIf="!entry.user.avatar_url" class="w-full h-full flex items-center justify-center text-slate-600 font-black text-xl">
+                                {{ entry.user.name.charAt(0) }}
+                            </div>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-white font-black group-hover:text-blue-400 transition-colors truncate">{{ entry.user.name }}</div>
+                            <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Pro Player</div>
+                        </div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="col-span-2 flex flex-col lg:items-center">
+                        <span class="lg:hidden text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Points Rating</span>
+                        <div class="px-4 py-2 bg-blue-500/5 rounded-xl border border-blue-500/10 inline-flex items-center gap-2">
+                            <span class="text-blue-400 font-black text-lg">{{ entry.stats.global_rating || entry.stats.rating_points }}</span>
+                            <span class="text-[10px] text-blue-500/50 font-bold">PTS</span>
+                        </div>
+                    </div>
+
+                    <!-- Tournaments Won/Played -->
+                    <div class="col-span-2 flex flex-col lg:items-center">
+                        <span class="lg:hidden text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Tournois</span>
+                        <div class="flex items-center gap-1.5 text-slate-400 font-bold text-sm">
+                            <span class="text-white">{{ entry.stats.tournaments_won }}</span>
+                            <span class="text-slate-600">/</span>
+                            <span>{{ entry.stats.tournaments_played }}</span>
+                            <span class="text-[10px] text-slate-500 ml-1">V/P</span>
+                        </div>
+                    </div>
+
+                    <!-- Win Rate -->
+                    <div class="col-span-1 flex flex-col lg:items-center">
+                        <span class="lg:hidden text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Win Rate</span>
+                        <div class="font-black text-sm" [ngClass]="getWinRateClass(entry.stats.win_rate)">
+                            {{ entry.stats.win_rate | number:'1.1-1' }}%
+                        </div>
+                    </div>
+
+                    <!-- Prize Money -->
+                    <div class="col-span-2 flex flex-col lg:items-end">
+                        <span class="lg:hidden text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Gains Totaux</span>
+                        <div class="text-white font-black text-lg flex items-center gap-1.5">
+                            {{ entry.stats.total_prize_money | number:'1.0-2' }}
+                            <span class="text-blue-400 text-sm italic ml-1">MLM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!isLoading && !error && pagination && pagination.last_page > 1" class="mt-12 flex justify-center gap-2">
+            <button 
+                [disabled]="pagination.current_page === 1"
+                (click)="onPageChange(pagination.current_page - 1)"
+                class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 text-white flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors"
+            >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            
+            <div class="hidden sm:flex gap-2">
+                <button *ngFor="let p of [].constructor(pagination.last_page); let i = index"
+                        (click)="onPageChange(i + 1)"
+                        [class.bg-blue-600]="pagination.current_page === i + 1"
+                        [class.text-white]="pagination.current_page === i + 1"
+                        [class.border-blue-500]="pagination.current_page === i + 1"
+                        class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 font-bold hover:bg-slate-800 transition-all">
+                    {{ i + 1 }}
+                </button>
+            </div>
+
+            <button 
+                [disabled]="pagination.current_page === pagination.last_page"
+                (click)="onPageChange(pagination.current_page + 1)"
+                class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 text-white flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-colors"
+            >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+    </div>
+  </div>
+</div>

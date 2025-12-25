@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../../core/services/auth.service';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { LeaderboardService } from '../../../core/services/leaderboard.service';
 
 interface Tab {
   id: string;
@@ -40,7 +41,6 @@ import { OrganizerBadgeComponent } from '../../../shared/components/organizer-ba
 })
 export class TournamentDetailsComponent implements OnInit {
   tournament: ParsedTournament | undefined;
-  activeTab: string = 'info';
   
   private authService = inject(AuthService);
   private tournamentService = inject(TournamentService);
@@ -61,11 +61,25 @@ export class TournamentDetailsComponent implements OnInit {
   isRegistered = false;
   selectedGameAccountId: number | null = null;
   error: string | null = null;
+  
+  private leaderboardService = inject(LeaderboardService);
+  tournamentRankings: any = null;
+  loadingRankings = false;
+
+  private _activeTab: string = 'info';
+  get activeTab(): string { return this._activeTab; }
+  set activeTab(value: string) {
+    this._activeTab = value;
+    if (value === 'rankings' && !this.tournamentRankings) {
+      this.fetchTournamentRankings();
+    }
+  }
 
   tabs: Tab[] = [
     { id: 'info', label: 'Informations', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' },
     { id: 'participants', label: 'Participants', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' },
-    { id: 'bracket', label: 'Arbre', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>' }
+    { id: 'bracket', label: 'Arbre', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4"/><polyline points="11 13 15 13 15 7 11 7"/><polyline points="15 7 20 7"/></svg>' },
+    { id: 'rankings', label: 'Classement', icon: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>' }
   ];
 
   icons = {
@@ -269,9 +283,20 @@ export class TournamentDetailsComponent implements OnInit {
     });
   }
 
-  goToProfile() {
-    this.router.navigate(['/profile/complete']);
+  fetchTournamentRankings() {
+    if (!this.tournament) return;
+    this.loadingRankings = true;
+    this.leaderboardService.getTournamentRankings(this.tournament.id).subscribe({
+      next: (res) => {
+        this.tournamentRankings = res;
+        this.loadingRankings = false;
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error fetching rankings', err);
+        this.loadingRankings = false;
+        this.cd.detectChanges();
+      }
+    });
   }
-  
-
 }
