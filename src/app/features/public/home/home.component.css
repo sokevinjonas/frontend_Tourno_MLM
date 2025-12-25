@@ -1,0 +1,24 @@
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.shadow-3xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.bg-white\/\[0\.03\] {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.hover\:bg-white\/\[0\.06\]:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.border-white\/\[0\.05\] {
+  border-color: rgba(255, 255, 255, 0.05);
+}

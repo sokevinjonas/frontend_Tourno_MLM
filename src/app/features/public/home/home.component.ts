@@ -112,4 +112,11 @@ export class HomeComponent implements OnInit {
       bg: 'bg-yellow-500/10'
     }
   ];
+
+  mockRankings = [
+    { rank: 1, name: 'AlexPro', rating: 2850, avatar: null, winRate: 78.5 },
+    { rank: 2, name: 'Killer88', rating: 2720, avatar: null, winRate: 72.1 },
+    { rank: 3, name: 'SlayerZ', rating: 2680, avatar: null, winRate: 69.8 },
+    { rank: 4, name: 'EliteGamer', rating: 2550, avatar: null, winRate: 65.4 }
+  ];
 }

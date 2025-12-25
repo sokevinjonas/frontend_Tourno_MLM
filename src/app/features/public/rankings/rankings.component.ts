@@ -4,14 +4,12 @@ import { CommonModule, Location } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LeaderboardService, LeaderboardEntry, PaginationInfo } from '../../../core/services/leaderboard.service';
-import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
-import { GameColorPipe } from '../../../shared/pipes/game-color.pipe';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-rankings',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, GameNamePipe, GameColorPipe],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './rankings.component.html',
   styleUrls: ['./rankings.component.css']
 })

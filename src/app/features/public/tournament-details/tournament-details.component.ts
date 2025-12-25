@@ -299,4 +299,8 @@ export class TournamentDetailsComponent implements OnInit {
       }
     });
   }
+
+  goToProfile() {
+    this.router.navigate(['/profile/complete']);
+  }
 }
