@@ -260,19 +260,29 @@
            </div>
 
            <div class="my-8 border-t border-slate-700"></div>
-                      <div *ngIf="!isRegistered; else registeredTemplate">
-              <!-- Tournament Full State -->
-              <ng-container *ngIf="(tournament.current_participants || 0) < (tournament.participants?.max || 0); else fullTemplate">
-                <button (click)="onParticipate()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
-                   S'inscrire ({{tournament.entry_fee}} 🪙)
-                </button>
-              </ng-container>
-              
-              <ng-template #fullTemplate>
+                       <div *ngIf="!isRegistered; else registeredTemplate">
+              <!-- Registration Expired State -->
+              <ng-container *ngIf="isRegistrationExpired; else openRegistrationTemplate">
                 <div class="w-full py-4 bg-slate-800 border border-slate-700 text-slate-500 font-bold rounded-xl flex items-center justify-center gap-2">
-                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                   Tournoi Complet
+                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                   Inscription close
                 </div>
+              </ng-container>
+
+              <!-- Tournament Open/Full States -->
+              <ng-template #openRegistrationTemplate>
+                <ng-container *ngIf="(tournament.current_participants || 0) < (tournament.participants?.max || 0); else fullTemplate">
+                  <button (click)="onParticipate()" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all active:scale-[0.98]">
+                     S'inscrire ({{tournament.entry_fee}} 🪙)
+                  </button>
+                </ng-container>
+                
+                <ng-template #fullTemplate>
+                  <div class="w-full py-4 bg-slate-800 border border-slate-700 text-slate-500 font-bold rounded-xl flex items-center justify-center gap-2">
+                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                     Tournoi Complet
+                  </div>
+                </ng-template>
               </ng-template>
             </div>
 

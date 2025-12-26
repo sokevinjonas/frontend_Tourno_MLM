@@ -5,11 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-my-matches',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="p-6">
-      <h1 class="text-2xl font-bold mb-4">MyMatchesComponent</h1>
-      <p class="text-gray-600">This feature is under construction.</p>
-    </div>
-  `
+  templateUrl: './my-matches.component.html',
+  styleUrl: './my-matches.component.css'
 })
 export class MyMatchesComponent {}

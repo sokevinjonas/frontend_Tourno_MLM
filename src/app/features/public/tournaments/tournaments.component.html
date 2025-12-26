@@ -59,9 +59,14 @@
           <!-- Header -->
           <div class="p-6 relative">
             <div class="absolute top-4 right-4 z-10">
-              <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md ' + (tournament.status | tournamentStatusClass)">
-                {{ tournament.status | tournamentStatus }}
+              <span *ngIf="isExpired(tournament); else statusBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md bg-slate-800/80 text-slate-400 border-slate-700/50">
+                Inscription close
               </span>
+              <ng-template #statusBadge>
+                <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border backdrop-blur-md ' + (tournament.status | tournamentStatusClass)">
+                  {{ tournament.status | tournamentStatus }}
+                </span>
+              </ng-template>
             </div>
 
             <div class="flex items-center gap-2 mb-3">

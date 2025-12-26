@@ -98,6 +98,11 @@ export class TournamentDetailsComponent implements OnInit {
     return balance - fee;
   }
 
+  get isRegistrationExpired(): boolean {
+    if (!this.tournament?.start_date) return false;
+    return new Date(this.tournament.start_date) < new Date();
+  }
+
   get filteredGameAccounts(): any[] {
     if (!this.currentUser?.game_accounts || !this.tournament) {
       return [];
@@ -225,6 +230,11 @@ export class TournamentDetailsComponent implements OnInit {
   onParticipate() {
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login'], { queryParams: { returnUrl: '/tournaments/' + this.tournament?.id } });
+      return;
+    }
+
+    if (this.isRegistrationExpired) {
+      this.toastService.error('Les inscriptions pour ce tournoi sont closes.');
       return;
     }
     

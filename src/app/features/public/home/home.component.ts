@@ -71,6 +71,11 @@ export class HomeComponent implements OnInit {
     return this.getParticipantCount(t) >= t.max_participants;
   }
 
+  isRegistrationExpired(t: Tournament): boolean {
+    if (!t.start_date) return false;
+    return new Date(t.start_date) < new Date();
+  }
+
   features = [
     {
       icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',

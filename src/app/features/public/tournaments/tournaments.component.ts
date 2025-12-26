@@ -104,4 +104,9 @@ export class TournamentsComponent implements OnInit {
     // Return specific icons per game if needed, or generic
     return this.sanitize(this.icons.trophy); // Placeholder
   }
+
+  isExpired(tournament: Tournament): boolean {
+    if (!tournament.start_date) return false;
+    return new Date(tournament.start_date) < new Date();
+  }
 }

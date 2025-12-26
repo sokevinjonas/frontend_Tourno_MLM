@@ -166,13 +166,22 @@
                 </span>
              </div>
 
-             <a *ngIf="!isTournamentFull(tournament)" [routerLink]="['/tournaments', tournament.id]" class="block w-full text-center py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform active:scale-95">
-               Rejoindre
-             </a>
-             <button *ngIf="isTournamentFull(tournament)" disabled class="w-full py-3 bg-slate-800 text-slate-500 font-bold rounded-xl cursor-not-allowed border border-slate-700 flex items-center justify-center gap-2">
-               <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-               <span>Complet</span>
-             </button>
+              <ng-container *ngIf="!isRegistrationExpired(tournament); else expiredCta">
+                <a *ngIf="!isTournamentFull(tournament)" [routerLink]="['/tournaments', tournament.id]" class="block w-full text-center py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform active:scale-95">
+                  Rejoindre
+                </a>
+                <button *ngIf="isTournamentFull(tournament)" disabled class="w-full py-3 bg-slate-800 text-slate-500 font-bold rounded-xl cursor-not-allowed border border-slate-700 flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <span>Complet</span>
+                </button>
+              </ng-container>
+
+              <ng-template #expiredCta>
+                <div class="w-full py-3 bg-slate-800 text-slate-500 font-bold rounded-xl border border-slate-700 flex items-center justify-center gap-2">
+                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                   <span>Inscription close</span>
+                </div>
+              </ng-template>
            </div>
         </div>
       </div>
