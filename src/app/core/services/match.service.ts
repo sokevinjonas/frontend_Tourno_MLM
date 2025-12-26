@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { PaginatedResponse } from '../models/user.model';
 
@@ -42,5 +42,11 @@ export class MatchService {
 
   confirmResult(matchId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${matchId}/confirm`, {});
+  }
+
+  getMyMatches(): Observable<Match[]> {
+    return this.http.get<any>(`${this.apiUrl}/my/matches`).pipe(
+      map(res => res.matches || res)
+    );
   }
 }
