@@ -102,7 +102,10 @@
                   <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center text-xl">⚽</div>
                   <div>
                      <div class="text-sm font-bold text-white uppercase tracking-tight">Ronde {{ match.round_number }}</div>
-                     <div class="text-xs text-slate-500">Deadline: {{ getDeadlineDate(match) | date:'dd/MM HH:mm' }}</div>
+                     <div class="text-xs font-bold transition-all duration-300" 
+                          [ngClass]="isExpired(match) ? 'text-slate-500' : 'text-blue-400'">
+                        {{ isExpired(match) ? 'Expiré' : 'Fin dans: ' + getCountdown(match) }}
+                     </div>
                   </div>
                </div>
                

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { PaymentService } from '../../../core/services/payment.service';
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private paymentService = inject(PaymentService);
   private matchService = inject(MatchService);
@@ -24,6 +24,10 @@ export class DashboardComponent implements OnInit {
   recentMatches: Match[] = [];
   loading = true;
   loadingMatches = true;
+
+  // Timer properties
+  private timer: any;
+  currentTime = new Date();
 
   isMyWinner(match: Match): boolean {
     const currentUserId = (this.authService.currentUserValue as any)?.id;
@@ -44,12 +48,46 @@ export class DashboardComponent implements OnInit {
     return null;
   }
 
+  getCountdown(match: Match): string {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return '--:--';
+    
+    const diff = deadline.getTime() - this.currentTime.getTime();
+    if (diff <= 0) return '00:00';
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return `${hours > 0 ? hours + ':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  isExpired(match: Match): boolean {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return false;
+    return deadline.getTime() <= this.currentTime.getTime();
+  }
+
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.userName = user?.name || '';
     });
     this.loadStats();
     this.loadRecentMatches();
+    this.startTimer();
+  }
+
+  ngOnDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
+  private startTimer() {
+    this.timer = setInterval(() => {
+      this.currentTime = new Date();
+      this.cd.markForCheck();
+    }, 1000);
   }
 
   loadStats() {

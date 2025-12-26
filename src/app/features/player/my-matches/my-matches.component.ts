@@ -1,10 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatchService, Match } from '../../../core/services/match.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -14,7 +13,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './my-matches.component.html',
   styleUrl: './my-matches.component.css'
 })
-export class MyMatchesComponent implements OnInit {
+export class MyMatchesComponent implements OnInit, OnDestroy {
   private matchService = inject(MatchService);
   private authService = inject(AuthService);
   private cd = inject(ChangeDetectorRef);
@@ -25,9 +24,14 @@ export class MyMatchesComponent implements OnInit {
   loading = true;
   activeTab: 'active' | 'completed' | 'expired' = 'active';
 
+  // Timer properties
+  private timer: any;
+  currentTime = new Date();
+
   // Modal State
   selectedMatch: Match | null = null;
   showScoreModal = false;
+  showSuccessModal = false;
   submittingScore = false;
   scoreForm = {
     own_score: 0,
@@ -48,6 +52,20 @@ export class MyMatchesComponent implements OnInit {
 
   ngOnInit() {
     this.loadMatches();
+    this.startTimer();
+  }
+
+  ngOnDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
+  private startTimer() {
+    this.timer = setInterval(() => {
+      this.currentTime = new Date();
+      this.cd.markForCheck();
+    }, 1000);
   }
 
   loadMatches() {
@@ -127,6 +145,10 @@ export class MyMatchesComponent implements OnInit {
     this.selectedMatch = null;
   }
 
+  closeSuccessModal() {
+    this.showSuccessModal = false;
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -160,8 +182,9 @@ export class MyMatchesComponent implements OnInit {
       next: () => {
         this.submittingScore = false;
         this.closeScoreModal();
+        this.showSuccessModal = true;
         this.loadMatches();
-        // Maybe add success toast
+        this.cd.markForCheck();
       },
       error: (err) => {
         console.error('Error submitting score', err);
@@ -188,5 +211,25 @@ export class MyMatchesComponent implements OnInit {
       return date;
     }
     return null;
+  }
+
+  getCountdown(match: Match): string {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return '--:--';
+    
+    const diff = deadline.getTime() - this.currentTime.getTime();
+    if (diff <= 0) return '00:00';
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return `${hours > 0 ? hours + ':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  isExpired(match: Match): boolean {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return false;
+    return deadline.getTime() <= this.currentTime.getTime();
   }
 }
