@@ -35,19 +35,31 @@
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
           <div class="text-slate-500 text-xs mb-1">Total Crédité</div>
-          <div class="text-xl font-bold text-green-400">+10.00</div>
+          <div class="text-xl font-bold text-green-400">
+            <span *ngIf="walletStats">+{{ (walletStats.total_credited || 0) | number:'1.2-2' }}</span>
+            <span *ngIf="!walletStats">...</span>
+          </div>
        </div>
        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
           <div class="text-slate-500 text-xs mb-1">Total Débité</div>
-          <div class="text-xl font-bold text-red-400">-5.00</div>
+          <div class="text-xl font-bold text-red-400">
+            <span *ngIf="walletStats">-{{ (walletStats.total_debited || 0) | number:'1.2-2' }}</span>
+            <span *ngIf="!walletStats">...</span>
+          </div>
        </div>
        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-          <div class="text-slate-500 text-xs mb-1">Tournois Payés</div>
-          <div class="text-xl font-bold text-white">1</div>
+          <div class="text-slate-500 text-xs mb-1">Tournois Actifs</div>
+          <div class="text-xl font-bold text-white">
+            <span *ngIf="walletStats">{{ walletStats.tournament_stats.active_tournaments || 0 }}</span>
+            <span *ngIf="!walletStats">...</span>
+          </div>
        </div>
        <div class="bg-slate-800 p-4 rounded-2xl border border-slate-700">
-          <div class="text-slate-500 text-xs mb-1">Gains Tournois</div>
-          <div class="text-xl font-bold text-yellow-400">0.00</div>
+          <div class="text-slate-500 text-xs mb-1">Gains Retirables</div>
+          <div class="text-xl font-bold text-emerald-400">
+            <span *ngIf="walletStats">{{ (walletStats.tournament_stats.available_for_withdrawal || 0) | number:'1.2-2' }}</span>
+            <span *ngIf="!walletStats">...</span>
+          </div>
        </div>
     </div>
 

@@ -33,16 +33,50 @@ export interface WalletBalance {
   currency: string;
 }
 
-export interface OrganizerWalletStats {
+export interface ReleasedTournamentFunds {
+  tournament_id: number;
+  tournament_name: string;
+  locked_amount: number;
+  paid_out: number;
+  available_for_withdrawal: number;
+  released_at: string;
+}
+
+export interface WalletData {
+  balance: number;
+  blocked_balance: number;
+  available_balance: number;
+}
+
+export interface TransactionStats {
   total_credited: number;
   total_debited: number;
-  total_transactions: number;
-  current_balance: number;
-  blocked_balance?: number; // Keep as optional if not in log but needed
+  total_count: number;
+}
+
+export interface TournamentSummaryStats {
+  // Organizer fields
+  total_collected?: number;
+  total_paid_out?: number;
+  total_profit?: number;
+  currently_blocked?: number;
+  available_for_withdrawal?: number;
+  released_funds_by_tournament?: ReleasedTournamentFunds[];
+
+  // Player fields
+  total_prizes_won?: number;
+  tournaments_won?: number;
+  podium_finishes?: number;
+
+  // Common fields
+  active_tournaments: number;
+  completed_tournaments: number;
 }
 
 export interface WalletStatisticsResponse {
-  statistics: OrganizerWalletStats;
+  wallet: WalletData;
+  transactions: TransactionStats;
+  tournaments: TournamentSummaryStats;
 }
 
 export interface TournamentWallet {

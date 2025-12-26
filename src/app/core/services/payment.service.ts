@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Transaction, TransactionsResponse, WalletBalance, OrganizerWalletStats, WalletStatisticsResponse, TournamentWallet } from '../models/payment.model';
+import { Transaction, TransactionsResponse, WalletBalance, WalletStats, WalletStatisticsResponse, TournamentWallet } from '../models/payment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class PaymentService {
     return this.http.get<WalletBalance>(`${this.apiUrl}/wallet/balance`);
   }
 
-  getOrganizerWalletStats(): Observable<WalletStatisticsResponse> {
+  getWalletStats(): Observable<WalletStatisticsResponse> {
     return this.http.get<WalletStatisticsResponse>(`${this.apiUrl}/wallet/statistics`);
   }
 

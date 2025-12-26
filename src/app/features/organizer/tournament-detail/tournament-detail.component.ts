@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { MatchService, Match } from '../../../core/services/match.service';
 import { PaymentService } from '../../../core/services/payment.service';
-import { OrganizerWalletStats } from '../../../core/models/payment.model';
+import { WalletStats } from '../../../core/models/payment.model';
 import { ToastService } from '../../../core/services/toast.service';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
@@ -27,7 +27,7 @@ export class TournamentDetailComponent implements OnInit {
   roundInfo: any = null;
   loading = true;
   submitting = false;
-  walletStats: OrganizerWalletStats | null = null;
+  walletStats: WalletStats | null = null;
   activeTab: 'overview' | 'participants' | 'matches' | 'settings' = 'overview';
 
   // Modal states
@@ -76,7 +76,7 @@ export class TournamentDetailComponent implements OnInit {
           this.loadMatches(id);
           this.loadRoundsInfo(id);
         }
-        this.loadTournamentWallet();
+        this.loadOrganizerStats();
         this.loading = false; 
         this.cd.detectChanges();
       },
@@ -147,16 +147,13 @@ export class TournamentDetailComponent implements OnInit {
     });
   }
 
-  loadTournamentWallet() {
-    this.paymentService.getOrganizerWalletStats().subscribe({
+  loadOrganizerStats() {
+    this.paymentService.getWalletStats().subscribe({
       next: (res) => {
         this.walletStats = res.statistics;
-        console.log('Wallet stats:', this.walletStats);
         this.cd.detectChanges();
       },
-      error: (err) => {
-        console.error('Error loading organizer wallet stats', err);
-      }
+      error: (err) => console.error('Error loading stats', err)
     });
   }
 

@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 import { PaymentService } from '../../../core/services/payment.service';
-import { OrganizerWalletStats } from '../../../core/models/payment.model';
+import { WalletStats, WalletStatisticsResponse } from '../../../core/models/payment.model';
 import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pipe';
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
 import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
@@ -24,9 +24,13 @@ export class DashboardComponent implements OnInit {
     total: 0,
     active: 0,
     participants: 0,
-    prizePool: 0
+    prizePool: 0,
+    totalProfit: 0,
+    totalPaidOut: 0,
+    totalCollected: 0,
+    totalAvailableForWithdrawal: 0
   };
-  walletStats: OrganizerWalletStats | null = null;
+  walletStats: WalletStats | null = null;
 
   constructor(
     private authService: AuthService,
@@ -77,13 +81,28 @@ export class DashboardComponent implements OnInit {
   }
 
   loadWalletStats() {
-    this.paymentService.getOrganizerWalletStats().subscribe({
-      next: (res) => {
+    this.paymentService.getWalletStats().subscribe({
+      next: (res: WalletStatisticsResponse) => {
         this.walletStats = res.statistics;
         console.log('Wallet stats:', this.walletStats);
+        
+        // Sync tournament stats provided by backend
+        if (this.walletStats.tournament_stats) {
+          this.stats.totalProfit = this.walletStats.tournament_stats.total_profit || 0;
+          this.stats.totalPaidOut = this.walletStats.tournament_stats.total_paid_out || 0;
+          this.stats.totalCollected = this.walletStats.tournament_stats.total_collected || 0;
+          this.stats.active = this.walletStats.tournament_stats.active_tournaments || this.stats.active;
+          this.stats.totalAvailableForWithdrawal = this.walletStats.tournament_stats.available_for_withdrawal || 0;
+          
+          // Use more accurate wallet fields if available
+          if (this.walletStats.tournament_stats.currently_blocked !== undefined) {
+            this.walletStats.blocked_balance = this.walletStats.tournament_stats.currently_blocked;
+          }
+        }
+        
         this.cd.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading organizer wallet stats', err);
       }
     });
@@ -96,10 +115,13 @@ export class DashboardComponent implements OnInit {
     }
 
     this.stats.total = this.tournaments.length;
-    this.stats.active = this.tournaments.filter(t => 
+    // Local calculation as fallback or secondary check
+    const activeLocal = this.tournaments.filter(t => 
       t && ['open', 'in_progress'].includes(t.status)
     ).length;
     
+    if (this.stats.active === 0) this.stats.active = activeLocal;
+
     this.stats.participants = this.tournaments.reduce((acc, t) => 
       acc + (t.current_participants || 0), 0
     );
@@ -112,7 +134,16 @@ export class DashboardComponent implements OnInit {
   }
 
   private resetStats() {
-    this.stats = { total: 0, active: 0, participants: 0, prizePool: 0 };
+    this.stats = { 
+      total: 0, 
+      active: 0, 
+      participants: 0, 
+      prizePool: 0,
+      totalProfit: 0,
+      totalPaidOut: 0,
+      totalCollected: 0,
+      totalAvailableForWithdrawal: 0
+    };
   }
 
 }
