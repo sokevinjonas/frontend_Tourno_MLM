@@ -40,5 +40,9 @@ export const publicRoutes: Routes = [
   {
     path: 'organizers',
     loadComponent: () => import('./organizers/organizers.component').then(m => m.OrganizersComponent)
+  },
+  {
+    path: 'guides/match-deadlines',
+    loadComponent: () => import('./guides/match-deadlines/match-deadlines.component').then(m => m.MatchDeadlinesComponent)
   }
 ];

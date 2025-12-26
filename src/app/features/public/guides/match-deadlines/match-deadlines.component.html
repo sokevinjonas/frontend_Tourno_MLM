@@ -1,0 +1,154 @@
+<div class="min-h-screen bg-slate-950 pt-32 pb-20 overflow-x-hidden">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Background Decor -->
+    <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[120px] -z-10"></div>
+    <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[120px] -z-10"></div>
+
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fade-in-up">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-[10px] font-black uppercase tracking-widest mb-6">
+         <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse"></span>
+         Règlement Officiel
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black text-white leading-tight uppercase tracking-tighter mb-6">
+        Système de <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Deadlines</span>
+      </h1>
+      <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+        Comprendre comment sont gérés vos matchs une fois la limite de temps dépassée. Le système vérifie les scores toutes les 15 minutes.
+      </p>
+    </div>
+
+    <!-- Scenarios Grid -->
+    <div class="space-y-12 mb-20">
+      
+      <!-- Scenario 1 -->
+      <div class="group relative bg-slate-900/50 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 hover:border-blue-500/30 transition-all duration-500 animate-fade-in-up" style="animation-delay: 100ms;">
+         <div class="flex flex-col md:flex-row gap-8 items-start">
+            <div class="w-16 h-16 rounded-3xl bg-blue-600/10 flex items-center justify-center text-blue-500 shrink-0 text-3xl">✅</div>
+            <div class="space-y-4">
+               <h3 class="text-2xl font-bold text-white uppercase tracking-tight">Un seul joueur soumet à temps</h3>
+               <p class="text-slate-400 leading-relaxed">
+                  Si vous soumettez votre score et que votre adversaire ne le fait pas avant la deadline, le système vous accorde automatiquement la victoire.
+               </p>
+               <div class="bg-slate-950/50 rounded-2xl p-6 border border-slate-800/50">
+                  <div class="flex items-center gap-4 mb-3">
+                     <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                     <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Conséquence</span>
+                  </div>
+                  <div class="text-white font-bold">Victoire par forfait (Forfeit Win)</div>
+                  <p class="text-slate-500 text-xs mt-1">Vous avancez au prochain tour et votre adversaire est crédité de 0 point.</p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Scenario 2: Draw -->
+      <div class="group relative bg-slate-900/50 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 hover:border-slate-500/30 transition-all duration-500 animate-fade-in-up" style="animation-delay: 200ms;">
+         <div class="flex flex-col md:flex-row gap-8 items-start">
+            <div class="w-16 h-16 rounded-3xl bg-slate-800 flex items-center justify-center text-slate-400 shrink-0 text-3xl">⚖️</div>
+            <div class="space-y-4">
+               <h3 class="text-2xl font-bold text-white uppercase tracking-tight">Aucun joueur ne soumet (Format Suisse)</h3>
+               <p class="text-slate-400 leading-relaxed">
+                  Dans un tournoi au format Suisse, si aucun des deux joueurs n'enregistre de score, le match est considéré comme nul.
+               </p>
+               <div class="bg-slate-950/50 rounded-2xl p-6 border border-slate-800/50">
+                  <div class="flex items-center gap-4 mb-3">
+                     <div class="w-2 h-2 bg-slate-600 rounded-full"></div>
+                     <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Conséquence</span>
+                  </div>
+                  <div class="text-white font-bold">Match Nul (0 - 0)</div>
+                  <p class="text-slate-500 text-xs mt-1">Chaque joueur reçoit 1 point et continue le tournoi normalement.</p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      <!-- Scenario 3: DQ -->
+      <div class="group relative bg-slate-900/50 border border-slate-800 rounded-[2.5rem] p-8 md:p-12 hover:border-red-500/30 transition-all duration-500 animate-fade-in-up" style="animation-delay: 300ms;">
+         <div class="flex flex-col md:flex-row gap-8 items-start">
+            <div class="w-16 h-16 rounded-3xl bg-red-600/10 flex items-center justify-center text-red-500 shrink-0 text-3xl">🚫</div>
+            <div class="space-y-4">
+               <h3 class="text-2xl font-bold text-white uppercase tracking-tight">Aucun joueur ne soumet (Format Knockout)</h3>
+               <p class="text-slate-400 leading-relaxed text-red-200/60">
+                  Attention ! Dans les tournois à élimination directe, le manque d'activité est sévèrement sanctionné pour ne pas bloquer l'arbre.
+               </p>
+               <div class="bg-red-500/5 rounded-2xl p-6 border border-red-500/10">
+                  <div class="flex items-center gap-4 mb-3">
+                     <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                     <span class="text-xs font-black text-red-400 uppercase tracking-widest text-[10px]">Sanction Critique</span>
+                  </div>
+                  <div class="text-white font-bold text-lg">Double Disqualification</div>
+                  <p class="text-red-300/50 text-xs mt-1 leading-relaxed">
+                     Les deux joueurs sont éliminés du tournoi. Le match est marqué comme expiré et l'adversaire de la ronde suivante aura un passage automatique (bye).
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+    </div>
+
+    <!-- Summary Table -->
+    <div class="bg-slate-900 border border-slate-800 rounded-[3rem] overflow-hidden mb-20">
+       <div class="p-8 md:p-12">
+          <h3 class="text-2xl font-bold text-white mb-8 text-center uppercase tracking-tighter">Récapitulatif Rapide</h3>
+          <div class="overflow-x-auto">
+             <table class="w-full text-left">
+                <thead>
+                   <tr class="border-b border-slate-800/50">
+                      <th class="pb-6 text-[10px] text-slate-500 font-black uppercase tracking-widest">Soumissions</th>
+                      <th class="pb-6 text-[10px] text-slate-500 font-black uppercase tracking-widest">Format Swiss</th>
+                      <th class="pb-6 text-[10px] text-slate-500 font-black uppercase tracking-widest">Format Knockout</th>
+                   </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/50">
+                   <tr>
+                      <td class="py-6 pr-4">
+                         <div class="text-white font-bold">Aucune</div>
+                         <div class="text-[10px] text-slate-500">0 joueur</div>
+                      </td>
+                      <td class="py-6">
+                         <span class="text-amber-400 text-sm font-bold">Match Nul (0-0)</span>
+                      </td>
+                      <td class="py-6">
+                         <span class="text-red-400 text-sm font-bold">⛔ Double DQ</span>
+                      </td>
+                   </tr>
+                   <tr>
+                      <td class="py-6 pr-4">
+                         <div class="text-white font-bold">Partielle</div>
+                         <div class="text-[10px] text-slate-500">1 seul joueur</div>
+                      </td>
+                      <td class="py-6">
+                         <span class="text-blue-400 text-sm font-bold">🏆 Victoire Forfait</span>
+                      </td>
+                      <td class="py-6">
+                         <span class="text-blue-400 text-sm font-bold">🏆 Victoire Forfait</span>
+                      </td>
+                   </tr>
+                   <tr>
+                      <td class="py-6 pr-4">
+                         <div class="text-white font-bold">Complète</div>
+                         <div class="text-[10px] text-slate-500">2 joueurs</div>
+                      </td>
+                      <td colspan="2" class="py-6 text-center">
+                         <span class="px-4 py-1.5 bg-green-500/10 text-green-400 rounded-full text-[10px] font-black uppercase tracking-widest">Validation automatique / Modérée</span>
+                      </td>
+                   </tr>
+                </tbody>
+             </table>
+          </div>
+       </div>
+    </div>
+
+    <!-- Footer Action -->
+    <div class="text-center">
+       <a routerLink="/my-matches" class="inline-flex items-center gap-4 px-10 py-5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-3xl transition-all shadow-xl shadow-blue-600/20 active:scale-95 uppercase tracking-widest text-sm">
+          Retour à mes matchs
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+       </a>
+    </div>
+
+  </div>
+</div>
