@@ -34,6 +34,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   selectedMatch: Match | null = null;
   showScoreModal = false;
   showSuccessModal = false;
+  showImageModal = false;
+  previewImageUrl: string | null = null;
   submittingScore = false;
   scoreForm = {
     own_score: 0,
@@ -160,6 +162,17 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     if (path.startsWith('http')) return path;
     if (path.startsWith('data:')) return path;
     return `${this.storageUrl}${path}`;
+  }
+
+  openImagePreview(url: string | null) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImageModal = true;
+  }
+
+  closeImagePreview() {
+    this.showImageModal = false;
+    this.previewImageUrl = null;
   }
 
   closeScoreModal() {
