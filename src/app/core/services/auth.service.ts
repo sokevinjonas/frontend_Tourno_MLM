@@ -33,6 +33,10 @@ export class AuthService {
   public currentUser$ = this.currentUserSubject.asObservable();
   private readonly TOKEN_KEY = 'auth_token';
 
+  get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
   constructor(private http: HttpClient) {
     this.initializeAuth();
   }

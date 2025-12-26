@@ -36,7 +36,7 @@ export class MatchService {
     return this.http.post<Match>(`${this.apiUrl}/${matchId}/enter-score`, score);
   }
 
-  reportResult(matchId: number, data: any): Observable<any> {
+  reportResult(matchId: number, data: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/${matchId}/report`, data);
   }
 

@@ -5,10 +5,12 @@ import { MatchService, Match } from '../../../core/services/match.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-my-matches',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './my-matches.component.html',
   styleUrl: './my-matches.component.css'
 })
@@ -22,6 +24,18 @@ export class MyMatchesComponent implements OnInit {
   filteredMatches: Match[] = [];
   loading = true;
   activeTab: 'active' | 'completed' | 'expired' = 'active';
+
+  // Modal State
+  selectedMatch: Match | null = null;
+  showScoreModal = false;
+  submittingScore = false;
+  scoreForm = {
+    own_score: 0,
+    opponent_score: 0,
+    comment: ''
+  };
+  selectedFile: File | null = null;
+  filePreview: string | null = null;
 
   currentUser$ = this.authService.currentUser$;
 
@@ -98,5 +112,67 @@ export class MyMatchesComponent implements OnInit {
       case 'expired': return 'Expiré';
       default: return status;
     }
+  }
+
+  openScoreModal(match: Match) {
+    this.selectedMatch = match;
+    this.showScoreModal = true;
+    this.scoreForm = { own_score: 0, opponent_score: 0, comment: '' };
+    this.selectedFile = null;
+    this.filePreview = null;
+  }
+
+  closeScoreModal() {
+    this.showScoreModal = false;
+    this.selectedMatch = null;
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.filePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  submitScore() {
+    if (!this.selectedMatch || (!this.selectedFile && !this.filePreview)) {
+      // Maybe add error toast if file is required
+      return;
+    }
+
+    this.submittingScore = true;
+    const formData = new FormData();
+    formData.append('own_score', this.scoreForm.own_score.toString());
+    formData.append('opponent_score', this.scoreForm.opponent_score.toString());
+    if (this.selectedFile) {
+      formData.append('screenshot', this.selectedFile);
+    }
+    if (this.scoreForm.comment) {
+      formData.append('comment', this.scoreForm.comment);
+    }
+
+    this.matchService.reportResult(this.selectedMatch.id, formData).subscribe({
+      next: () => {
+        this.submittingScore = false;
+        this.closeScoreModal();
+        this.loadMatches();
+        // Maybe add success toast
+      },
+      error: (err) => {
+        console.error('Error submitting score', err);
+        this.submittingScore = false;
+        // Maybe add error toast
+      }
+    });
+  }
+
+  isMyWinner(match: Match): boolean {
+    const currentUserId = (this.authService.currentUserValue as any)?.id;
+    return match.winner_id === currentUserId;
   }
 }
