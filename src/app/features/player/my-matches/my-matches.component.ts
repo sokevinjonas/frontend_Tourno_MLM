@@ -175,4 +175,18 @@ export class MyMatchesComponent implements OnInit {
     const currentUserId = (this.authService.currentUserValue as any)?.id;
     return match.winner_id === currentUserId;
   }
+
+  getScheduledDate(match: Match): string | null {
+    return match.scheduled_at || match.round?.start_date || null;
+  }
+
+  getDeadlineDate(match: Match): Date | null {
+    if (match.deadline_at) return new Date(match.deadline_at);
+    if (match.round?.start_date && match.tournament?.match_deadline_minutes) {
+      const date = new Date(match.round.start_date);
+      date.setMinutes(date.getMinutes() + match.tournament.match_deadline_minutes);
+      return date;
+    }
+    return null;
+  }
 }

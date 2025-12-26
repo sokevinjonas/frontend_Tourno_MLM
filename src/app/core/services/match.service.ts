@@ -14,10 +14,21 @@ export interface Match {
   player2_score: number | null;
   winner_id: number | null;
   status: 'scheduled' | 'in_progress' | 'pending_validation' | 'completed' | 'disputed' | 'expired';
-  scheduled_at: string;
-  deadline_at: string;
+  scheduled_at: string | null;
+  deadline_at: string | null;
   player1?: { id: number; name: string };
   player2?: { id: number; name: string };
+  round?: {
+    start_date: string;
+    end_date: string | null;
+    round_number: number;
+    status: string;
+  };
+  tournament?: {
+    name: string;
+    match_deadline_minutes: number;
+    status: string;
+  };
 }
 
 @Injectable({

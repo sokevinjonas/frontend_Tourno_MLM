@@ -25,6 +25,25 @@ export class DashboardComponent implements OnInit {
   loading = true;
   loadingMatches = true;
 
+  isMyWinner(match: Match): boolean {
+    const currentUserId = (this.authService.currentUserValue as any)?.id;
+    return match.winner_id === currentUserId;
+  }
+
+  getScheduledDate(match: Match): string | null {
+    return match.scheduled_at || match.round?.start_date || null;
+  }
+
+  getDeadlineDate(match: Match): Date | null {
+    if (match.deadline_at) return new Date(match.deadline_at);
+    if (match.round?.start_date && match.tournament?.match_deadline_minutes) {
+      const date = new Date(match.round.start_date);
+      date.setMinutes(date.getMinutes() + match.tournament.match_deadline_minutes);
+      return date;
+    }
+    return null;
+  }
+
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.userName = user?.name || '';
@@ -66,7 +85,11 @@ export class DashboardComponent implements OnInit {
         // Get active matches first, sorted by deadline
         this.recentMatches = matches
           .filter(m => ['scheduled', 'in_progress', 'pending_validation'].includes(m.status))
-          .sort((a, b) => new Date(a.deadline_at).getTime() - new Date(b.deadline_at).getTime())
+          .sort((a, b) => {
+            const dateA = new Date(a.deadline_at || a.round?.start_date || 0).getTime();
+            const dateB = new Date(b.deadline_at || b.round?.start_date || 0).getTime();
+            return dateA - dateB;
+          })
           .slice(0, 3);
         
         this.loadingMatches = false;

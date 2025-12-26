@@ -110,14 +110,14 @@
                   <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center" [innerHTML]="sanitize(icons.calendar)"></div>
                   <div class="min-w-0">
                      <div class="text-[10px] uppercase font-black text-slate-600">Date Prévue</div>
-                     <div class="text-xs text-white truncate">{{ match.scheduled_at | date:'dd/MM HH:mm' }}</div>
+                     <div class="text-xs text-white truncate">{{ getScheduledDate(match) | date:'dd/MM HH:mm' }}</div>
                   </div>
                </div>
                <div class="flex items-center gap-3 text-slate-400">
                   <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center" [innerHTML]="sanitize(icons.clock)"></div>
                   <div class="min-w-0">
                      <div class="text-[10px] uppercase font-black text-slate-600">Deadline</div>
-                     <div class="text-xs text-red-400 font-bold truncate">{{ match.deadline_at | date:'dd/MM HH:mm' }}</div>
+                     <div class="text-xs text-red-400 font-bold truncate">{{ getDeadlineDate(match) | date:'dd/MM HH:mm' }}</div>
                   </div>
                </div>
             </div>
