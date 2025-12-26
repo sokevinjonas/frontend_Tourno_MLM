@@ -91,7 +91,11 @@
             <p class="text-[10px] text-slate-500">{{ verif.user?.email }}</p>
           </div>
         </div>
-        <div class="mb-8">
+        <div class="space-y-3 mb-6 text-sm">
+          <p class="text-slate-300">📱 <span class="ml-1">{{ verif.whatsapp_number }}</span></p>
+          <p class="text-slate-300">🌍 <span class="ml-1">{{ verif.country }}, {{ verif.city }}</span></p>
+        </div>
+        <div class="mb-8" *ngIf="verif.verification_document">
             <p class="text-[10px] text-slate-500 font-bold uppercase mb-2">Document de vérification</p>
             <a [href]="verif.verification_document" target="_blank" class="block p-3 bg-slate-950 border border-slate-800 rounded-xl text-blue-400 hover:text-blue-300 text-xs truncate">
                 📄 Voir le document

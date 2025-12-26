@@ -44,5 +44,21 @@ export const publicRoutes: Routes = [
   {
     path: 'guides/match-deadlines',
     loadComponent: () => import('./guides/match-deadlines/match-deadlines.component').then(m => m.MatchDeadlinesComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./contact/contact.component').then(m => m.ContactComponent)
+  },
+  {
+    path: 'terms',
+    loadComponent: () => import('./legal/terms/terms.component').then(m => m.TermsComponent)
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./legal/privacy/privacy.component').then(m => m.PrivacyComponent)
+  },
+  {
+    path: 'mentions',
+    loadComponent: () => import('./legal/mentions/mentions.component').then(m => m.MentionsComponent)
   }
 ];

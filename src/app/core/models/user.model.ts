@@ -56,7 +56,10 @@ export interface OrganizerVerification {
   id: number;
   user_id: number;
   user?: User;
-  verification_document: string;
+  whatsapp_number: string;
+  country: string;
+  city: string;
+  verification_document?: string;
   status: 'pending' | 'validated' | 'rejected';
   rejection_reason?: string;
   created_at: string;
