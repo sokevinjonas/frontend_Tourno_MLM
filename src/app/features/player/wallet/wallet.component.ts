@@ -2,7 +2,7 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { PaymentService } from '../../../core/services/payment.service';
-import { Transaction, WalletStats } from '../../../core/models/payment.model';
+import { Transaction, WalletStats, WalletStatisticsResponse } from '../../../core/models/payment.model';
 
 @Component({
   selector: 'app-wallet',
@@ -44,8 +44,19 @@ export class WalletComponent implements OnInit {
 
   loadStats() {
     this.paymentService.getWalletStats().subscribe({
-      next: (res) => {
-        this.walletStats = res.statistics;
+      next: (res: WalletStatisticsResponse) => {
+        const { wallet, transactions, tournaments } = res;
+        
+        // Compatibility mapping for existing HTML
+        this.walletStats = {
+          balance: wallet.balance,
+          blocked_balance: wallet.blocked_balance,
+          available_balance: wallet.available_balance,
+          total_credited: transactions.total_credited,
+          total_debited: transactions.total_debited,
+          tournament_stats: tournaments
+        } as any;
+        
         this.cd.detectChanges();
       },
       error: (err) => console.error('Error fetching stats', err)

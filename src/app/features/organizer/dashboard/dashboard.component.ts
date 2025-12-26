@@ -83,20 +83,32 @@ export class DashboardComponent implements OnInit {
   loadWalletStats() {
     this.paymentService.getWalletStats().subscribe({
       next: (res: WalletStatisticsResponse) => {
-        this.walletStats = res.statistics;
-        console.log('Wallet stats:', this.walletStats);
+        // Map the new nested response to the component's state
+        const { wallet, transactions, tournaments } = res;
+        
+        // Use a generic object for UI compatibility if needed, 
+        // but here we map directly to our stats and walletStats
+        this.walletStats = {
+          balance: wallet.balance,
+          blocked_balance: wallet.blocked_balance,
+          available_balance: wallet.available_balance,
+          tournament_stats: tournaments
+        } as any; // Cast as any for now to avoid breaking existing HTML if it expects the old wrapper, 
+                  // though we should ideally use the new types everywhere.
+        
+        console.log('Wallet stats nested mapping:', res);
         
         // Sync tournament stats provided by backend
-        if (this.walletStats.tournament_stats) {
-          this.stats.totalProfit = this.walletStats.tournament_stats.total_profit || 0;
-          this.stats.totalPaidOut = this.walletStats.tournament_stats.total_paid_out || 0;
-          this.stats.totalCollected = this.walletStats.tournament_stats.total_collected || 0;
-          this.stats.active = this.walletStats.tournament_stats.active_tournaments || this.stats.active;
-          this.stats.totalAvailableForWithdrawal = this.walletStats.tournament_stats.available_for_withdrawal || 0;
+        if (tournaments) {
+          this.stats.totalProfit = tournaments.total_profit || 0;
+          this.stats.totalPaidOut = tournaments.total_paid_out || 0;
+          this.stats.totalCollected = tournaments.total_collected || 0;
+          this.stats.active = tournaments.active_tournaments || this.stats.active;
+          this.stats.totalAvailableForWithdrawal = tournaments.available_for_withdrawal || 0;
           
-          // Use more accurate wallet fields if available
-          if (this.walletStats.tournament_stats.currently_blocked !== undefined) {
-            this.walletStats.blocked_balance = this.walletStats.tournament_stats.currently_blocked;
+          // Sync blocked balance from wallet if available
+          if (wallet.blocked_balance !== undefined && this.walletStats) {
+            this.walletStats.blocked_balance = wallet.blocked_balance;
           }
         }
         

@@ -48,6 +48,12 @@ export interface WalletData {
   available_balance: number;
 }
 
+export interface WalletStats extends WalletData {
+  tournament_stats: TournamentSummaryStats;
+  total_credited?: number;
+  total_debited?: number;
+}
+
 export interface TransactionStats {
   total_credited: number;
   total_debited: number;
