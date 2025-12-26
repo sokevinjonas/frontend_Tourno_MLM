@@ -29,6 +29,20 @@ export interface Match {
     match_deadline_minutes: number;
     status: string;
   };
+  match_results?: MatchResult[];
+}
+
+export interface MatchResult {
+  id: number;
+  match_id: number;
+  submitted_by: number;
+  own_score: number;
+  opponent_score: number;
+  screenshot_path: string;
+  comment: string | null;
+  status: 'pending' | 'validated' | 'rejected';
+  created_at: string;
+  updated_at: string;
 }
 
 @Injectable({
@@ -57,6 +71,12 @@ export class MatchService {
 
   getMyMatches(): Observable<Match[]> {
     return this.http.get<any>(`${this.apiUrl}/my/matches`).pipe(
+      map(res => res.matches || res)
+    );
+  }
+
+  getPendingMatches(): Observable<Match[]> {
+    return this.http.get<any>(`${this.apiUrl}/my/pending`).pipe(
       map(res => res.matches || res)
     );
   }

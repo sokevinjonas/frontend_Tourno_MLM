@@ -139,6 +139,51 @@
                  </div>
               </div>
 
+              <!-- Submissions Display -->
+              @if (getOwnSubmission(match) || getOpponentSubmission(match)) {
+                <div class="mt-4 pt-4 border-t border-slate-700/30 flex flex-col gap-2">
+                  <div class="text-[9px] text-slate-500 font-black uppercase tracking-widest mb-1 text-center">Soumissions</div>
+                  <div class="flex justify-between items-center bg-slate-900/50 rounded-xl p-3 border border-slate-800/50">
+                    <!-- Own Submission -->
+                    <div class="flex-1 text-center flex flex-col items-center gap-1">
+                      @if (getOwnSubmission(match); as sub) {
+                        <div class="text-xs font-black text-blue-400">{{ sub.own_score }} - {{ sub.opponent_score }}</div>
+                        <div [class]="'text-[8px] uppercase font-black ' + (sub.status === 'pending' ? 'text-amber-500' : 'text-green-500')">
+                          {{ sub.status === 'pending' ? 'En attente' : 'Validé' }}
+                        </div>
+                        @if (sub.screenshot_path) {
+                          <a [href]="getImageUrl(sub.screenshot_path)" target="_blank" class="mt-1 w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                          </a>
+                        }
+                      } @else {
+                        <div class="text-[8px] text-slate-600 uppercase font-black italic">Aucune de votre part</div>
+                      }
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="h-10 w-[1px] bg-slate-800 mx-2"></div>
+
+                    <!-- Opponent Submission -->
+                    <div class="flex-1 text-center flex flex-col items-center gap-1">
+                      @if (getOpponentSubmission(match); as sub) {
+                        <div class="text-xs font-black text-red-400">{{ sub.own_score }} - {{ sub.opponent_score }}</div>
+                        <div [class]="'text-[8px] uppercase font-black ' + (sub.status === 'pending' ? 'text-amber-500' : 'text-green-500')">
+                          {{ sub.status === 'pending' ? 'En attente' : 'Validé' }}
+                        </div>
+                        @if (sub.screenshot_path) {
+                          <a [href]="getImageUrl(sub.screenshot_path)" target="_blank" class="mt-1 w-6 h-6 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                          </a>
+                        }
+                      } @else {
+                        <div class="text-[8px] text-slate-600 uppercase font-black italic">En attente adverse</div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              }
+
               <!-- Actions -->
               <div class="mt-4 flex gap-2">
                 <button 
@@ -150,8 +195,8 @@
                 <button 
                   (click)="openScoreModal(match)"
                   [disabled]="isExpired(match)"
-                  class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:border-slate-700 text-white font-bold rounded-lg text-xs transition-all shadow-lg shadow-blue-500/20 uppercase tracking-widest border border-transparent">
-                  {{ isExpired(match) ? 'Délai Dépassé' : 'Saisir Score' }}
+                  class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:border-slate-700 text-white font-bold rounded-lg text-xs transition-all uppercase tracking-widest border border-transparent">
+                  {{ isExpired(match) ? 'Délai Dépassé' : (getOwnSubmission(match) ? 'Modifier Score' : 'Saisir Score') }}
                 </button>
                 }
                 @if (match.status === 'completed') {
@@ -219,7 +264,7 @@
     @if (showScoreModal && selectedMatch) {
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
        <!-- Backdrop -->
-       <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="closeScoreModal()"></div>
+       <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
        
        <!-- Modal Content -->
        <div class="relative bg-slate-900 border border-slate-800 w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden animate-zoom-in">
@@ -325,7 +370,7 @@
     <!-- Submission Success Modal -->
     @if (showSuccessModal) {
     <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="closeSuccessModal()"></div>
+      <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
       <div class="relative bg-slate-900 border border-slate-800 w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-zoom-in text-center p-8">
          <div class="w-20 h-20 bg-green-500/10 border border-green-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-green-500">
             <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">

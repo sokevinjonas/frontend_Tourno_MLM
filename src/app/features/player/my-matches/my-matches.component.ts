@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatchService, Match } from '../../../core/services/match.service';
+import { MatchService, Match, MatchResult } from '../../../core/services/match.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private cd = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
+  
+  storageUrl = 'http://localhost:8000/storage/';
 
   matches: Match[] = [];
   filteredMatches: Match[] = [];
@@ -70,12 +72,13 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
 
   loadMatches() {
     this.loading = true;
-    this.matchService.getMyMatches().subscribe({
+    // We use getPendingMatches for the main view to get submissions and statuses
+    this.matchService.getPendingMatches().subscribe({
       next: (res) => {
         this.matches = res;
         this.filterMatches();
         this.loading = false;
-        this.cd.detectChanges();
+        this.cd.markForCheck();
       },
       error: (err) => {
         console.error('Error loading matches', err);
@@ -135,9 +138,28 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   openScoreModal(match: Match) {
     this.selectedMatch = match;
     this.showScoreModal = true;
-    this.scoreForm = { own_score: 0, opponent_score: 0, comment: '' };
+    
+    const ownSub = this.getOwnSubmission(match);
+    if (ownSub) {
+      this.scoreForm = { 
+        own_score: ownSub.own_score, 
+        opponent_score: ownSub.opponent_score, 
+        comment: ownSub.comment || '' 
+      };
+      // We don't prepopulate the file for security reasons, user can upload a new one if they want to change
+    } else {
+      this.scoreForm = { own_score: 0, opponent_score: 0, comment: '' };
+    }
+    
     this.selectedFile = null;
     this.filePreview = null;
+  }
+
+  getImageUrl(path: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('data:')) return path;
+    return `${this.storageUrl}${path}`;
   }
 
   closeScoreModal() {
@@ -179,11 +201,45 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     }
 
     this.matchService.reportResult(this.selectedMatch.id, formData).subscribe({
-      next: () => {
+      next: (res) => {
         this.submittingScore = false;
+        
+        // Manually update the local match object's results for instant feedback
+        if (this.selectedMatch) {
+          if (!this.selectedMatch.match_results) this.selectedMatch.match_results = [];
+          
+          // The response 'res' should contain the new submission
+          // If not, we can create a temporary one or wait for loadMatches
+          const userId = this.authService.currentUserValue?.id;
+          if (userId) {
+             const newResult: MatchResult = {
+                id: res?.id || Date.now(),
+                match_id: this.selectedMatch.id,
+                submitted_by: userId,
+                own_score: this.scoreForm.own_score,
+                opponent_score: this.scoreForm.opponent_score,
+                screenshot_path: this.filePreview || '',
+                comment: this.scoreForm.comment || null,
+                status: 'pending',
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+             };
+             // Remove existing own submission if any
+             this.selectedMatch.match_results = [
+               ...this.selectedMatch.match_results.filter((r: MatchResult) => r.submitted_by !== userId),
+               newResult
+             ];
+          }
+        }
+
         this.closeScoreModal();
         this.showSuccessModal = true;
-        this.loadMatches();
+        
+        // Refresh full list after a tiny delay to ensure backend consistency
+        setTimeout(() => {
+          this.loadMatches();
+        }, 500);
+        
         this.cd.markForCheck();
       },
       error: (err) => {
@@ -231,5 +287,21 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     const deadline = this.getDeadlineDate(match);
     if (!deadline) return false;
     return deadline.getTime() <= this.currentTime.getTime();
+  }
+
+  getSubmission(match: Match, forPlayerId: number | null): MatchResult | null {
+    if (!match.match_results || !forPlayerId) return null;
+    return match.match_results.find((r: MatchResult) => r.submitted_by === forPlayerId) || null;
+  }
+
+  getOwnSubmission(match: Match): any {
+    const userId = this.authService.currentUserValue?.id;
+    return this.getSubmission(match, userId || null);
+  }
+
+  getOpponentSubmission(match: Match): any {
+    const userId = this.authService.currentUserValue?.id;
+    const opponentId = match.player1_id === userId ? match.player2_id : match.player1_id;
+    return this.getSubmission(match, opponentId || null);
   }
 }
