@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -39,7 +39,7 @@ import { OrganizerBadgeComponent } from '../../../shared/components/organizer-ba
   templateUrl: './tournament-details.component.html',
   styleUrls: ['./tournament-details.component.css']
 })
-export class TournamentDetailsComponent implements OnInit {
+export class TournamentDetailsComponent implements OnInit, OnDestroy {
   tournament: ParsedTournament | undefined;
   
   private authService = inject(AuthService);
@@ -50,6 +50,10 @@ export class TournamentDetailsComponent implements OnInit {
   private location = inject(Location);
   private sanitizer = inject(DomSanitizer);
   private toastService = inject(ToastService);
+  
+  // Timer properties for deadlines
+  private timer: any;
+  currentTime = new Date();
   
   currentUser$ = this.authService.currentUser$;
   currentUser: User | null = null;
@@ -117,16 +121,33 @@ export class TournamentDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-       this.loadTournament(id);
-    }
+    this.route.params.subscribe(params => {
+      const id = +params['id'];
+      if (id) {
+        this.loadTournament(id);
+      }
+    });
+
+    this.startTimer();
 
     // Keep currentUser updated
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
       this.cd.markForCheck();
     });
+  }
+
+  ngOnDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+
+  private startTimer() {
+    this.timer = setInterval(() => {
+      this.currentTime = new Date();
+      this.cd.markForCheck();
+    }, 1000);
   }
 
   loadTournament(id: number) {
@@ -190,7 +211,9 @@ export class TournamentDetailsComponent implements OnInit {
                                   p2: playerMap[m.player2_id] || 'TBD',
                                   s1: m.player1_score,
                                   s2: m.player2_score,
-                                  status: m.status
+                                  status: m.status,
+                                  scheduled_at: m.scheduled_at,
+                                  deadline_at: m.deadline_at
                               }))
                           };
                       });
@@ -221,6 +244,36 @@ export class TournamentDetailsComponent implements OnInit {
 
   sanitize(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  getDeadlineDate(match: any): Date | null {
+    if (match.deadline_at) return new Date(match.deadline_at);
+    if (match.scheduled_at && this.tournament?.match_deadline_minutes) {
+      const date = new Date(match.scheduled_at);
+      date.setMinutes(date.getMinutes() + this.tournament.match_deadline_minutes);
+      return date;
+    }
+    return null;
+  }
+
+  isExpired(match: any): boolean {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return false;
+    return deadline.getTime() <= this.currentTime.getTime();
+  }
+
+  getCountdown(match: any): string {
+    const deadline = this.getDeadlineDate(match);
+    if (!deadline) return '--:--';
+    
+    const diff = deadline.getTime() - this.currentTime.getTime();
+    if (diff <= 0) return '00:00';
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return `${hours > 0 ? hours + ':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   goBack() {

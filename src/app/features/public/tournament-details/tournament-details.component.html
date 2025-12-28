@@ -134,49 +134,103 @@
            </div>
 
            <!-- Rounds Visualization -->
-           <div *ngIf="tournament.rounds && tournament.rounds.length > 0" class="overflow-x-auto pb-4">
-              <div class="flex gap-8 min-w-max px-2">
+           <div *ngIf="tournament.rounds && tournament.rounds.length > 0" class="overflow-x-auto pb-8 no-scrollbar">
+              <div class="flex gap-12 min-w-max px-4 py-8">
                  <!-- Round Column -->
-                 <div *ngFor="let round of tournament.rounds" class="w-72 flex flex-col gap-4">
-                    <h4 class="text-blue-400 font-bold text-center sticky left-0 mb-2">{{round.name}}</h4>
+                 <div *ngFor="let round of tournament.rounds; let lastRound = last" class="w-80 flex flex-col gap-8 relative">
                     
-                    <!-- Match Card -->
-                    <div *ngFor="let match of round.matches" class="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden relative group hover:border-slate-600 transition-colors">
-                       <div class="absolute inset-y-0 left-0 w-1 bg-slate-700 group-hover:bg-blue-500 transition-colors"></div>
-                       <div class="p-3 space-y-2">
-                          <!-- Player 1 -->
-                          <div class="flex justify-between items-center" [class.opacity-50]="match.status === 'completed' && match.s1 !== null && match.s2 !== null && match.s1 < match.s2">
-                             <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-400">
-                                   {{match.p1.charAt(0)}}
-                                </div>
-                                <span class="text-sm font-medium text-white truncate max-w-[100px]">{{match.p1}}</span>
-                             </div>
-                             <span *ngIf="match.s1 !== null" class="font-bold font-mono" [class.text-green-400]="match.s1 > (match.s2 || 0)" [class.text-slate-400]="match.s1 < (match.s2 || 0)">{{match.s1}}</span>
-                             <span *ngIf="match.s1 === null" class="text-xs text-slate-600">-</span>
-                          </div>
-                          
-                          <!-- Divider -->
-                          <div class="h-px bg-slate-700/50"></div>
+                    <!-- Round Header -->
+                    <div class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 text-center shadow-lg">
+                       <h4 class="text-blue-400 font-bold uppercase tracking-widest text-xs">{{round.name}}</h4>
+                       <div class="text-[10px] text-slate-500 mt-1 font-black uppercase">Round {{round.id}}</div>
+                    </div>
+                    
+                    <!-- Matches Container -->
+                    <div class="flex flex-col flex-1 justify-around gap-8">
+                      <!-- Match Card -->
+                      <div *ngFor="let match of round.matches" class="relative">
+                        
+                        <!-- Connecting Lines (Visual enhancement) -->
+                        <div *ngIf="!lastRound" class="absolute -right-12 top-1/2 w-12 h-px bg-slate-700/50 hidden md:block"></div>
 
-                          <!-- Player 2 -->
-                          <div class="flex justify-between items-center" [class.opacity-50]="match.status === 'completed' && match.s1 !== null && match.s2 !== null && match.s2 < match.s1">
-                             <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-400">
-                                   {{match.p2.charAt(0)}}
-                                </div>
-                                <span class="text-sm font-medium text-white truncate max-w-[100px]">{{match.p2}}</span>
-                             </div>
-                             <span *ngIf="match.s2 !== null" class="font-bold font-mono" [class.text-green-400]="match.s2 > (match.s1 || 0)" [class.text-slate-400]="match.s2 < (match.s1 || 0)">{{match.s2}}</span>
-                             <span *ngIf="match.s2 === null" class="text-xs text-slate-600">-</span>
-                          </div>
-                       </div>
-                       
-                       <!-- Status Badge -->
-                       <div *ngIf="match.status === 'live'" class="absolute top-2 right-2 flex items-center gap-1">
-                          <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-                          <span class="text-[10px] text-red-400 font-bold uppercase">Live</span>
-                       </div>
+                        <div class="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-2xl overflow-hidden group hover:border-blue-500/50 transition-all duration-300 shadow-xl relative">
+                           
+                           <!-- Match Top Info (Scheduled Date) -->
+                           <div class="bg-slate-900/50 px-4 py-2 flex justify-between items-center border-b border-white/5">
+                              <div class="flex items-center gap-1.5 text-slate-500">
+                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                 <span class="text-[9px] font-black uppercase tracking-wider">{{ (match.scheduled_at || tournament.start_date) | date:'MMM dd, HH:mm' }}</span>
+                              </div>
+                              
+                              <!-- Status Indicator -->
+                              <div *ngIf="match.status === 'live'" class="flex items-center gap-1.5">
+                                 <span class="flex h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                                 <span class="text-[9px] text-red-400 font-black uppercase tracking-wider">Live</span>
+                              </div>
+                              <div *ngIf="match.status === 'completed'" class="text-green-500/70">
+                                 <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                              </div>
+                           </div>
+
+                           <div class="p-3 space-y-1">
+                              <!-- Player 1 -->
+                              <div class="flex justify-between items-center p-2 rounded-lg transition-colors"
+                                   [ngClass]="{
+                                     'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && match.s1 > (match.s2 || 0),
+                                     'opacity-40 filter grayscale': match.status === 'completed' && match.s1 < (match.s2 || 0)
+                                   }">
+                                 <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-500/30 transition-colors">
+                                       {{match.p1.charAt(0)}}
+                                    </div>
+                                    <span class="text-xs font-bold text-white truncate max-w-[120px]">{{match.p1}}</span>
+                                 </div>
+                                 <div class="flex items-center gap-2">
+                                    <span *ngIf="match.status === 'completed' && match.s1 > (match.s2 || 0)" class="text-[10px]">👑</span>
+                                    <span *ngIf="match.s1 !== null" class="font-black text-sm font-mono" [class.text-blue-400]="match.s1 > (match.s2 || 0)">{{match.s1}}</span>
+                                    <span *ngIf="match.s1 === null" class="text-xs text-slate-600">-</span>
+                                 </div>
+                              </div>
+                              
+                              <!-- Connector / VS -->
+                              <div class="flex items-center justify-center h-4 relative">
+                                 <div class="absolute inset-y-0 left-6 w-[1px] bg-slate-700/50"></div>
+                                 <span class="relative z-10 bg-slate-800 px-2 text-[8px] font-black text-slate-600 uppercase tracking-widest italic">VS</span>
+                              </div>
+
+                              <!-- Player 2 -->
+                              <div class="flex justify-between items-center p-2 rounded-lg transition-colors"
+                                   [ngClass]="{
+                                     'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && match.s2 > (match.s1 || 0),
+                                     'opacity-40 filter grayscale': match.status === 'completed' && match.s2 < (match.s1 || 0)
+                                   }">
+                                 <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-500/30 transition-colors">
+                                       {{match.p2.charAt(0)}}
+                                    </div>
+                                    <span class="text-xs font-bold text-white truncate max-w-[120px]">{{match.p2}}</span>
+                                 </div>
+                                 <div class="flex items-center gap-2">
+                                    <span *ngIf="match.status === 'completed' && match.s2 > (match.s1 || 0)" class="text-[10px]">👑</span>
+                                    <span *ngIf="match.s2 !== null" class="font-black text-sm font-mono" [class.text-blue-400]="match.s2 > (match.s1 || 0)">{{match.s2}}</span>
+                                    <span *ngIf="match.s2 === null" class="text-xs text-slate-600">-</span>
+                                 </div>
+                              </div>
+                           </div>
+
+                           <!-- Match Footer (Deadline) -->
+                           <div class="bg-slate-900/30 border-t border-white/5 py-1.5 px-3 flex justify-between items-center">
+                              <div class="flex items-center gap-1.5">
+                                 <svg class="w-3 h-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                 <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Deadline:</span>
+                              </div>
+                              <span class="text-[9px] font-black transition-all duration-300"
+                                    [ngClass]="match.status === 'completed' ? 'text-slate-600' : (isExpired(match) ? 'text-red-500/50' : 'text-blue-400/80')">
+                                 {{ match.status === 'completed' ? '-- : --' : (isExpired(match) ? 'Expiré' : getCountdown(match)) }}
+                              </span>
+                           </div>
+                        </div>
+                      </div>
                     </div>
                  </div>
               </div>
