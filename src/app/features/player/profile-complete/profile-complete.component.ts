@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { PlayerService } from '../../../core/services/player.service';
 import { GameAccountModalComponent } from '../../../shared/components/game-account-modal/game-account-modal.component';
+import { AFRICAN_COUNTRIES } from '../../../core/constants/countries';
 
 @Component({
   selector: 'app-profile-complete',
@@ -21,6 +22,8 @@ export class ProfileCompleteComponent implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   
   public currentUser$ = this.authService.currentUser$;
+  public countries = AFRICAN_COUNTRIES;
+  public selectedCountry = AFRICAN_COUNTRIES.find(c => c.name === 'Burkina Faso') || AFRICAN_COUNTRIES[0];
 
   currentStep = 1;
   isLoading = false;
@@ -32,11 +35,19 @@ export class ProfileCompleteComponent implements OnInit {
 
   personalInfoForm = this.fb.group({
     whatsapp_number: ['', [Validators.required]],
-    country: ['Cameroun', Validators.required],
+    country: ['Burkina Faso', Validators.required],
     city: ['', Validators.required]
   });
 
   ngOnInit() {
+    // Listen for country changes to update placeholder/calling code
+    this.personalInfoForm.get('country')?.valueChanges.subscribe(countryName => {
+      const country = this.countries.find(c => c.name === countryName);
+      if (country) {
+        this.selectedCountry = country;
+      }
+    });
+
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         const profile = user.profile || {};

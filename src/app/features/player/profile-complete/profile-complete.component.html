@@ -51,9 +51,12 @@
           <div>
             <label class="block text-sm font-medium text-slate-300 mb-2">Numéro WhatsApp</label>
             <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">📞</span>
-              <input type="tel" formControlName="whatsapp_number" placeholder="+237 6XX XX XX XX" 
-                     class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium flex items-center gap-2">
+                <span>{{ selectedCountry.flag }}</span>
+                <span>{{ selectedCountry.callingCode }}</span>
+              </span>
+              <input type="tel" formControlName="whatsapp_number" [placeholder]="selectedCountry.placeholder" 
+                     class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-24 md:pl-28 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
             </div>
             <p *ngIf="personalInfoForm.get('whatsapp_number')?.touched && personalInfoForm.get('whatsapp_number')?.invalid" class="text-red-400 text-xs mt-1">Requis pour l'organisation</p>
           </div>
@@ -63,9 +66,7 @@
              <div>
                 <label class="block text-sm font-medium text-slate-300 mb-2">Pays</label>
                 <select formControlName="country" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 transition-all text-sm md:text-base">
-                   <option value="Cameroun">Cameroun 🇨🇲</option>
-                   <option value="Gabon">Gabon 🇬🇦</option>
-                   <option value="CoteIvoire">Côte d'Ivoire 🇨🇮</option>
+                   <option *ngFor="let c of countries" [value]="c.name">{{ c.name }} {{ c.flag }}</option>
                 </select>
              </div>
              <div>

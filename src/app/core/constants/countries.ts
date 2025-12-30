@@ -1,0 +1,65 @@
+export interface Country {
+  name: string;
+  code: string;
+  flag: string;
+  callingCode: string;
+  placeholder: string;
+  capital: string;
+}
+
+export const AFRICAN_COUNTRIES: Country[] = [
+  { name: 'Algérie', code: 'DZ', flag: '🇩🇿', callingCode: '+213', placeholder: '5XX XX XX XX', capital: 'Alger' },
+  { name: 'Angola', code: 'AO', flag: '🇦🇴', callingCode: '+244', placeholder: '9XX XX XX XX', capital: 'Luanda' },
+  { name: 'Bénin', code: 'BJ', flag: '🇧🇯', callingCode: '+229', placeholder: 'XX XX XX XX', capital: 'Porto-Novo' },
+  { name: 'Botswana', code: 'BW', flag: '🇧🇼', callingCode: '+267', placeholder: 'XX XXX XXX', capital: 'Gaborone' },
+  { name: 'Burkina Faso', code: 'BF', flag: '🇧🇫', callingCode: '+226', placeholder: 'XX XX XX XX', capital: 'Ouagadougou' },
+  { name: 'Burundi', code: 'BI', flag: '🇧🇮', callingCode: '+257', placeholder: 'XX XX XX XX', capital: 'Gitega' },
+  { name: 'Cabo Verde', code: 'CV', flag: '🇨🇻', callingCode: '+238', placeholder: 'XXX XX XX', capital: 'Praia' },
+  { name: 'Cameroun', code: 'CM', flag: '🇨🇲', callingCode: '+237', placeholder: '6XX XX XX XX', capital: 'Yaoundé' },
+  { name: 'Centrafrique', code: 'CF', flag: '🇨🇫', callingCode: '+236', placeholder: 'XX XX XX XX', capital: 'Bangui' },
+  { name: 'Tchad', code: 'TD', flag: '🇹🇩', callingCode: '+235', placeholder: '6X XX XX XX', capital: 'N\'Djaména' },
+  { name: 'Comores', code: 'KM', flag: '🇰🇲', callingCode: '+269', placeholder: '3XX XX XX', capital: 'Moroni' },
+  { name: 'Congo-Brazzaville', code: 'CG', flag: '🇨🇬', callingCode: '+242', placeholder: 'XX XX XX XX', capital: 'Brazzaville' },
+  { name: 'Congo-Kinshasa', code: 'CD', flag: '🇨🇩', callingCode: '+243', placeholder: '8XX XX XX XX', capital: 'Kinshasa' },
+  { name: 'Côte d’Ivoire', code: 'CI', flag: '🇨🇮', callingCode: '+225', placeholder: 'XX XX XX XX XX', capital: 'Yamoussoukro' },
+  { name: 'Djibouti', code: 'DJ', flag: '🇩🇯', callingCode: '+253', placeholder: 'XX XX XX XX', capital: 'Djibouti' },
+  { name: 'Égypte', code: 'EG', flag: '🇪🇬', callingCode: '+20', placeholder: '1X XXX XXXX', capital: 'Le Caire' },
+  { name: 'Guinée équatoriale', code: 'GQ', flag: '🇬🇶', callingCode: '+240', placeholder: 'XX XXX XXXX', capital: 'Malabo' },
+  { name: 'Érythrée', code: 'ER', flag: '🇪🇷', callingCode: '+291', placeholder: '7 XX XX XX', capital: 'Asmara' },
+  { name: 'Eswatini', code: 'SZ', flag: '🇸🇿', callingCode: '+268', placeholder: '7X XX XX XX', capital: 'Mbabane' },
+  { name: 'Éthiopie', code: 'ET', flag: '🇪🇹', callingCode: '+251', placeholder: '9X XXX XXXX', capital: 'Addis-Abeba' },
+  { name: 'Gabon', code: 'GA', flag: '🇬🇦', callingCode: '+241', placeholder: '6X XX XX XX', capital: 'Libreville' },
+  { name: 'Gambie', code: 'GM', flag: '🇬🇲', callingCode: '+220', placeholder: 'XXX XX XX', capital: 'Banjul' },
+  { name: 'Ghana', code: 'GH', flag: '🇬🇭', callingCode: '+233', placeholder: 'XX XXX XXXX', capital: 'Accra' },
+  { name: 'Guinée', code: 'GN', flag: '🇬🇳', callingCode: '+224', placeholder: '6XX XX XX XX', capital: 'Conakry' },
+  { name: 'Guinée-Bissau', code: 'GW', flag: '🇬🇼', callingCode: '+245', placeholder: '9X XXX XXXX', capital: 'Bissau' },
+  { name: 'Kenya', code: 'KE', flag: '🇰🇪', callingCode: '+254', placeholder: '7XX XXX XXX', capital: 'Nairobi' },
+  { name: 'Lesotho', code: 'LS', flag: '🇱🇸', callingCode: '+266', placeholder: '5X XX XX XX', capital: 'Maseru' },
+  { name: 'Liberia', code: 'LR', flag: '🇱🇷', callingCode: '+231', placeholder: 'XX XXX XXXX', capital: 'Monrovia' },
+  { name: 'Libye', code: 'LY', flag: '🇱🇾', callingCode: '+218', placeholder: '9X XXX XXXX', capital: 'Tripoli' },
+  { name: 'Madagascar', code: 'MG', flag: '🇲🇬', callingCode: '+261', placeholder: '3X XX XX XX', capital: 'Antananarivo' },
+  { name: 'Malawi', code: 'MW', flag: '🇲🇼', callingCode: '+265', placeholder: '8X XXX XXXX', capital: 'Lilongwe' },
+  { name: 'Mali', code: 'ML', flag: '🇲🇱', callingCode: '+223', placeholder: 'XX XX XX XX', capital: 'Bamako' },
+  { name: 'Mauritanie', code: 'MR', flag: '🇲🇷', callingCode: '+222', placeholder: 'XX XX XX XX', capital: 'Nouakchott' },
+  { name: 'Maurice', code: 'MU', flag: '🇲🇺', callingCode: '+230', placeholder: '5XXX XXXX', capital: 'Port-Louis' },
+  { name: 'Maroc', code: 'MA', flag: '🇲🇦', callingCode: '+212', placeholder: '6XX XX XX XX', capital: 'Rabat' },
+  { name: 'Mozambique', code: 'MZ', flag: '🇲🇿', callingCode: '+258', placeholder: '8X XXX XXXX', capital: 'Maputo' },
+  { name: 'Namibie', code: 'NA', flag: '🇳🇦', callingCode: '+264', placeholder: '81 XXX XXXX', capital: 'Windhoek' },
+  { name: 'Niger', code: 'NE', flag: '🇳🇪', callingCode: '+227', placeholder: 'XX XX XX XX', capital: 'Niamey' },
+  { name: 'Nigeria', code: 'NG', flag: '🇳🇬', callingCode: '+234', placeholder: '8XX XXX XXXX', capital: 'Abuja' },
+  { name: 'Rwanda', code: 'RW', flag: '🇷🇼', callingCode: '+250', placeholder: '7XX XXX XXX', capital: 'Kigali' },
+  { name: 'Sao Tomé-et-Principe', code: 'ST', flag: '🇸🇹', callingCode: '+239', placeholder: '9XX XX XX', capital: 'São Tomé' },
+  { name: 'Sénégal', code: 'SN', flag: '🇸🇳', callingCode: '+221', placeholder: '7X XXX XX XX', capital: 'Dakar' },
+  { name: 'Seychelles', code: 'SC', flag: '🇸🇨', callingCode: '+248', placeholder: '2 XXX XXX', capital: 'Victoria' },
+  { name: 'Sierra Leone', code: 'SL', flag: '🇸🇱', callingCode: '+232', placeholder: 'XX XXX XXX', capital: 'Freetown' },
+  { name: 'Somalie', code: 'SO', flag: '🇸🇴', callingCode: '+252', placeholder: '6X XXX XXXX', capital: 'Mogadiscio' },
+  { name: 'Afrique du Sud', code: 'ZA', flag: '🇿🇦', callingCode: '+27', placeholder: 'XX XXX XXXX', capital: 'Pretoria' },
+  { name: 'Soudan du Sud', code: 'SS', flag: '🇸🇸', callingCode: '+211', placeholder: '9X XXX XXXX', capital: 'Djouba' },
+  { name: 'Soudan', code: 'SD', flag: '🇸🇩', callingCode: '+249', placeholder: '9X XXX XXXX', capital: 'Khartoum' },
+  { name: 'Tanzanie', code: 'TZ', flag: '🇹🇿', callingCode: '+255', placeholder: '7XX XXX XXX', capital: 'Dodoma' },
+  { name: 'Togo', code: 'TG', flag: '🇹🇬', callingCode: '+228', placeholder: '9X XX XX XX', capital: 'Lomé' },
+  { name: 'Tunisie', code: 'TN', flag: '🇹🇳', callingCode: '+216', placeholder: 'XX XXX XXX', capital: 'Tunis' },
+  { name: 'Ouganda', code: 'UG', flag: '🇺🇬', callingCode: '+256', placeholder: '7XX XXX XXX', capital: 'Kampala' },
+  { name: 'Zambie', code: 'ZM', flag: '🇿🇲', callingCode: '+260', placeholder: '9XX XXX XXX', capital: 'Lusaka' },
+  { name: 'Zimbabwe', code: 'ZW', flag: '🇿🇼', callingCode: '+263', placeholder: '7XX XXX XXX', capital: 'Harare' }
+];
