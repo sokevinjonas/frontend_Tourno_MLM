@@ -137,7 +137,7 @@ export class HomeComponent implements OnInit {
     {
       label: 'Gains Distribués',
       value: '300',
-      suffix: 'Pièces GAP',
+      suffix: 'Pièces GPA',
       description: 'Soit plus de 150.000 FCFA versés aux vainqueurs.',
       icon: 'coins'
     },

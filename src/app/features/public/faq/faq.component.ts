@@ -65,14 +65,14 @@ export class FaqComponent implements OnInit {
         {
           id: 'q1.1',
           category: 'debuter',
-          question: "Qu'est-ce que G4MEPRO AFRICA (GAP) ?",
-          answer: `<p>G4MEPRO AFRICA (GAP) est une plateforme qui permet aux joueurs de jeux de football mobile (E-football, FC Mobile, Dream League Soccer) d'organiser et de participer à des tournois automatisés.</p>
+          question: "Qu'est-ce que G4MEPRO AFRICA (GPA) ?",
+          answer: `<p>G4MEPRO AFRICA (GPA) est une plateforme qui permet aux joueurs de jeux de football mobile (E-football, FC Mobile, Dream League Soccer) d'organiser et de participer à des tournois automatisés.</p>
                    <p class="mt-2 font-bold">Caractéristiques principales :</p>
                    <ul class="list-disc pl-5 mt-1 space-y-1">
                      <li>Format Suisse : Tout le monde joue toutes les rondes, pas d'élimination</li>
                      <li>Inscription sans mot de passe (OAuth ou Magic Link)</li>
-                     <li>Système de Pièces GAP (1 pièce = 500 FCFA)</li>
-                     <li>4 Pièces GAP offertes à l'inscription (non retirables, utilisables pour l'inscription aux tournois)</li>
+                     <li>Système de Pièces GPA (1 pièce = 500 FCFA)</li>
+                     <li>4 Pièces GPA offertes à l'inscription (non retirables, utilisables pour l'inscription aux tournois)</li>
                    </ul>`,
           tags: ['gap', 'intro', 'plateforme'],
           related: []
@@ -80,7 +80,7 @@ export class FaqComponent implements OnInit {
         {
           id: 'q1.2',
           category: 'debuter',
-          question: "Comment créer un compte sur G4MEPRO AFRICA (GAP) ?",
+          question: "Comment créer un compte sur G4MEPRO AFRICA (GPA) ?",
           answer: `<p>L'inscription est rapide et <strong>sans mot de passe</strong>.</p>
                    <p class="mt-2 text-blue-400 font-bold">Méthode 1 : OAuth (Recommandée)</p>
                    <ol class="list-decimal pl-5 mt-1 space-y-1">
@@ -100,7 +100,7 @@ export class FaqComponent implements OnInit {
           id: 'q1.3',
           category: 'debuter',
           question: "Quels jeux sont supportés ?",
-          answer: `<p>G4MEPRO AFRICA (GAP) supporte actuellement <strong>3 jeux majeurs</strong> :</p>
+          answer: `<p>G4MEPRO AFRICA (GPA) supporte actuellement <strong>3 jeux majeurs</strong> :</p>
                    <ul class="list-disc pl-5 mt-2 space-y-1">
                      <li>⚽ <strong>E-football</strong> (Konami)</li>
                      <li>🎮 <strong>FC Mobile</strong> (EA Sports)</li>
@@ -115,7 +115,7 @@ export class FaqComponent implements OnInit {
           category: 'debuter',
           question: "Est-ce gratuit de s'inscrire ?",
           answer: `<p><strong>Oui, l'inscription est 100% gratuite !</strong></p>
-                   <p class="mt-2">Vous recevez même <strong>4 Pièces GAP offertes</strong> (non retirables, utilisables pour l'inscription aux tournois) après validation de votre profil.</p>
+                   <p class="mt-2">Vous recevez même <strong>4 Pièces GPA offertes</strong> (non retirables, utilisables pour l'inscription aux tournois) après validation de votre profil.</p>
                    <p class="mt-2">Les seuls frais sont les frais d'entrée aux tournois, qui constituent le prize pool.</p>`,
           tags: ['gratuit', 'prix', 'inscription'],
           related: []
@@ -126,7 +126,7 @@ export class FaqComponent implements OnInit {
           question: "Combien de temps prend la validation du profil ?",
           answer: `<p>En général : <strong>24 à 48 heures</strong>.</p>
                    <p class="mt-2">Un modérateur vérifie manuellement vos screenshots et informations pour garantir la sécurité de la plateforme.</p>
-                   <p class="mt-2 text-green-400">✅ Une fois validé, vous recevez vos 4 Pièces GAP gratuites (utilisables pour vos premiers tournois).</p>`,
+                   <p class="mt-2 text-green-400">✅ Une fois validé, vous recevez vos 4 Pièces GPA gratuites (utilisables pour vos premiers tournois).</p>`,
           tags: ['validation', 'profil', 'temps'],
           related: []
         }
@@ -156,7 +156,7 @@ export class FaqComponent implements OnInit {
            category: 'profil',
            question: "Puis-je avoir plusieurs comptes de jeu ?",
            answer: `<p>Oui, vous pouvez ajouter jusqu'à <strong>3 comptes</strong> (un par jeu supporté).</p>
-                    <p class="mt-2">Cela vous permet de participer à des tournois sur E-football, FC Mobile et DLS avec le même profil G4MEPRO AFRICA (GAP).</p>`,
+                    <p class="mt-2">Cela vous permet de participer à des tournois sur E-football, FC Mobile et DLS avec le même profil G4MEPRO AFRICA (GPA).</p>`,
            tags: ['multicompte', 'jeux'],
            related: []
         }
@@ -223,9 +223,9 @@ export class FaqComponent implements OnInit {
          {
            id: 'q5.1',
            category: 'wallet',
-           question: "Qu'est-ce qu'une Pièces GAP ?",
+           question: "Qu'est-ce qu'une Pièces GPA ?",
            answer: `<p>La monnaie virtuelle de la plateforme. <strong>1 pièce = 500 FCFA</strong>.</p>
-                    <p class="mt-1">Elles servent à payer les frais d'inscription. Les gains des tournois sont aussi versés en Pièces GAP.</p>`,
+                    <p class="mt-1">Elles servent à payer les frais d'inscription. Les gains des tournois sont aussi versés en Pièces GPA.</p>`,
            tags: ['piece', 'monnaie', 'valeur'],
            related: []
          },

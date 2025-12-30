@@ -13,5 +13,5 @@ import { CookieConsentComponent } from './shared/components/cookie-consent/cooki
   styleUrl: './app.css'
 })
 export class AppComponent {
-  title = 'G4MEPRO AFRICA (GAP)';
+  title = 'G4MEPRO AFRICA (GPA)';
 }

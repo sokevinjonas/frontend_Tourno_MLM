@@ -25,7 +25,7 @@ export class HowItWorksComponent {
     },
     {
       title: 'Recharge & Inscription',
-      description: 'Prenez vos Pièces GAP et inscrivez-vous au tournoi de votre choix parmi E-football, FC Mobile ou DLS.',
+      description: 'Prenez vos Pièces GPA et inscrivez-vous au tournoi de votre choix parmi E-football, FC Mobile ou DLS.',
       icon: '🪙',
       color: 'yellow'
     },
@@ -37,7 +37,7 @@ export class HowItWorksComponent {
     },
     {
       title: 'Gains & Retraits',
-      description: 'Accumulez des Pièces GAP grâce à vos victoires et retirez vos gains directement via Mobile Money.',
+      description: 'Accumulez des Pièces GPA grâce à vos victoires et retirez vos gains directement via Mobile Money.',
       icon: '💰',
       color: 'green'
     }
