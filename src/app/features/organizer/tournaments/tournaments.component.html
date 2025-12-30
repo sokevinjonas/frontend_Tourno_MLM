@@ -38,7 +38,7 @@
     <div *ngIf="!loading && filteredTournaments.length > 0" class="tournament-grid">
       <div *ngFor="let t of filteredTournaments" class="tournament-card group">
         <div class="card-image">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60"></div>
+          <div class="absolute inset-0 bg-slate-950 opacity-60"></div>
           <span class="text-4xl">🎮</span>
           <div class="absolute top-4 right-4">
              <span class="badge" [ngClass]="t.status | tournamentStatusClass">

@@ -59,7 +59,7 @@
 
 .card-image {
     height: 160px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
+    background: #1e293b;
     display: flex;
     align-items: center;
     justify-content: center;

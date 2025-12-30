@@ -72,7 +72,7 @@ export class FaqComponent implements OnInit {
                      <li>Format Suisse : Tout le monde joue toutes les rondes, pas d'élimination</li>
                      <li>Inscription sans mot de passe (OAuth ou Magic Link)</li>
                      <li>Système de Pièces GAP (1 pièce = 500 FCFA)</li>
-                     <li>10 Pièces GAP offertes à l'inscription</li>
+                     <li>4 Pièces GAP offertes à l'inscription (non retirables, utilisables pour l'inscription aux tournois)</li>
                    </ul>`,
           tags: ['gap', 'intro', 'plateforme'],
           related: []
@@ -115,7 +115,7 @@ export class FaqComponent implements OnInit {
           category: 'debuter',
           question: "Est-ce gratuit de s'inscrire ?",
           answer: `<p><strong>Oui, l'inscription est 100% gratuite !</strong></p>
-                   <p class="mt-2">Vous recevez même <strong>10 Pièces GAP offertes</strong> (valeur 5,000 FCFA) après validation de votre profil.</p>
+                   <p class="mt-2">Vous recevez même <strong>4 Pièces GAP offertes</strong> (non retirables, utilisables pour l'inscription aux tournois) après validation de votre profil.</p>
                    <p class="mt-2">Les seuls frais sont les frais d'entrée aux tournois, qui constituent le prize pool.</p>`,
           tags: ['gratuit', 'prix', 'inscription'],
           related: []
@@ -126,7 +126,7 @@ export class FaqComponent implements OnInit {
           question: "Combien de temps prend la validation du profil ?",
           answer: `<p>En général : <strong>24 à 48 heures</strong>.</p>
                    <p class="mt-2">Un modérateur vérifie manuellement vos screenshots et informations pour garantir la sécurité de la plateforme.</p>
-                   <p class="mt-2 text-green-400">✅ Une fois validé, vous recevez vos 10 Pièces GAP gratuites.</p>`,
+                   <p class="mt-2 text-green-400">✅ Une fois validé, vous recevez vos 4 Pièces GAP gratuites (utilisables pour vos premiers tournois).</p>`,
           tags: ['validation', 'profil', 'temps'],
           related: []
         }
@@ -234,7 +234,7 @@ export class FaqComponent implements OnInit {
             category: 'wallet',
             question: "Comment recharger mon compte ?",
             answer: `<p>Pour la version actuelle (MVP), la recharge par Mobile Money n'est <strong>pas encore disponible</strong>.</p>
-                     <p class="mt-2">Vous devez utiliser vos 10 pièces de bienvenue et vos gains de tournois pour participer.</p>`,
+                     <p class="mt-2">Vous devez utiliser vos 4 pièces de bienvenue (non retirables) et vos gains de tournois pour participer.</p>`,
             tags: ['recharge', 'paiement'],
             related: []
          }

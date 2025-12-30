@@ -17,7 +17,7 @@
       <div *ngFor="let account of user.game_accounts" class="bg-slate-800 rounded-3xl p-6 border border-slate-700 hover:border-slate-600 transition-all group relative overflow-hidden">
         
         <!-- Game Banner (Background) -->
-        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-gradient-to-br"
+        <div class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-blue-600"
              [ngClass]="{
                'from-blue-500 to-indigo-600': account.game === 'efootball',
                'from-green-500 to-emerald-600': account.game === 'fc_mobile',

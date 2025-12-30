@@ -44,12 +44,12 @@
 
 .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, #2563eb, #4f46e5);
+    background: #2563eb;
     border-radius: 4px;
 }
 
 .revenue-text {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    background: #fbbf24;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

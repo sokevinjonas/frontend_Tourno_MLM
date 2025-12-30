@@ -32,19 +32,19 @@
 
 /* Rank Colors */
 .rank-gold {
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  background: #fbbf24;
   color: white;
   box-shadow: 0 0 15px rgba(217, 119, 6, 0.3);
 }
 
 .rank-silver {
-  background: linear-gradient(135deg, #94a3b8 0%, #475569 100%);
+  background: #94a3b8;
   color: white;
   box-shadow: 0 0 15px rgba(71, 85, 105, 0.3);
 }
 
 .rank-bronze {
-  background: linear-gradient(135deg, #ea580c 0%, #9a3412 100%);
+  background: #ea580c;
   color: white;
   box-shadow: 0 0 15px rgba(154, 52, 18, 0.3);
 }
