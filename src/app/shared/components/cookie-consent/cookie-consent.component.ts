@@ -73,9 +73,19 @@ export class CookieConsentComponent implements OnInit {
     this.isVisible = false;
     this.showSettings = false;
     
-    // Logic to initialize or disable tracking could go here
-    if (this.preferences.analytics) {
-      console.log('[GAP] Analytics enabled - Tracking page visits...');
+    // Mixpanel Opt-in/Opt-out logic
+    const mixpanel = (window as any).mixpanel;
+    if (mixpanel) {
+      if (this.preferences.analytics) {
+        console.log('[GAP] Mixpanel: Opt-in tracking enabled');
+        mixpanel.opt_in_tracking();
+        mixpanel.track('Cookie Consent Granted', {
+          marketing: this.preferences.marketing
+        });
+      } else {
+        console.log('[GAP] Mixpanel: Opt-out tracking');
+        mixpanel.opt_out_tracking();
+      }
     }
   }
 
