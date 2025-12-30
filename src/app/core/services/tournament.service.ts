@@ -14,6 +14,9 @@ export interface Tournament {
     email: string;
     badge?: BadgeType;
     verified?: boolean;
+    organizer_profile?: {
+      badge?: BadgeType;
+    };
   };
   name: string;
   description?: string;

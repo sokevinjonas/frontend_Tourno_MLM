@@ -104,7 +104,7 @@ export class FaqComponent implements OnInit {
                    <ul class="list-disc pl-5 mt-2 space-y-1">
                      <li>⚽ <strong>E-football</strong> (Konami)</li>
                      <li>🎮 <strong>FC Mobile</strong> (EA Sports)</li>
-                     <li>🏆 <strong>Dream League Soccer</strong> (DLS)</li>
+                     <li><img src="assets/icons/logo.png" alt="Cup" class="w-4 h-4 inline-block mr-1"> <strong>Dream League Soccer</strong> (DLS)</li>
                    </ul>
                    <p class="mt-2 text-sm text-slate-400"><i>Note : Vous devez fournir un screenshot de votre profil in-game pour valider votre compte.</i></p>`,
           tags: ['jeux', 'efootball', 'fc mobile', 'dls'],
@@ -165,7 +165,7 @@ export class FaqComponent implements OnInit {
     {
       id: 'tournois',
       name: 'Tournois',
-      icon: '🏆',
+      icon: 'assets/icons/logo.png',
       questions: [
          {
            id: 'q3.1',

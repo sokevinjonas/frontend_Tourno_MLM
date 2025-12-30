@@ -31,7 +31,11 @@
     </div>
 
     <div *ngIf="!loading && filteredTournaments.length === 0" class="text-center py-20 bg-slate-900/50 rounded-3xl border border-slate-800">
-      <div class="text-slate-500 text-4xl mb-4">🏆</div>
+      <div class="flex justify-center mb-6">
+        <div class="w-20 h-20 bg-white/5 rounded-2xl p-4 border border-white/5 shadow-xl">
+          <img src="assets/icons/logo.png" alt="No Tournaments" class="w-full h-full object-contain grayscale opacity-30">
+        </div>
+      </div>
       <p class="text-slate-400 text-lg">Aucun tournoi trouvé dans cette catégorie.</p>
     </div>
 

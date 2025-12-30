@@ -81,10 +81,10 @@
               {{ tournament.name }}
             </h3>
 
-            <div class="flex items-center gap-2 text-sm text-slate-400 mb-4">
-              <span class="flex items-center gap-1.5">
-                 <span *ngIf="tournament.organizer.verified" [innerHTML]="sanitize(icons.verified)"></span>
-                 {{ tournament.organizer.name }}
+            <div class="flex items-center gap-2 text-sm text-slate-400 mb-4 h-6">
+              <span class="flex items-center gap-1.5 min-w-0">
+                 <app-organizer-badge [badge]="tournament.organizer.badge || tournament.organizer.verified" size="sm"></app-organizer-badge>
+                 <span class="truncate">Par {{ tournament.organizer.name }}</span>
               </span>
             </div>
 

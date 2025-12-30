@@ -55,9 +55,7 @@
 
         <!-- Empty State -->
         <div *ngIf="!isLoading && !error && leaderboard.length === 0" class="py-24 text-center bg-slate-900/50 rounded-[2.5rem] border border-slate-800 border-dashed">
-            <div class="w-24 h-24 bg-slate-800 rounded-[2rem] flex items-center justify-center mx-auto mb-8 text-slate-600">
-                <div class="w-12 h-12" [innerHTML]="sanitize(icons.trophy)"></div>
-            </div>
+                <img src="assets/icons/logo.png" alt="Empty Leaderboard" class="w-full h-full object-contain grayscale opacity-20">
             <h3 class="text-2xl font-black text-white mb-4 uppercase tracking-tight">Le trône est vide</h3>
             <p class="text-slate-500 max-w-sm mx-auto">Soyez le premier à participer et inscrivez votre nom dans la légende.</p>
         </div>

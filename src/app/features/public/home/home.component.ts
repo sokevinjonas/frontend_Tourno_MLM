@@ -5,10 +5,12 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 import { TournamentService, Tournament } from '../../../core/services/tournament.service';
 
+import { OrganizerBadgeComponent } from '../../../shared/components/organizer-badge/organizer-badge.component';
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, OrganizerBadgeComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
