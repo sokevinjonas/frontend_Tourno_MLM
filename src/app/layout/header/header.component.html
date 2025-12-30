@@ -4,79 +4,80 @@
       <div class="px-3 md:px-6 h-14 md:h-16 flex items-center justify-between">
         
         <!-- Logo -->
-        <a routerLink="/" class="flex items-center gap-2 md:gap-3 group relative">
+        <a routerLink="/" class="flex items-center gap-2 md:gap-3 group relative shrink-0">
           <div class="absolute -inset-2 bg-blue-500/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div class="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-white/10 rounded-lg overflow-hidden shadow-lg border border-white/5">
             <img src="assets/icons/logo.png" alt="GAP Logo" class="w-full h-full object-cover p-1">
           </div>
           <span class="font-bold text-lg md:text-xl text-white tracking-tight relative group-hover:text-blue-400 transition-colors">
-            <span class="hidden sm:inline">G4MEPRO AFRICA (GAP)</span>
-            <span class="sm:hidden">GAP</span>
+            <span class="hidden xl:inline">G4MEPRO AFRICA (GAP)</span>
+            <span class="hidden lg:inline xl:hidden">G4MEPRO AFRICA</span>
+            <span class="lg:hidden">GAP</span>
           </span>
         </a>
 
         <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center gap-1">
-          <a routerLink="/tournaments" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+        <nav class="hidden md:flex items-center gap-0.5 lg:gap-1 flex-nowrap">
+          <a routerLink="/tournaments" class="px-3 lg:px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group whitespace-nowrap">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
               <rect width="18" height="18" x="3" y="3" rx="2" />
               <path d="M3 9h18" />
             </svg>
-            Tournois
+            <span class="hidden lg:inline">Tournois</span>
           </a>
           
-          <a routerLink="/rankings" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+          <a routerLink="/rankings" class="px-3 lg:px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group whitespace-nowrap">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
                <line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/>
              </svg>
-             Classement
+             <span class="hidden xl:inline">Classement</span>
           </a>
 
-          <a routerLink="/organizers" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+          <a routerLink="/organizers" class="px-3 lg:px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group whitespace-nowrap">
              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
              </svg>
-             Organisateurs
+             <span class="hidden xl:inline">Organisateurs</span>
           </a>
           
           <!-- Role Based Links -->
           <ng-container *ngIf="currentUser$ | async as user">
              <!-- ADMIN -->
-             <a *ngIf="hasRole(user, 'admin')" routerLink="/admin" class="px-4 py-2 text-sm font-bold text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-red-500/30">
+             <a *ngIf="hasRole(user, 'admin')" routerLink="/admin" class="px-3 lg:px-4 py-2 text-sm font-bold text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-red-500/30 whitespace-nowrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Administration
+                <span class="hidden xl:inline">Administration</span>
              </a>
 
              <!-- ORGANIZER -->
-             <a *ngIf="hasRole(user, 'organizer')" routerLink="/organizer" class="px-4 py-2 text-sm font-bold text-purple-400 hover:text-white hover:bg-purple-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-purple-500/30">
+             <a *ngIf="hasRole(user, 'organizer')" routerLink="/organizer" class="px-3 lg:px-4 py-2 text-sm font-bold text-purple-400 hover:text-white hover:bg-purple-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-purple-500/30 whitespace-nowrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                Organisateur
+                <span class="hidden xl:inline">Organisateur</span>
              </a>
 
              <!-- MODERATOR -->
-             <a *ngIf="hasRole(user, 'moderator')" routerLink="/moderator" class="px-4 py-2 text-sm font-bold text-orange-400 hover:text-white hover:bg-orange-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-orange-500/30">
+             <a *ngIf="hasRole(user, 'moderator')" routerLink="/moderator" class="px-3 lg:px-4 py-2 text-sm font-bold text-orange-400 hover:text-white hover:bg-orange-500/20 rounded-xl transition-all flex items-center gap-2 group border border-transparent hover:border-orange-500/30 whitespace-nowrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h10"/><path d="M9 4v16"/><path d="M3 9h3"/><path d="M3 15h3"/></svg>
-                Modération
+                <span class="hidden xl:inline">Modération</span>
              </a>
 
              <!-- PLAYER -->
-             <a *ngIf="hasRole(user, 'player')" routerLink="/my-matches" class="px-4 py-2 text-sm font-medium text-blue-400 hover:text-white hover:bg-blue-500/20 rounded-xl transition-all flex items-center gap-2 group">
+             <a *ngIf="hasRole(user, 'player')" routerLink="/my-matches" class="px-3 lg:px-4 py-2 text-sm font-medium text-blue-400 hover:text-white hover:bg-blue-500/20 rounded-xl transition-all flex items-center gap-2 group whitespace-nowrap">
                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                Mes Matchs
+                <span class="hidden lg:inline">Mes Matchs</span>
              </a>
           </ng-container>
 
-          <a routerLink="/faq" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group">
+          <a routerLink="/faq" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-xl transition-all flex items-center gap-2 group whitespace-nowrap">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 group-hover:text-blue-400 transition-colors">
               <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
               <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
             </svg>
-            FAQ
+            <span class="hidden xl:inline">FAQ</span>
           </a>
         </nav>
 
         <!-- Auth Buttons / Profile -->
-        <div class="hidden md:flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-2 lg:gap-4 shrink-0">
           
           <ng-container *ngIf="currentUser$ | async as user; else guest">
              
@@ -92,7 +93,7 @@
                   <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
                      {{ user.name.charAt(0).toUpperCase() }}
                   </div>
-                  <span class="text-sm font-medium text-slate-200 max-w-[100px] truncate">{{ user.name }}</span>
+                  <span class="text-sm font-medium text-slate-200 max-w-[100px] truncate hidden xl:inline">{{ user.name }}</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500 transition-transform duration-200" [class.rotate-180]="isProfileMenuOpen">
                     <path d="m6 9 6 6 6-6"/>
                   </svg>

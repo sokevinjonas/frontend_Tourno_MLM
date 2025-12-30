@@ -74,8 +74,21 @@ export class TournamentService {
     }
 
     return this.http.get<any>(`${this.apiUrl}/tournaments`, { params }).pipe(
-      map(response => response.data?.tournaments || response.tournaments || response.data || response)
+      map(response => {
+        const data = response.data?.tournaments || response.tournaments || response.data || response;
+        if (Array.isArray(data)) {
+          return data.map(t => this.mapTournamentData(t));
+        }
+        return data;
+      })
     );
+  }
+
+  private mapTournamentData(t: any): Tournament {
+    if (t && t.organizer) {
+      t.organizer.badge = t.organizer.badge || t.organizer.organizer_profile?.badge || (t.organizer.verified ? 'verified' : null);
+    }
+    return t;
   }
 
   /**
@@ -85,9 +98,10 @@ export class TournamentService {
   getTournament(id: number): Observable<Tournament> {
     return this.http.get<any>(`${this.apiUrl}/tournaments/${id}`).pipe(
       map(res => {
-        const t = res.tournament || res.data?.tournament || res.data || res;
+        let t = res.tournament || res.data?.tournament || res.data || res;
         // Robust calculation of participants from various possible sources in response
         if (t) {
+          t = this.mapTournamentData(t);
           t.current_participants = t.registrations?.length || res.statistics?.total_registered || t.current_participants || 0;
         }
         return t;
@@ -101,7 +115,10 @@ export class TournamentService {
    */
   createTournament(data: any): Observable<Tournament> {
     return this.http.post<any>(`${this.apiUrl}/tournaments`, data).pipe(
-      map(res => res.tournament || res.data?.tournament || res.data || res)
+      map(res => {
+        const t = res.tournament || res.data?.tournament || res.data || res;
+        return this.mapTournamentData(t);
+      })
     );
   }
 
@@ -111,7 +128,10 @@ export class TournamentService {
    */
   updateTournament(id: number, data: any): Observable<Tournament> {
     return this.http.put<any>(`${this.apiUrl}/tournaments/${id}`, data).pipe(
-      map(res => res.tournament || res.data?.tournament || res.data || res)
+      map(res => {
+        const t = res.tournament || res.data?.tournament || res.data || res;
+        return this.mapTournamentData(t);
+      })
     );
   }
 
@@ -133,7 +153,10 @@ export class TournamentService {
    */
   changeStatus(id: number, status: string): Observable<Tournament> {
     return this.http.post<any>(`${this.apiUrl}/tournaments/${id}/status`, { status }).pipe(
-      map(res => res.tournament || res.data?.tournament || res.data || res)
+      map(res => {
+        const t = res.tournament || res.data?.tournament || res.data || res;
+        return this.mapTournamentData(t);
+      })
     );
   }
 
@@ -174,12 +197,15 @@ export class TournamentService {
 
     return this.http.get<any>(`${this.apiUrl}/tournaments/my/tournaments`, { params }).pipe(
       map(response => {
-        const tours = response.data?.tournaments || response.tournaments || response.data || response;
+        let tours = response.data?.tournaments || response.tournaments || response.data || response;
         if (Array.isArray(tours)) {
-          return tours.map(t => ({
-            ...t,
-            current_participants: t.registrations?.length || t.registrations_count || t.current_participants || 0
-          }));
+          return tours.map(t => {
+            const mapped = this.mapTournamentData(t);
+            return {
+              ...mapped,
+              current_participants: mapped.registrations?.length || mapped.registrations_count || mapped.current_participants || 0
+            };
+          });
         }
         return tours;
       })
