@@ -126,4 +126,32 @@ export class HomeComponent implements OnInit {
     { rank: 3, name: 'SlayerZ', rating: 2680, avatar: null, winRate: 69.8 },
     { rank: 4, name: 'EliteGamer', rating: 2550, avatar: null, winRate: 65.4 }
   ];
+
+  platformStats = [
+    {
+      label: 'Joueurs Actifs',
+      value: '+100',
+      description: 'Une communauté passionnée de football mobile.',
+      icon: 'users'
+    },
+    {
+      label: 'Gains Distribués',
+      value: '300',
+      suffix: 'Pièces GAP',
+      description: 'Soit plus de 150.000 FCFA versés aux vainqueurs.',
+      icon: 'coins'
+    },
+    {
+      label: 'Tournois Réalisés',
+      value: '10',
+      description: 'Organisés avec succès au cours des 8 derniers mois.',
+      icon: 'trophy'
+    },
+    {
+      label: 'Satisfaction',
+      value: '99%',
+      description: 'La confiance de nos joueurs et organisateurs.',
+      icon: 'star'
+    }
+  ];
 }
