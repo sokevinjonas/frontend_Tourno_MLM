@@ -303,14 +303,6 @@ export class FaqComponent implements OnInit {
       this.activeCategory = 'debuter'; // Reset to first
       return;
     }
-
-    // Filter categories that contain matching questions
-    // This creates a "Search Results" view effectively where we specific questions match
-    // Alternatively, we can show a flat list of matching questions.
-    // Let's stick to showing categories but filtering their questions
-    
-    // Actually, a better UX for search is often to show a flat list of results regardless of category
-    // But to keep structure simple let's filter the categories to only show ones with hits
     
     const matchingCats: FAQCategory[] = [];
     
@@ -352,11 +344,7 @@ export class FaqComponent implements OnInit {
     this.activeCategory = catId;
     this.searchQuery = ''; // Clear search when navigating manually
     this.filteredCategories = this.categories; // Reset filters
-    
-    // In a real implementation this would scroll the user to the section
-    // For this design where "Pills" filter the view, it just sets activeCategory.
-    // The visual design implies "Navigation" creates a scroll-spy effect or just tab switching.
-    // Based on "Sticky header" and "Scroll smooth" description, it's a long scroll page.
+
     setTimeout(() => {
         const el = document.getElementById(catId);
         if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
