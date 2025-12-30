@@ -10,6 +10,14 @@ export const publicRoutes: Routes = [
     loadComponent: () => import('./faq/faq.component').then(m => m.FaqComponent)
   },
   {
+    path: 'about',
+    loadComponent: () => import('./about/about.component').then(m => m.AboutComponent)
+  },
+  {
+    path: 'how-it-works',
+    loadComponent: () => import('./how-it-works/how-it-works.component').then(m => m.HowItWorksComponent)
+  },
+  {
     path: 'login',
     loadComponent: () => import('./login/login.component').then(m => m.LoginComponent)
   },
