@@ -15,7 +15,8 @@ interface FAQItem {
 
 interface FAQCategory {
   id: string;
-  name: string;
+  title: string;
+  description: string;
   icon: string;
   questions: FAQItem[];
 }
@@ -59,8 +60,9 @@ export class FaqComponent implements OnInit {
   categories: FAQCategory[] = [
     {
       id: 'debuter',
-      name: 'Débuter',
-      icon: '🎮',
+      title: 'Débuter sur GPA',
+      description: 'Tout ce qu\'il faut savoir pour bien commencer.',
+      icon: 'gamepad',
       questions: [
         {
           id: 'q1.1',
@@ -134,8 +136,9 @@ export class FaqComponent implements OnInit {
     },
     {
       id: 'profil',
-      name: 'Profil',
-      icon: '👤',
+      title: 'Mon Profil & Comptes',
+      description: 'Gestion de vos informations et comptes de jeux.',
+      icon: 'user',
       questions: [
         {
            id: 'q2.1',
@@ -164,8 +167,9 @@ export class FaqComponent implements OnInit {
     },
     {
       id: 'tournois',
-      name: 'Tournois',
-      icon: 'assets/icons/logo.png',
+      title: 'Tournois & Matchs',
+      description: 'Inscription, déroulement et résultats.',
+      icon: 'trophy',
       questions: [
          {
            id: 'q3.1',
@@ -191,14 +195,7 @@ export class FaqComponent implements OnInit {
                     <p class="mt-2">Victoire = 3 pts, Nul = 1 pt, Défaite = 0 pt.</p>`,
            tags: ['format', 'suisse', 'règles'],
            related: []
-         }
-      ]
-    },
-    {
-       id: 'matchs',
-       name: 'Matchs',
-       icon: '⚽',
-       questions: [
+         },
          {
             id: 'q4.1',
             category: 'matchs',
@@ -213,13 +210,14 @@ export class FaqComponent implements OnInit {
             tags: ['resultat', 'score', 'screenshot'],
             related: []
          }
-       ]
+      ]
     },
     {
-       id: 'wallet',
-       name: 'Wallet',
-       icon: '💰',
-       questions: [
+      id: 'wallet',
+      title: 'Wallet & Paiements',
+      description: 'Recharges, retraits et Pièces GPA.',
+      icon: 'wallet',
+      questions: [
          {
            id: 'q5.1',
            category: 'wallet',
@@ -238,13 +236,14 @@ export class FaqComponent implements OnInit {
             tags: ['recharge', 'paiement'],
             related: []
          }
-       ]
+      ]
     },
     {
-       id: 'securite',
-       name: 'Sécurité',
-       icon: '🛡️',
-       questions: [
+      id: 'securite',
+      title: 'Sécurité & Fair-play',
+      description: 'Règles du jeu et protection de votre compte.',
+      icon: 'shield',
+      questions: [
           {
              id: 'q7.1',
              category: 'securite',
@@ -259,12 +258,13 @@ export class FaqComponent implements OnInit {
              tags: ['triche', 'signalement', 'ban'],
              related: []
           }
-       ]
+      ]
     },
     {
       id: 'technique',
-      name: 'Technique',
-      icon: '🔧',
+      title: 'Support Technique',
+      description: 'Signaler un problème ou nous contacter.',
+      icon: 'help-circle',
       questions: [
          {
            id: 'q8.1',
