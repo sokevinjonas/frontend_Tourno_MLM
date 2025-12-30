@@ -12,5 +12,5 @@ import { ToastComponent } from './shared/components/toast/toast.component';
   styleUrl: './app.css'
 })
 export class AppComponent {
-  title = 'Mobile League Manager';
+  title = 'G4MEPRO AFRICA (GAP)';
 }
