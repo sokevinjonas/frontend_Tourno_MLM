@@ -12,8 +12,10 @@ export class PaymentService {
 
   constructor(private http: HttpClient) {}
 
-  getTransactions(): Observable<TransactionsResponse> {
-    return this.http.get<TransactionsResponse>(`${this.apiUrl}/wallet/transactions`);
+  getTransactions(limit: number = 10, offset: number = 0): Observable<TransactionsResponse> {
+    return this.http.get<TransactionsResponse>(`${this.apiUrl}/wallet/transactions`, {
+      params: { limit: limit.toString(), offset: offset.toString() }
+    });
   }
 
   getBalance(): Observable<WalletBalance> {
@@ -26,5 +28,14 @@ export class PaymentService {
 
   getTournamentWallet(tournamentId: number): Observable<TournamentWallet> {
     return this.http.get<TournamentWallet>(`${this.apiUrl}/tournaments/${tournamentId}/wallet`);
+  }
+
+  // Placeholder for future recharge and withdrawal endpoints
+  recharge(packId: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/wallet/recharge`, { pack_id: packId });
+  }
+
+  withdraw(data: { amount: number; phone: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/wallet/withdraw`, data);
   }
 }
