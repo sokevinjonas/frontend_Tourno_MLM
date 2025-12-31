@@ -1,10 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../core/services/auth.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-payment-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './payment-modal.component.html',
   styleUrls: ['./payment-modal.component.css']
 })
@@ -17,6 +19,16 @@ export class PaymentModalComponent {
 
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
+
+  private authService = inject(AuthService);
+
+  get userBalance(): number {
+    return Number(this.authService.currentUserValue?.wallet?.balance) || 0;
+  }
+
+  get canAfford(): boolean {
+    return this.userBalance >= this.cost;
+  }
 
   onConfirm() {
     this.confirm.emit();

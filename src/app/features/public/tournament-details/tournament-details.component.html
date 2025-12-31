@@ -438,18 +438,19 @@
         <p class="text-slate-400">Vous êtes sur le point de vous inscrire au tournoi <span class="text-white font-medium">{{tournament.name}}</span>.</p>
       </div>
 
-      <div class="bg-slate-900/50 rounded-xl p-4 mb-6 space-y-3 border border-slate-700/50">
-         <div class="flex justify-between items-center text-sm">
-            <span class="text-slate-400">Solde actuel</span>
-            <span class="text-white font-medium">{{currentUser?.wallet?.balance}} 🪙</span>
-         </div>
-         <div class="flex justify-between items-center text-sm">
+      <div class="bg-slate-900/50 rounded-xl p-4 mb-6 border border-slate-700/50">
+         <div class="flex justify-between items-center mb-2">
             <span class="text-slate-400">Frais d'inscription</span>
-            <span class="text-red-400 font-medium">- {{tournament.entry_fee}} 🪙</span>
+            <span class="font-bold text-white">{{tournament.entry_fee}} 🪙</span>
          </div>
-         <div class="border-t border-slate-700/50 pt-3 flex justify-between items-center">
-            <span class="text-slate-300 font-medium">Nouveau solde</span>
-            <span class="text-blue-400 font-bold text-lg">{{remainingBalance}} 🪙</span>
+         <div class="flex justify-between items-center mb-2">
+            <span class="text-slate-400">Votre solde actuel</span>
+            <span class="font-bold text-green-400">{{userBalance}} 🪙</span>
+         </div>
+         <div class="h-px bg-slate-700/50 my-2"></div>
+         <div class="flex justify-between items-center">
+            <span class="text-white font-bold">Nouveau solde</span>
+            <span class="font-bold text-blue-400">{{userBalance - entryFee}} 🪙</span>
          </div>
       </div>
       
