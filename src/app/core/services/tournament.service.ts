@@ -37,7 +37,7 @@ export interface Tournament {
   current_round?: number;
   registrations_count?: number;
   current_participants?: number;
-  rules?: string;
+  rules?: string | any[];
   image?: string;
   is_featured?: boolean;
   registrations?: any[];

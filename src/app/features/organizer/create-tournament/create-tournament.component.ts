@@ -4,17 +4,32 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { TournamentService } from '../../../core/services/tournament.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { OrganizerService } from '../../../core/services/organizer.service';
+import { PaymentModalComponent } from '../../../shared/components/payment-modal/payment-modal.component';
 
 @Component({
   selector: 'app-create-tournament',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, PaymentModalComponent],
   templateUrl: './create-tournament.component.html',
   styleUrls: ['./create-tournament.component.css']
 })
 export class CreateTournamentComponent implements OnInit {
   tournamentForm: FormGroup;
   loading = false;
+  showPaymentModal = false;
+  userBadge: string | null = null;
+  
+  defaultRules = [
+    "Fair-play et respect mutuel exigés.",
+    "Format Suisse : 5 rondes minimum garanties.",
+    "Engagement : chaque joueur doit effectuer 5 matchs.",
+    "Responsabilité technique : chaque joueur est garant de sa propre connexion internet.",
+    "Barème des points : Victoire = 3 pts, Nul = 1 pt, Défaite ou non-joué = 0 pt.",
+    "Validation : capture d'écran du score final obligatoire après chaque match.",
+    "Sécurité : enregistrement vidéo conseillé pour servir de preuve en cas de litige."
+  ];
   
   games = [
     { value: 'efootball', label: 'E-football (PES)' },
@@ -23,15 +38,17 @@ export class CreateTournamentComponent implements OnInit {
   ];
 
   formats = [
-    { value: 'single_elimination', label: 'Coupe (Élimination directe)' },
     { value: 'swiss', label: 'Rondes Suisses' },
-    { value: 'champions_league', label: 'Ligue des Champions' }
+    { value: 'single_elimination', label: 'Coupe (Élimination directe)' }
+    // { value: 'champions_league', label: 'Ligue des Champions' }
   ];
 
   constructor(
     private fb: FormBuilder,
     private tournamentService: TournamentService,
     private toastService: ToastService,
+    private authService: AuthService,
+    private organizerService: OrganizerService,
     private router: Router,
     private cd: ChangeDetectorRef
   ) {
@@ -60,7 +77,26 @@ export class CreateTournamentComponent implements OnInit {
   schedulePreview: any = null;
   loadingPreview = false;
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Pre-fill rules
+    this.tournamentForm.get('rules')?.setValue('- ' + this.defaultRules.join('\n- '));
+
+    // Fetch organizer status
+    this.organizerService.checkIfOrganizer().subscribe({
+      next: (res) => {
+        this.userBadge = res.badge;
+        this.cd.detectChanges();
+      }
+    });
+  }
+
+  get currentUser() {
+    return this.authService.currentUserValue;
+  }
+
+  get hasBadge(): boolean {
+    return !!this.userBadge;
+  }
 
   onPreviewSchedule() {
     if (this.tournamentForm.invalid) {
@@ -107,12 +143,32 @@ export class CreateTournamentComponent implements OnInit {
       return;
     }
 
+    if (this.userBadge === 'certified' && !this.showPaymentModal) {
+      this.showPaymentModal = true;
+      return;
+    }
+
+    this.createTournament();
+  }
+
+  confirmPayment() {
+    this.showPaymentModal = false;
+    this.createTournament();
+  }
+
+  createTournament() {
     this.loading = true;
+    const rulesArray = this.tournamentForm.value.rules
+      .split('\n')
+      .map((r: string) => r.replace(/^[-\s•*]+/, '').trim())
+      .filter((r: string) => r.length > 0);
+
     const formData = {
       ...this.tournamentForm.value,
-      prize_distribution: JSON.stringify(this.tournamentForm.value.prize_distribution)
+      rules: JSON.stringify(rulesArray),
+      prize_distribution: this.hasBadge ? JSON.stringify(this.tournamentForm.value.prize_distribution) : null
     };
-
+    console.log(formData);
     this.tournamentService.createTournament(formData).subscribe({
       next: () => {
         this.toastService.success('Tournoi créé avec succès !');

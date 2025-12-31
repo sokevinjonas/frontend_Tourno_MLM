@@ -110,14 +110,14 @@
 
           <div class="form-group">
             <label class="label-text">Règles Spécifiques</label>
-            <textarea formControlName="rules" rows="3" placeholder="Ex: Screenshot obligatoire à la fin..." class="form-input"></textarea>
+            <textarea formControlName="rules" rows="8" placeholder="Ex: Screenshot obligatoire à la fin..." class="form-input"></textarea>
           </div>
         </div>
 
       </div>
 
       <!-- Section 3: Prize Distribution -->
-      <div class="mt-8 space-y-6" formGroupName="prize_distribution">
+      <div class="mt-8 space-y-6" formGroupName="prize_distribution" *ngIf="hasBadge">
           <h2 class="text-xl font-semibold text-white flex items-center gap-2 mb-4">
               <span class="w-8 h-8 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-sm">3</span>
               Récompenses (🪙)
@@ -151,7 +151,7 @@
       <div class="mt-12 p-6 bg-slate-900/50 border border-slate-700/50 rounded-2xl">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-xl font-semibold text-white flex items-center gap-2">
-            <span class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-sm">4</span>
+            <span class="w-8 h-8 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-sm">{{ hasBadge ? '4' : '3' }}</span>
             Prévisualisation du Calendrier
           </h2>
           <button type="button" (click)="onPreviewSchedule()" [disabled]="loadingPreview" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-all border border-slate-600">
@@ -198,3 +198,13 @@
     </form>
   </div>
 </div>
+
+<app-payment-modal 
+  [isVisible]="showPaymentModal"
+  [title]="'Frais de Création'"
+  [message]="'En tant qu\'organisateur certifié, la création d\'un tournoi est facturée 2 pièces. Vous bénéficiez en retour d\'une mise en avant et de fonctionnalités exclusives.'"
+  [cost]="2"
+  [isLoading]="loading"
+  (confirm)="confirmPayment()"
+  (cancel)="showPaymentModal = false">
+</app-payment-modal>

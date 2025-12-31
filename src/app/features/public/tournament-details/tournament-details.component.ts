@@ -179,12 +179,23 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
                       this.tournament.prizeDistributionObj = {};
                   }
 
-                  this.tournament.rulesList = [
-                      'Format Suisse : 5 rondes minimum',
-                      'Victoire = 3 points, Nul = 1 point',
-                      'Screenshot du score final obligatoire', 
-                      'Fair-play exigé'
-                  ];
+                  // Parse real rules from tournament.rules
+                  if (this.tournament && typeof this.tournament.rules === 'string') {
+                    try {
+                      const parsedRules = JSON.parse(this.tournament.rules);
+                      if (Array.isArray(parsedRules)) {
+                        this.tournament.rulesList = parsedRules;
+                      } else {
+                        this.tournament.rulesList = [this.tournament.rules];
+                      }
+                    } catch (e) {
+                      this.tournament.rulesList = [this.tournament.rules];
+                    }
+                  } else if (this.tournament && Array.isArray(this.tournament.rules)) {
+                    this.tournament.rulesList = this.tournament.rules;
+                  } else {
+                    this.tournament.rulesList = [];
+                  }
 
                   // Map rounds and matches for the tree/bracket view
                   if ((this.tournament as any).rounds && (this.tournament as any).matches) {
@@ -365,5 +376,9 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile/complete']);
+  }
+
+  isArray(val: any): boolean {
+    return Array.isArray(val);
   }
 }

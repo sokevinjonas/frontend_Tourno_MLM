@@ -1,11 +1,13 @@
 <div class="min-h-screen bg-slate-950 pt-24 pb-12">
   <div class="detail-container">
     
-    <div *ngIf="loading" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
+    @if (loading) {
+      <div class="flex justify-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }
 
-    <div *ngIf="!loading && tournament">
+    @if (!loading && tournament) {
       
       <!-- Header -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
@@ -25,28 +27,42 @@
         </div>
 
         <div class="flex gap-3">
-          <button *ngIf="tournament.status === 'open'" (click)="closeRegistrations()" class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-medium hover:bg-slate-700 transition-colors">
-            Fermer Inscriptions
-          </button>
-          <button *ngIf="tournament.status === 'open'" (click)="launchTournament()" class="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">
-            Lancer le Tournoi
-          </button>
+          @if (tournament.status === 'draft') {
+            <button [disabled]="submitting" (click)="publishTournament()" class="px-6 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/20 flex items-center gap-2">
+              @if (submitting) {
+                <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+              }
+              Publier le Tournoi
+            </button>
+          }
+
+          @if (tournament.status === 'open') {
+            <button (click)="closeRegistrations()" class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white font-medium hover:bg-slate-700 transition-colors">
+              Fermer Inscriptions
+            </button>
+            <button (click)="launchTournament()" class="px-6 py-2 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-500 transition-all shadow-lg shadow-blue-900/20">
+              Lancer le Tournoi
+            </button>
+          }
           
           <!-- Finalize Button in Header -->
-          <button 
-            *ngIf="roundInfo && roundInfo.rounds_remaining === 0 && roundInfo.current_round.pending_matches === 0 && tournament.status !== 'completed'" 
-            (click)="completeTournament()" 
-            class="px-6 py-2 rounded-lg bg-green-600 text-white font-bold hover:bg-green-500 transition-all shadow-lg shadow-green-900/20 flex items-center gap-2"
-          >
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            Finaliser le Tournoi
-          </button>
+          @if (roundInfo && roundInfo.rounds_remaining === 0 && roundInfo.current_round.pending_matches === 0 && tournament.status !== 'completed') {
+            <button 
+              (click)="completeTournament()" 
+              class="px-6 py-2 rounded-lg bg-green-600 text-white font-bold hover:bg-green-500 transition-all shadow-lg shadow-green-900/20 flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Finaliser le Tournoi
+            </button>
+          }
 
           <!-- Completed Status in Header -->
-          <div *ngIf="tournament.status === 'completed'" class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-500 font-bold flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            Tournoi Clôturé
-          </div>
+          @if (tournament.status === 'completed') {
+            <div class="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-500 font-bold flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Tournoi Clôturé
+            </div>
+          }
         </div>
       </div>
 
@@ -59,67 +75,86 @@
       </div>
 
       <!-- Tab Content -->
-      <div [ngSwitch]="activeTab" class="control-panel">
-        
-        <!-- Overview Tab -->
-        <div *ngSwitchCase="'overview'" class="grid md:grid-cols-3 gap-8">
-            <div class="md:col-span-2 space-y-8">
-                <div>
-                   <h3 class="text-lg font-bold text-white mb-4">À propos du tournoi</h3>
-                   <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed">
-                      {{ tournament.description }}
-                   </div>
-                </div>
-                <div>
-                    <h3 class="text-lg font-bold text-white mb-4">Règlement</h3>
-                    <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed italic">
-                       {{ tournament.rules }}
-                    </div>
-                </div>
-            </div>
-            <div class="space-y-6">
-                <div class="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
-                    <h4 class="text-blue-400 font-bold mb-4">Résumé des Inscriptions</h4>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-slate-400">Places occupées</span>
-                        <span class="text-white font-bold">{{ tournament.current_participants || 0 }} / {{ tournament.max_participants }}</span>
-                    </div>
-                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                        <div class="bg-blue-500 h-full" [style.width.%]="(tournament.current_participants || 0) / tournament.max_participants * 100"></div>
-                    </div>
-                </div>
-                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
-                    <h4 class="text-white font-bold mb-4">Dotation (Prize Pool)</h4>
-                    <div class="text-2xl font-black text-amber-500 mb-2">
-                        {{ (parseFloat(tournament.entry_fee) * (tournament.current_participants || 0)) | number:'1.0-2' }} 🪙
-                    </div>
-                    <p class="text-xs text-slate-500">Basé sur les frais d'inscription de {{ tournament.entry_fee }} 🪙</p>
-                </div>
+      <div class="control-panel">
+        @switch (activeTab) {
+          @case ('overview') {
+            <div class="grid md:grid-cols-3 gap-8">
+              <div class="md:col-span-2 space-y-8">
+                  <div>
+                     <h3 class="text-lg font-bold text-white mb-4">À propos du tournoi</h3>
+                     <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed">
+                        {{ tournament.description }}
+                     </div>
+                  </div>
+                  <div>
+                      <h3 class="text-lg font-bold text-white mb-4">Règlement</h3>
+                      <div class="p-6 rounded-2xl bg-slate-800/30 text-slate-300 leading-relaxed italic">
+                        @if (tournament.rules && isArray(tournament.rules)) {
+                          <ul class="space-y-3">
+                            @for (rule of tournament.rules; track $index) {
+                              <li class="flex items-start gap-3 text-slate-300">
+                                <div class="w-5 h-5 mt-0.5 text-blue-500 shrink-0" [innerHTML]="sanitize(icons.check)"></div>
+                                {{ rule }}
+                              </li>
+                            }
+                          </ul>
+                        } @else {
+                          {{ tournament.rules }}
+                        }
+                      </div>
+                  </div>
+              </div>
+              <div class="space-y-6">
+                  <div class="p-6 rounded-2xl bg-blue-500/5 border border-blue-500/20">
+                      <h4 class="text-blue-400 font-bold mb-4">Résumé des Inscriptions</h4>
+                      <div class="flex justify-between text-sm mb-2">
+                          <span class="text-slate-400">Places occupées</span>
+                          <span class="text-white font-bold">{{ tournament.current_participants || 0 }} / {{ tournament.max_participants }}</span>
+                      </div>
+                      <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                          <div class="bg-blue-500 h-full" [style.width.%]="(tournament.current_participants || 0) / tournament.max_participants * 100"></div>
+                      </div>
+                  </div>
+                  <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                      <h4 class="text-white font-bold mb-4">Dotation (Prize Pool)</h4>
+                      <div class="text-2xl font-black text-amber-500 mb-2">
+                          {{ (parseFloat(tournament.entry_fee) * (tournament.current_participants || 0)) | number:'1.0-2' }} 🪙
+                      </div>
+                      <p class="text-xs text-slate-500">Basé sur les frais d'inscription de {{ tournament.entry_fee }} 🪙</p>
+                  </div>
 
-                <div class="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                    <h4 class="text-amber-500 font-bold mb-4 text-xs uppercase tracking-wider">Fonds Collectés (BLOQUÉ)</h4>
-                    <div class="text-2xl font-black text-white">
-                        <span *ngIf="walletStats">{{ walletStats.total_credited | number:'1.0-2' }} 🪙</span>
-                        <span *ngIf="!walletStats">...</span>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-2">Ces fonds seront libérés à la clôture du tournoi.</p>
-                </div>
+                  <div class="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                      <h4 class="text-amber-500 font-bold mb-4 text-xs uppercase tracking-wider">Fonds Collectés (BLOQUÉ)</h4>
+                      <div class="text-2xl font-black text-white">
+                        <span>
+                          @if (walletStats) {
+                            {{ walletStats.total_credited | number:'1.0-2' }} 🪙
+                          } @else {
+                            ...
+                          }
+                        </span>
+                      </div>
+                      <p class="text-xs text-slate-500 mt-2">Ces fonds seront libérés à la clôture du tournoi.</p>
+                  </div>
+              </div>
             </div>
-        </div>
+          }
 
-        <!-- Participants Tab -->
-        <div *ngSwitchCase="'participants'">
+          @case ('participants') {
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-white">Joueurs Inscrits</h2>
                 <button class="text-blue-400 text-sm font-medium hover:underline">Exporter (.csv)</button>
             </div>
             
-            <div *ngIf="!tournament.registrations || tournament.registrations.length === 0" class="text-center py-12 text-slate-500 font-medium">
-                Aucun participant inscrit pour le moment.
-            </div>
+            @if (!tournament.registrations || tournament.registrations.length === 0) {
+              <div class="text-center py-12 text-slate-500 font-medium">
+                  Aucun participant inscrit pour le moment.
+              </div>
+            }
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div *ngFor="let reg of tournament.registrations" class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center justify-between">
+              @for (reg of tournament.registrations; track reg.id) {
+                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white">👤</div>
                         <div>
@@ -131,323 +166,364 @@
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                     </button>
                 </div>
+              }
             </div>
-        </div>
+          }
 
-        <!-- Matches Tab -->
-        <div *ngSwitchCase="'matches'">
+          @case ('matches') {
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-bold text-white">Matches & Résultats</h2>
                 <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-                    <button 
-                        *ngFor="let round of rounds"
-                        (click)="selectRound(round.id)"
-                        [class.bg-blue-600]="selectedRoundId === round.id"
-                        [class.text-white]="selectedRoundId === round.id"
-                        [class.bg-slate-800]="selectedRoundId !== round.id"
-                        [class.text-slate-400]="selectedRoundId !== round.id"
-                        class="px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
-                    >
-                        Round {{ round.round_number }}
-                    </button>
+                    @for (round of rounds; track round.id) {
+                      <button 
+                          (click)="selectRound(round.id)"
+                          [class.bg-blue-600]="selectedRoundId === round.id"
+                          [class.text-white]="selectedRoundId === round.id"
+                          [class.bg-slate-800]="selectedRoundId !== round.id"
+                          [class.text-slate-400]="selectedRoundId !== round.id"
+                          class="px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
+                      >
+                          Round {{ round.round_number }}
+                      </button>
+                    }
                 </div>
             </div>
 
             <!-- Round Progress & Control -->
-            <div *ngIf="roundInfo && tournament.status !== 'open'" class="mb-8 p-6 rounded-3xl bg-slate-900/50 border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-8">
-                    <div class="space-y-1">
-                        <div class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">Round Actuel</div>
-                        <div class="text-2xl font-black text-white flex items-baseline gap-1">
-                            {{ roundInfo.current_round_number }} <span class="text-sm text-slate-500 font-bold">/ {{ roundInfo.total_rounds }}</span>
-                        </div>
+            @if (roundInfo && tournament.status !== 'open') {
+              <div class="mb-8 p-6 rounded-3xl bg-slate-900/50 border border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
+                  <div class="flex items-center gap-8">
+                      <div class="space-y-1">
+                          <div class="text-[10px] text-blue-400 uppercase tracking-widest font-bold">Round Actuel</div>
+                          <div class="text-2xl font-black text-white flex items-baseline gap-1">
+                              {{ roundInfo.current_round_number }} <span class="text-sm text-slate-500 font-bold">/ {{ roundInfo.total_rounds }}</span>
+                          </div>
+                      </div>
+                      <div class="w-px h-10 bg-slate-800"></div>
+                      <div class="space-y-1">
+                          <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Progression du Round</div>
+                          <div class="flex items-center gap-3">
+                              <div class="text-2xl font-black text-white">
+                                  {{ roundInfo.current_round.completed_matches }}<span class="text-sm text-slate-500 font-bold">/{{ roundInfo.current_round.total_matches }}</span>
+                              </div>
+                              <div class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400 font-bold uppercase tracking-tighter">Matchs</div>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  @if (roundInfo.rounds_remaining > 0) {
+                    <button 
+                        (click)="goToNextRound()"
+                        [disabled]="submitting || roundInfo.current_round.pending_matches > 0"
+                        class="w-full md:w-auto px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 disabled:opacity-50 disabled:bg-slate-800 disabled:text-slate-500 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-600/20 group"
+                    >
+                        @if (!submitting) {
+                          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                        } @else {
+                          <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        }
+                        <span>{{ submitting ? 'Génération...' : 'Lancer le Round Suivant' }}</span>
+                    </button>
+                  }
+
+                  <!-- Finalize Button -->
+                  @if (roundInfo.rounds_remaining === 0 && roundInfo.current_round.pending_matches === 0 && tournament.status !== 'completed') {
+                    <button 
+                        (click)="completeTournament()"
+                        class="px-8 py-3 bg-green-600 hover:bg-green-500 text-white font-black rounded-2xl flex items-center gap-3 shadow-xl shadow-green-600/20 transition-all animate-bounce-subtle"
+                    >
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Finaliser le Tournoi & Remettre les Prix
+                    </button>
+                  }
+
+                  <!-- Status Completed -->
+                  @if (tournament.status === 'completed') {
+                    <div class="px-6 py-3 bg-slate-800 border border-slate-700 text-slate-400 font-bold rounded-2xl flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Tournoi Clôturé
                     </div>
-                    <div class="w-px h-10 bg-slate-800"></div>
-                    <div class="space-y-1">
-                        <div class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Progression du Round</div>
-                        <div class="flex items-center gap-3">
-                            <div class="text-2xl font-black text-white">
-                                {{ roundInfo.current_round.completed_matches }}<span class="text-sm text-slate-500 font-bold">/{{ roundInfo.current_round.total_matches }}</span>
-                            </div>
-                            <div class="text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400 font-bold uppercase tracking-tighter">Matchs</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button 
-                    *ngIf="roundInfo.rounds_remaining > 0"
-                    (click)="goToNextRound()"
-                    [disabled]="submitting || roundInfo.current_round.pending_matches > 0"
-                    class="w-full md:w-auto px-8 py-4 bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-500 disabled:opacity-50 disabled:bg-slate-800 disabled:text-slate-500 transition-all flex items-center justify-center gap-3 shadow-xl shadow-blue-600/20 group"
-                >
-                    <svg *ngIf="!submitting" class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                    <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    <span>{{ submitting ? 'Génération...' : 'Lancer le Round Suivant' }}</span>
-                </button>
+                  }
+              </div>
+            }
 
-                <!-- Finalize Button -->
-                <button 
-                    *ngIf="roundInfo.rounds_remaining === 0 && roundInfo.current_round.pending_matches === 0 && tournament.status !== 'completed'"
-                    (click)="completeTournament()"
-                    class="px-8 py-3 bg-green-600 hover:bg-green-500 text-white font-black rounded-2xl flex items-center gap-3 shadow-xl shadow-green-600/20 transition-all animate-bounce-subtle"
-                >
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Finaliser le Tournoi & Remettre les Prix
-                </button>
-
-                <!-- Status Completed -->
-                <div *ngIf="tournament.status === 'completed'" class="px-6 py-3 bg-slate-800 border border-slate-700 text-slate-400 font-bold rounded-2xl flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    Tournoi Clôturé
-                </div>
-            </div>
-
-            <div *ngIf="matches.length === 0" class="text-center py-20 bg-slate-900/30 rounded-3xl border border-dashed border-slate-800">
-                <p class="text-slate-500">Les matches seront générés une fois le tournoi lancé.</p>
-                <button *ngIf="tournament.status === 'open'" (click)="launchTournament()" class="mt-4 text-blue-400 font-bold hover:underline">Lancer le tournoi maintenant</button>
-            </div>
+            @if (matches.length === 0) {
+              <div class="text-center py-20 bg-slate-900/30 rounded-3xl border border-dashed border-slate-800">
+                  <p class="text-slate-500">Les matches seront générés une fois le tournoi lancé.</p>
+                  @if (tournament.status === 'open') {
+                    <button (click)="launchTournament()" class="mt-4 text-blue-400 font-bold hover:underline">Lancer le tournoi maintenant</button>
+                  }
+              </div>
+            }
 
             <div class="grid gap-4">
-                <div *ngFor="let match of filteredMatches" class="match-card group relative">
-                    <div class="text-right flex-1">
-                        <div class="text-white font-bold truncate">{{ match.player1?.name || 'À déterminer' }}</div>
-                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 1</div>
-                    </div>
-                    
-                    <div class="flex flex-col items-center gap-3 px-8">
-                        <div class="score-display">
-                            {{ match.player1_score ?? '-' }} : {{ match.player2_score ?? '-' }}
+                @for (match of filteredMatches; track match.id) {
+                  <div class="match-card group relative">
+                      <div class="text-right flex-1">
+                          <div class="text-white font-bold truncate">{{ match.player1?.name || 'À déterminer' }}</div>
+                          <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 1</div>
+                      </div>
+                      
+                      <div class="flex flex-col items-center gap-3 px-8">
+                          <div class="score-display">
+                              {{ match.player1_score ?? '-' }} : {{ match.player2_score ?? '-' }}
+                          </div>
+                          <span class="badge" [ngClass]="{
+                              'bg-amber-500/10 text-amber-500': match.status === 'scheduled',
+                              'bg-blue-500/10 text-blue-400': match.status === 'in_progress',
+                              'bg-green-500/10 text-green-400': match.status === 'completed',
+                              'bg-red-500/10 text-red-400': match.status === 'disputed'
+                          }">
+                             {{ match.status | uppercase }}
+                          </span>
+                      </div>
+
+                      <div class="text-left flex-1">
+                          <div class="text-white font-bold truncate">{{ match.player2?.name || 'À déterminer' }}</div>
+                          <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 2</div>
+                      </div>
+
+                      <!-- Action Hover Overlay -->
+                      @if (match.status !== 'completed' && match.player1 && match.player2) {
+                        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all rounded-3xl">
+                            <button (click)="openScoreModal(match)" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transform scale-90 group-hover:scale-100 transition-all shadow-xl shadow-blue-600/20">
+                                Saisir les Scores
+                            </button>
                         </div>
-                        <span class="badge" [ngClass]="{
-                            'bg-amber-500/10 text-amber-500': match.status === 'scheduled',
-                            'bg-blue-500/10 text-blue-400': match.status === 'in_progress',
-                            'bg-green-500/10 text-green-400': match.status === 'completed',
-                            'bg-red-500/10 text-red-400': match.status === 'disputed'
-                        }">
-                           {{ match.status | uppercase }}
-                        </span>
-                    </div>
+                      }
+                  </div>
+                }
+            </div>
+          }
 
-                    <div class="text-left flex-1">
-                        <div class="text-white font-bold truncate">{{ match.player2?.name || 'À déterminer' }}</div>
-                        <div class="text-[10px] text-slate-500 uppercase tracking-widest">Joueur 2</div>
+          @case ('settings') {
+            <div class="max-w-2xl">
+                <h2 class="text-xl font-bold text-white mb-6">Actions Administratives</h2>
+                <div class="space-y-4">
+                    <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                        <h4 class="text-white font-bold mb-2">Annuler le tournoi</h4>
+                        <p class="text-slate-500 text-sm mb-4">Tous les frais d'inscription seront automatiquement remboursés aux participants.</p>
+                        <button class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all border border-red-500/20">
+                            Annuler Tournament
+                        </button>
                     </div>
-
-                    <!-- Action Hover Overlay -->
-                    <div *ngIf="match.status !== 'completed' && match.player1 && match.player2" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all rounded-3xl">
-                        <button (click)="openScoreModal(match)" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500 transform scale-90 group-hover:scale-100 transition-all shadow-xl shadow-blue-600/20">
-                            Saisir les Scores
+                    <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
+                        <h4 class="text-white font-bold mb-2">Litiges & Support</h4>
+                        <p class="text-slate-500 text-sm mb-4">Accédez à l'interface de gestion des réclamations pour ce tournoi.</p>
+                        <button class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
+                            Voir Litiges
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div *ngSwitchCase="'settings'" class="max-w-2xl">
-            <h2 class="text-xl font-bold text-white mb-6">Actions Administratives</h2>
-            <div class="space-y-4">
-                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
-                    <h4 class="text-white font-bold mb-2">Annuler le tournoi</h4>
-                    <p class="text-slate-500 text-sm mb-4">Tous les frais d'inscription seront automatiquement remboursés aux participants.</p>
-                    <button class="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all border border-red-500/20">
-                        Annuler Tournament
-                    </button>
-                </div>
-                <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700">
-                    <h4 class="text-white font-bold mb-2">Litiges & Support</h4>
-                    <p class="text-slate-500 text-sm mb-4">Accédez à l'interface de gestion des réclamations pour ce tournoi.</p>
-                    <button class="bg-slate-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">
-                        Voir Litiges
-                    </button>
-                </div>
-            </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-</div>
+        }
+      }
+    </div> <!-- End control-panel -->
+  } <!-- End tournament @if -->
+</div> <!-- End detail-container -->
+</div> <!-- End min-h-screen -->
 
 <!-- Score Submission Modal -->
-<div *ngIf="showScoreModal && selectedMatch" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="closeScoreModal()"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-black text-white mb-2 uppercase tracking-tight">Enregistrer le Score</h3>
-            <p class="text-slate-500 text-sm">Entrez les résultats finaux de la rencontre</p>
-        </div>
+@if (showScoreModal && selectedMatch) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="closeScoreModal()"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="text-center mb-10">
+              <h3 class="text-3xl font-black text-white mb-2 uppercase tracking-tight">Enregistrer le Score</h3>
+              <p class="text-slate-500 text-sm">Entrez les résultats finaux de la rencontre</p>
+          </div>
 
-        <div class="grid grid-cols-2 gap-8 mb-10">
-            <!-- Player 1 Score -->
-            <div class="space-y-4 text-center">
-                <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player1?.name }}</div>
-                <div class="relative">
-                    <input 
-                        type="number" 
-                        [(ngModel)]="score1"
-                        min="0"
-                        class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
-                        placeholder="0"
-                    >
-                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P1</div>
-                </div>
-            </div>
+          <div class="grid grid-cols-2 gap-8 mb-10">
+              <!-- Player 1 Score -->
+              <div class="space-y-4 text-center">
+                  <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player1?.name }}</div>
+                  <div class="relative">
+                      <input 
+                          type="number" 
+                          [(ngModel)]="score1"
+                          min="0"
+                          class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
+                          placeholder="0"
+                      >
+                      <div class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P1</div>
+                  </div>
+              </div>
 
-            <!-- Player 2 Score -->
-            <div class="space-y-4 text-center">
-                <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player2?.name }}</div>
-                <div class="relative">
-                    <input 
-                        type="number" 
-                        [(ngModel)]="score2"
-                        min="0"
-                        class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
-                        placeholder="0"
-                    >
-                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P2</div>
-                </div>
-            </div>
-        </div>
+              <!-- Player 2 Score -->
+              <div class="space-y-4 text-center">
+                  <div class="text-white font-bold truncate text-sm px-2">{{ selectedMatch.player2?.name }}</div>
+                  <div class="relative">
+                      <input 
+                          type="number" 
+                          [(ngModel)]="score2"
+                          min="0"
+                          class="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center text-4xl font-black text-white focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-800"
+                          placeholder="0"
+                      >
+                      <div class="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 text-white text-[10px] font-black rounded-lg flex items-center justify-center border-2 border-slate-900">P2</div>
+                  </div>
+              </div>
+          </div>
 
-        <div class="flex gap-4">
-            <button (click)="closeScoreModal()" class="flex-1 py-5 px-6 rounded-2xl border border-slate-800 text-slate-400 font-bold hover:bg-slate-800 transition-all uppercase tracking-widest text-xs">Annuler</button>
-            <button 
-                (click)="submitScore()" 
-                [disabled]="submitting || score1 === null || score2 === null"
-                class="flex-1 py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-xs flex items-center justify-center gap-3"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Enregistrement...' : 'Confirmer' }}
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="flex gap-4">
+              <button (click)="closeScoreModal()" class="flex-1 py-5 px-6 rounded-2xl border border-slate-800 text-slate-400 font-bold hover:bg-slate-800 transition-all uppercase tracking-widest text-xs">Annuler</button>
+              <button 
+                  (click)="submitScore()" 
+                  [disabled]="submitting || score1 === null || score2 === null"
+                  class="flex-1 py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-xs flex items-center justify-center gap-3"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Enregistrement...' : 'Confirmer' }}
+              </button>
+          </div>
+      </div>
+  </div>
+}
+
 <!-- Next Round Modal -->
-<div *ngIf="showNextRoundModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showNextRoundModal = false"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
-            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-        </div>
-        
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Passer au Round Suivant ?</h3>
-            <p class="text-slate-500 leading-relaxed mb-4">
-                Tous les matchs du Round actuel sont terminés. Vous allez générer les nouveaux affrontements.
-            </p>
-            <div *ngIf="roundInfo" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl text-blue-400 font-bold text-sm">
-                Round {{ roundInfo.current_round_number }} <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg> Round {{ roundInfo.current_round_number + 1 }}
-            </div>
-        </div>
+@if (showNextRoundModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showNextRoundModal = false"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
+              <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+          </div>
+          
+          <div class="text-center mb-10">
+              <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Passer au Round Suivant ?</h3>
+              <p class="text-slate-500 leading-relaxed mb-4">
+                  Tous les matchs du Round actuel sont terminés. Vous allez générer les nouveaux affrontements.
+              </p>
+              @if (roundInfo) {
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl text-blue-400 font-bold text-sm">
+                    Round {{ roundInfo.current_round_number }} <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg> Round {{ roundInfo.current_round_number + 1 }}
+                </div>
+              }
+          </div>
 
-        <div class="flex flex-col gap-4">
-            <button 
-                (click)="confirmNextRound()" 
-                [disabled]="submitting"
-                class="w-full py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Génération...' : 'Confirmer le Passage' }}
-            </button>
-            <button (click)="showNextRoundModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="flex flex-col gap-4">
+              <button 
+                  (click)="confirmNextRound()" 
+                  [disabled]="submitting"
+                  class="w-full py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Génération...' : 'Confirmer le Passage' }}
+              </button>
+              <button (click)="showNextRoundModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                  Annuler
+              </button>
+          </div>
+      </div>
+  </div>
+}
 
 <!-- Close Registrations Modal -->
-<div *ngIf="showCloseRegistrationsModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showCloseRegistrationsModal = false"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="w-20 h-20 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
-            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m4-3a4 4 0 11-8 0 4 4 0 018 0zM12 9V7"/></svg>
-        </div>
-        
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Clôturer les Inscriptions ?</h3>
-            <p class="text-slate-500 leading-relaxed">
-                Plus aucun nouveau participant ne pourra s'inscrire à ce tournoi. Cette action est irréversible avant le lancement.
-            </p>
-        </div>
+@if (showCloseRegistrationsModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showCloseRegistrationsModal = false"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="w-20 h-20 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+              <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m4-3a4 4 0 11-8 0 4 4 0 018 0zM12 9V7"/></svg>
+          </div>
+          
+          <div class="text-center mb-10">
+              <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Clôturer les Inscriptions ?</h3>
+              <p class="text-slate-500 leading-relaxed">
+                  Plus aucun nouveau participant ne pourra s'inscrire à ce tournoi. Cette action est irréversible avant le lancement.
+              </p>
+          </div>
 
-        <div class="flex flex-col gap-4">
-            <button 
-                (click)="confirmCloseRegistrations()" 
-                [disabled]="submitting"
-                class="w-full py-5 px-6 rounded-2xl bg-amber-600 text-white font-black hover:bg-amber-500 transition-all shadow-xl shadow-amber-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Clôture...' : 'Confirmer la Clôture' }}
-            </button>
-            <button (click)="showCloseRegistrationsModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="flex flex-col gap-4">
+              <button 
+                  (click)="confirmCloseRegistrations()" 
+                  [disabled]="submitting"
+                  class="w-full py-5 px-6 rounded-2xl bg-amber-600 text-white font-black hover:bg-amber-500 transition-all shadow-xl shadow-amber-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Clôture...' : 'Confirmer la Clôture' }}
+              </button>
+              <button (click)="showCloseRegistrationsModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                  Annuler
+              </button>
+          </div>
+      </div>
+  </div>
+}
 
 <!-- Launch Tournament Modal -->
-<div *ngIf="showLaunchModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showLaunchModal = false"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
-            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-        </div>
-        
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Lancer le Tournoi ?</h3>
-            <p class="text-slate-500 leading-relaxed">
-                Cette action va clôturer définitivement les inscriptions et générer les matchs du <span class="text-blue-400 font-bold">Round 1</span>. 
-                Une fois lancé, vous ne pourrez plus ajouter de participants.
-            </p>
-        </div>
+@if (showLaunchModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showLaunchModal = false"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-blue-500/20">
+              <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          
+          <div class="text-center mb-10">
+              <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Lancer le Tournoi ?</h3>
+              <p class="text-slate-500 leading-relaxed">
+                  Cette action va clôturer définitivement les inscriptions et générer les matchs du <span class="text-blue-400 font-bold">Round 1</span>. 
+                  Une fois lancé, vous ne pourrez plus ajouter de participants.
+              </p>
+          </div>
 
-        <div class="flex flex-col gap-4">
-            <button 
-                (click)="confirmLaunchTournament()" 
-                [disabled]="submitting"
-                class="w-full py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Lancement...' : 'Confirmer le Lancement' }}
-            </button>
-            <button (click)="showLaunchModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="flex flex-col gap-4">
+              <button 
+                  (click)="confirmLaunchTournament()" 
+                  [disabled]="submitting"
+                  class="w-full py-5 px-6 rounded-2xl bg-blue-600 text-white font-black hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Lancement...' : 'Confirmer le Lancement' }}
+              </button>
+              <button (click)="showLaunchModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                  Annuler
+              </button>
+          </div>
+      </div>
+  </div>
+}
 
 <!-- Complete Tournament Modal -->
-<div *ngIf="showCompleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showCompleteModal = false"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="w-20 h-20 bg-green-500/10 text-green-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-green-500/20">
-            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.621 1M12 17c-1.12 0-2.09-.41-2.633-1.02M12 7v10m6-5a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
-        </div>
-        
-        <div class="text-center mb-10">
-            <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Finaliser le Tournoi ?</h3>
-            <p class="text-slate-500 leading-relaxed">
-                Le tournoi est terminé ! En confirmant, vous allez clôturer définitivement la compétition et <span class="text-green-400 font-bold">distribuer les prix</span> aux gagnants sur leur portefeuille.
-            </p>
-        </div>
+@if (showCompleteModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showCompleteModal = false"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="w-20 h-20 bg-green-500/10 text-green-500 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-green-500/20">
+              <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.407 2.621 1M12 17c-1.12 0-2.09-.41-2.633-1.02M12 7v10m6-5a6 6 0 11-12 0 6 6 0 0112 0z"/></svg>
+          </div>
+          
+          <div class="text-center mb-10">
+              <h3 class="text-3xl font-black text-white mb-4 uppercase tracking-tight">Finaliser le Tournoi ?</h3>
+              <p class="text-slate-500 leading-relaxed">
+                  Le tournoi est terminé ! En confirmant, vous allez clôturer définitivement la compétition et <span class="text-green-400 font-bold">distribuer les prix</span> aux gagnants sur leur portefeuille.
+              </p>
+          </div>
 
-        <div class="flex flex-col gap-4">
-            <button 
-                (click)="confirmCompleteTournament()" 
-                [disabled]="submitting"
-                class="w-full py-5 px-6 rounded-2xl bg-green-600 text-white font-black hover:bg-green-500 transition-all shadow-xl shadow-green-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Finalisation...' : 'Confirmer & Distribuer les Prix' }}
-            </button>
-            <button (click)="showCompleteModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="flex flex-col gap-4">
+              <button 
+                  (click)="confirmCompleteTournament()" 
+                  [disabled]="submitting"
+                  class="w-full py-5 px-6 rounded-2xl bg-green-600 text-white font-black hover:bg-green-500 transition-all shadow-xl shadow-green-600/20 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Finalisation...' : 'Confirmer & Distribuer les Prix' }}
+              </button>
+              <button (click)="showCompleteModal = false" class="w-full py-5 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-xs">
+                  Annuler
+              </button>
+          </div>
+      </div>
+  </div>
+}
