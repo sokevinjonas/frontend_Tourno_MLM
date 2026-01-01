@@ -153,7 +153,10 @@ export class TournamentDetailComponent implements OnInit {
 
   get filteredMatches(): Match[] {
     if (!this.selectedRoundUuid) return this.matches;
-    return this.matches.filter(m => (m as any).round_uuid === this.selectedRoundUuid);
+    return this.matches.filter(m => {
+      const matchRoundUuid = (m as any).round_uuid || (m as any).round?.uuid;
+      return matchRoundUuid === this.selectedRoundUuid;
+    });
   }
 
   selectRound(roundUuid: string) {

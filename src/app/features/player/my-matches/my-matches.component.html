@@ -73,8 +73,8 @@
               <!-- Header -->
               <div class="flex justify-between items-start mb-2">
                  <div class="space-y-0.5">
-                  <div class="text-[7px] text-blue-400 font-black uppercase tracking-widest">Tournament UUID: {{ match.tournament_uuid | slice:0:8 }}...</div>
-                  <h3 class="font-bold text-white text-xs line-clamp-1">Ronde {{ match.round_number }}</h3>
+                  <div class="text-[7px] text-blue-400 font-black uppercase tracking-widest">{{ match.tournament!.name }}</div>
+                  <h3 class="font-bold text-white text-xs line-clamp-1">Round {{ match.round?.round_number }}</h3>
                 </div>
                 <span [class]="'px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border ' + getStatusClass(match.status)">
                   {{ getStatusLabel(match.status) }}
