@@ -5,6 +5,7 @@ import { MatchService, Match, MatchResult } from '../../../core/services/match.s
 import { AuthService } from '../../../core/services/auth.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-my-matches',
@@ -19,7 +20,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   private cd = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
   
-  storageUrl = 'http://localhost:8000/storage/';
+  storageUrl = environment.apiUrl.replace(/\/api$/, '') + '/storage/';
 
   matches: Match[] = [];
   filteredMatches: Match[] = [];
@@ -35,6 +36,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   showScoreModal = false;
   showSuccessModal = false;
   showImageModal = false;
+  showProofsModal = false;
   previewImageUrl: string | null = null;
   submittingScore = false;
   scoreForm = {
@@ -179,6 +181,16 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     this.selectedMatch = null;
   }
 
+  openProofsModal(match: Match) {
+    this.selectedMatch = match;
+    this.showProofsModal = true;
+  }
+
+  closeProofsModal() {
+    this.showProofsModal = false;
+    this.selectedMatch = null;
+  }
+
   closeSuccessModal() {
     this.showSuccessModal = false;
   }
@@ -301,7 +313,24 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
 
   getSubmission(match: Match, forPlayerUuid: string | null): MatchResult | null {
     if (!match.match_results || !forPlayerUuid) return null;
-    return match.match_results.find((r: MatchResult) => r.submitted_by_uuid === forPlayerUuid) || null;
+    
+    // Try primary identifying field
+    let sub = match.match_results.find((r: any) => 
+      (r.submitted_by_uuid === forPlayerUuid) || 
+      (r.user_uuid === forPlayerUuid) || 
+      (r.player_uuid === forPlayerUuid)
+    );
+
+    // Fallback: If only 2 results and indices match players (standard behavior)
+    if (!sub && match.match_results.length === 2) {
+      const isPlayer1 = match.player1_uuid === forPlayerUuid || match.player1?.uuid === forPlayerUuid;
+      const isPlayer2 = match.player2_uuid === forPlayerUuid || match.player2?.uuid === forPlayerUuid;
+      
+      if (isPlayer1) return match.match_results[0];
+      if (isPlayer2) return match.match_results[1];
+    }
+
+    return sub || null;
   }
 
   getOwnSubmission(match: Match): any {
