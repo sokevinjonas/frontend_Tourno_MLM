@@ -153,7 +153,7 @@
             }
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              @for (reg of tournament.registrations; track reg.id) {
+              @for (reg of tournament.registrations; track reg.uuid) {
                 <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white">👤</div>
@@ -174,13 +174,13 @@
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-xl font-bold text-white">Matches & Résultats</h2>
                 <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-                    @for (round of rounds; track round.id) {
+                    @for (round of rounds; track round.uuid) {
                       <button 
-                          (click)="selectRound(round.id)"
-                          [class.bg-blue-600]="selectedRoundId === round.id"
-                          [class.text-white]="selectedRoundId === round.id"
-                          [class.bg-slate-800]="selectedRoundId !== round.id"
-                          [class.text-slate-400]="selectedRoundId !== round.id"
+                          (click)="selectRound(round.uuid)"
+                          [class.bg-blue-600]="selectedRoundUuid === round.uuid"
+                          [class.text-white]="selectedRoundUuid === round.uuid"
+                          [class.bg-slate-800]="selectedRoundUuid !== round.uuid"
+                          [class.text-slate-400]="selectedRoundUuid !== round.uuid"
                           class="px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap"
                       >
                           Round {{ round.round_number }}
@@ -257,7 +257,7 @@
             }
 
             <div class="grid gap-4">
-                @for (match of filteredMatches; track match.id) {
+                @for (match of filteredMatches; track match.uuid) {
                   <div class="match-card group relative">
                       <div class="text-right flex-1">
                           <div class="text-white font-bold truncate">{{ match.player1?.name || 'À déterminer' }}</div>

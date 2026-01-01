@@ -167,19 +167,19 @@
               <div class="overflow-x-auto pb-8 no-scrollbar">
                  <div class="flex gap-12 min-w-max px-4 py-8">
                     <!-- Round Column -->
-                    @for (round of tournament.rounds; track round.id; let lastRound = $last) {
+                    @for (round of tournament.rounds; track round.uuid; let lastRound = $last) {
                       <div class="w-80 flex flex-col gap-8 relative">
                          
                          <!-- Round Header -->
                          <div class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 text-center shadow-lg">
                             <h4 class="text-blue-400 font-bold uppercase tracking-widest text-xs">{{round.name}}</h4>
-                            <div class="text-[10px] text-slate-500 mt-1 font-black uppercase">Round {{round.id}}</div>
+                            <div class="text-[10px] text-slate-500 mt-1 font-black uppercase">Round {{round.uuid | slice:0:8}}</div>
                          </div>
                          
                          <!-- Matches Container -->
                          <div class="flex flex-col flex-1 justify-around gap-8">
                            <!-- Match Card -->
-                           @for (match of round.matches; track match.id) {
+                           @for (match of round.matches; track match.uuid) {
                              <div class="relative">
                                
                                <!-- Connecting Lines (Visual enhancement) -->
@@ -483,10 +483,10 @@
         }
 
         @if (filteredGameAccounts.length > 1) {
-          <select [(ngModel)]="selectedGameAccountId"
+          <select [(ngModel)]="selectedGameAccountUuid"
                   class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 appearance-none cursor-pointer">
-            @for (acc of filteredGameAccounts; track acc.id) {
-              <option [ngValue]="acc.id">
+            @for (acc of filteredGameAccounts; track acc.uuid) {
+              <option [ngValue]="acc.uuid">
                 {{acc.game_username}}
               </option>
             }
@@ -496,7 +496,7 @@
 
       <div class="flex gap-4">
         <button (click)="closeModals()" [disabled]="isRegistering" class="flex-1 py-3 px-4 rounded-xl border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 transition-colors disabled:opacity-50">Annuler</button>
-        <button [disabled]="isRegistering || remainingBalance < 0 || !selectedGameAccountId" (click)="confirmParticipation()" class="flex-1 py-3 px-4 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+        <button [disabled]="isRegistering || remainingBalance < 0 || !selectedGameAccountUuid" (click)="confirmParticipation()" class="flex-1 py-3 px-4 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
            @if (!isRegistering) {
              <span>Confirmer</span>
            } @else {

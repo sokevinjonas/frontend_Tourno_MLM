@@ -2,20 +2,20 @@ export type TransactionType = 'credit' | 'debit';
 export type TransactionStatus = 'pending' | 'completed' | 'failed';
 
 export interface Transaction {
-  id: number;
-  wallet_id: number;
-  user_id: number;
+  uuid: string;
+  wallet_uuid: string;
+  user_uuid: string;
   type: TransactionType;
   amount: string;
   balance_before: string;
   balance_after: string;
   reason: string;
   description: string;
-  tournament_id: number | null;
+  tournament_uuid: string | null;
   created_at: string;
   updated_at: string;
   tournament: any | null;
-  status?: TransactionStatus; // Optional as not in sample but might exist
+  status?: TransactionStatus;
 }
 
 export interface TransactionsResponse {
@@ -34,7 +34,7 @@ export interface WalletBalance {
 }
 
 export interface ReleasedTournamentFunds {
-  tournament_id: number;
+  tournament_uuid: string;
   tournament_name: string;
   locked_amount: number;
   paid_out: number;
@@ -86,7 +86,7 @@ export interface WalletStatisticsResponse {
 }
 
 export interface TournamentWallet {
-  tournament_id: number;
+  tournament_uuid: string;
   collected_funds: number;
   status: 'active' | 'payout_pending' | 'payouts_completed';
 }

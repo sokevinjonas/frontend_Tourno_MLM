@@ -6,10 +6,9 @@ import { environment } from '../../../environments/environment';
 import { BadgeType } from '../models/organizer.model';
 
 export interface Tournament {
-  id: number;
-  organizer_id: number;
+  uuid: string;
   organizer: {
-    id: number;
+    uuid: string;
     name: string;
     email: string;
     badge?: BadgeType;
@@ -92,11 +91,11 @@ export class TournamentService {
   }
 
   /**
-   * Récupère un tournoi par son ID
-   * GET /tournaments/{id}
+   * Récupère un tournoi par son UUID
+   * GET /tournaments/{uuid}
    */
-  getTournament(id: number): Observable<Tournament> {
-    return this.http.get<any>(`${this.apiUrl}/tournaments/${id}`).pipe(
+  getTournament(uuid: string): Observable<Tournament> {
+    return this.http.get<any>(`${this.apiUrl}/tournaments/${uuid}`).pipe(
       map(res => {
         let t = res.tournament || res.data?.tournament || res.data || res;
         // Robust calculation of participants from various possible sources in response
@@ -124,10 +123,10 @@ export class TournamentService {
 
   /**
    * Mettre à jour un tournoi existant
-   * PUT /tournaments/{id}
+   * PUT /tournaments/{uuid}
    */
-  updateTournament(id: number, data: any): Observable<Tournament> {
-    return this.http.put<any>(`${this.apiUrl}/tournaments/${id}`, data).pipe(
+  updateTournament(uuid: string, data: any): Observable<Tournament> {
+    return this.http.put<any>(`${this.apiUrl}/tournaments/${uuid}`, data).pipe(
       map(res => {
         const t = res.tournament || res.data?.tournament || res.data || res;
         return this.mapTournamentData(t);
@@ -137,10 +136,10 @@ export class TournamentService {
 
   /**
    * Démarrer le tournoi (générer les rounds)
-   * POST /tournaments/{id}/start
+   * POST /tournaments/{uuid}/start
    */
-  startTournament(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${id}/start`, {});
+  startTournament(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${uuid}/start`, {});
   }
 
   previewSchedule(data: any): Observable<any> {
@@ -149,10 +148,10 @@ export class TournamentService {
 
   /**
    * Changer le statut d'un tournoi
-   * POST /tournaments/{id}/status
+   * POST /tournaments/{uuid}/status
    */
-  changeStatus(id: number, status: string): Observable<Tournament> {
-    return this.http.post<any>(`${this.apiUrl}/tournaments/${id}/status`, { status }).pipe(
+  changeStatus(uuid: string, status: string): Observable<Tournament> {
+    return this.http.post<any>(`${this.apiUrl}/tournaments/${uuid}/status`, { status }).pipe(
       map(res => {
         const t = res.tournament || res.data?.tournament || res.data || res;
         return this.mapTournamentData(t);
@@ -162,24 +161,24 @@ export class TournamentService {
 
   /**
    * Fermer les inscriptions manuellement
-   * POST /tournaments/{id}/close-registrations
+   * POST /tournaments/{uuid}/close-registrations
    */
-  closeRegistrations(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${id}/close-registrations`, {});
+  closeRegistrations(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${uuid}/close-registrations`, {});
   }
 
   /**
    * S'inscrire à un tournoi
-   * POST /tournaments/{id}/register
+   * POST /tournaments/{uuid}/register
    */
-  registerToTournament(tournamentId: number, gameAccountId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${tournamentId}/register`, {
-      game_account_id: gameAccountId
+  registerToTournament(tournamentUuid: string, gameAccountUuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${tournamentUuid}/register`, {
+      game_account_uuid: gameAccountUuid
     });
   }
 
-  checkRegistration(tournamentId: number): Observable<{ is_registered: boolean, registration: any }> {
-    return this.http.get<{ is_registered: boolean, registration: any }>(`${this.apiUrl}/tournaments/${tournamentId}/check-registration`);
+  checkRegistration(tournamentUuid: string): Observable<{ is_registered: boolean, registration: any }> {
+    return this.http.get<{ is_registered: boolean, registration: any }>(`${this.apiUrl}/tournaments/${tournamentUuid}/check-registration`);
   }
   /**
    * Récupère les tournois créés par l'organisateur connecté
@@ -214,21 +213,21 @@ export class TournamentService {
 
   /**
    * Récupère les informations détaillées sur les rounds d'un tournoi
-   * GET /tournaments/{id}/rounds-info
+   * GET /tournaments/{uuid}/rounds-info
    */
-  getRoundsInfo(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/tournaments/${id}/rounds-info`);
+  getRoundsInfo(uuid: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/tournaments/${uuid}/rounds-info`);
   }
 
   /**
    * Passe au round suivant
-   * POST /tournaments/{id}/next-round
+   * POST /tournaments/{uuid}/next-round
    */
-  nextRound(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${id}/next-round`, {});
+  nextRound(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${uuid}/next-round`, {});
   }
 
-  completeTournament(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/tournaments/${id}/complete`, {});
+  completeTournament(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/tournaments/${uuid}/complete`, {});
   }
 }

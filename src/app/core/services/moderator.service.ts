@@ -23,12 +23,12 @@ export class ModeratorService {
     );
   }
 
-  validateProfile(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/profiles/${id}/validate`, {});
+  validateProfile(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/profiles/${uuid}/validate`, {});
   }
 
-  rejectProfile(id: number, reason: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/profiles/${id}/reject`, { rejection_reason: reason });
+  rejectProfile(uuid: string, reason: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/profiles/${uuid}/reject`, { rejection_reason: reason });
   }
 
   /**
@@ -40,8 +40,8 @@ export class ModeratorService {
     );
   }
 
-  validateMatchResult(id: number, data: { winner_id: number, player1_score: number, player2_score: number }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/matches/${id}/validate`, data);
+  validateMatchResult(uuid: string, data: { winner_uuid: string, player1_score: number, player2_score: number }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/matches/${uuid}/validate`, data);
   }
 
   /**
@@ -53,11 +53,11 @@ export class ModeratorService {
     );
   }
 
-  validateOrganizerVerification(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/organizers/verification/${id}/validate`, {});
+  validateOrganizerVerification(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/organizers/verification/${uuid}/validate`, {});
   }
 
-  rejectOrganizerVerification(id: number, reason: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/organizers/verification/${id}/reject`, { rejection_reason: reason });
+  rejectOrganizerVerification(uuid: string, reason: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/organizers/verification/${uuid}/reject`, { rejection_reason: reason });
   }
 }

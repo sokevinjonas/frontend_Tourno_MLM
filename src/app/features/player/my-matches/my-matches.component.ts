@@ -213,7 +213,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
       formData.append('comment', this.scoreForm.comment);
     }
 
-    this.matchService.reportResult(this.selectedMatch.id, formData).subscribe({
+    this.matchService.reportResult(this.selectedMatch.uuid, formData).subscribe({
       next: (res) => {
         this.submittingScore = false;
         
@@ -221,14 +221,12 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
         if (this.selectedMatch) {
           if (!this.selectedMatch.match_results) this.selectedMatch.match_results = [];
           
-          // The response 'res' should contain the new submission
-          // If not, we can create a temporary one or wait for loadMatches
-          const userId = this.authService.currentUserValue?.id;
-          if (userId) {
+          const userUuid = this.authService.currentUserValue?.uuid;
+          if (userUuid) {
              const newResult: MatchResult = {
-                id: res?.id || Date.now(),
-                match_id: this.selectedMatch.id,
-                submitted_by: userId,
+                uuid: res?.uuid || 'temp-' + Date.now(),
+                match_uuid: this.selectedMatch.uuid,
+                submitted_by_uuid: userUuid,
                 own_score: this.scoreForm.own_score,
                 opponent_score: this.scoreForm.opponent_score,
                 screenshot_path: this.filePreview || '',
@@ -239,7 +237,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
              };
              // Remove existing own submission if any
              this.selectedMatch.match_results = [
-               ...this.selectedMatch.match_results.filter((r: MatchResult) => r.submitted_by !== userId),
+               ...this.selectedMatch.match_results.filter((r: MatchResult) => r.submitted_by_uuid !== userUuid),
                newResult
              ];
           }
@@ -264,8 +262,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   }
 
   isMyWinner(match: Match): boolean {
-    const currentUserId = (this.authService.currentUserValue as any)?.id;
-    return match.winner_id === currentUserId;
+    const currentUserUuid = (this.authService.currentUserValue as any)?.uuid;
+    return match.winner_uuid === currentUserUuid;
   }
 
   getScheduledDate(match: Match): string | null {
@@ -302,19 +300,19 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     return deadline.getTime() <= this.currentTime.getTime();
   }
 
-  getSubmission(match: Match, forPlayerId: number | null): MatchResult | null {
-    if (!match.match_results || !forPlayerId) return null;
-    return match.match_results.find((r: MatchResult) => r.submitted_by === forPlayerId) || null;
+  getSubmission(match: Match, forPlayerUuid: string | null): MatchResult | null {
+    if (!match.match_results || !forPlayerUuid) return null;
+    return match.match_results.find((r: MatchResult) => r.submitted_by_uuid === forPlayerUuid) || null;
   }
 
   getOwnSubmission(match: Match): any {
-    const userId = this.authService.currentUserValue?.id;
-    return this.getSubmission(match, userId || null);
+    const userUuid = this.authService.currentUserValue?.uuid;
+    return this.getSubmission(match, userUuid || null);
   }
 
   getOpponentSubmission(match: Match): any {
-    const userId = this.authService.currentUserValue?.id;
-    const opponentId = match.player1_id === userId ? match.player2_id : match.player1_id;
-    return this.getSubmission(match, opponentId || null);
+    const userUuid = this.authService.currentUserValue?.uuid;
+    const opponentUuid = match.player1_uuid === userUuid ? match.player2_uuid : match.player1_uuid;
+    return this.getSubmission(match, opponentUuid || null);
   }
 }

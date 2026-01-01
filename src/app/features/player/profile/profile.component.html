@@ -147,7 +147,7 @@
          </div>
 
          <div class="space-y-3">
-            @for (account of user.game_accounts; track account.id) {
+            @for (account of user.game_accounts; track account.uuid) {
             <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/50 border border-slate-700/50">
                <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold border border-slate-700">

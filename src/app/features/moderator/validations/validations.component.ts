@@ -83,10 +83,10 @@ export class ValidationsComponent implements OnInit {
   validateProfile(profile: UserProfile) {
     if (this.submitting) return;
     this.submitting = true;
-    this.moderatorService.validateProfile(profile.id).subscribe({
+    this.moderatorService.validateProfile(profile.uuid).subscribe({
       next: () => {
-        this.toastService.success(`Profil de ${profile.user?.name} validé.`);
-        this.pendingProfiles = this.pendingProfiles.filter(p => p.id !== profile.id);
+        this.toastService.success('Profil du joueur validé.');
+        this.pendingProfiles = this.pendingProfiles.filter(p => p.uuid !== profile.uuid);
         this.submitting = false;
         this.cd.markForCheck();
       },
@@ -102,10 +102,10 @@ export class ValidationsComponent implements OnInit {
   validateOrganizer(verif: OrganizerVerification) {
     if (this.submitting) return;
     this.submitting = true;
-    this.moderatorService.validateOrganizerVerification(verif.id).subscribe({
+    this.moderatorService.validateOrganizerVerification(verif.uuid).subscribe({
       next: () => {
-        this.toastService.success(`Organisateur ${verif.user?.name} validé.`);
-        this.pendingVerifications = this.pendingVerifications.filter(v => v.id !== verif.id);
+        this.toastService.success('Vérification organisateur validée.');
+        this.pendingVerifications = this.pendingVerifications.filter(v => v.uuid !== verif.uuid);
         this.submitting = false;
         this.cd.markForCheck();
       },
@@ -134,10 +134,10 @@ export class ValidationsComponent implements OnInit {
     this.submitting = true;
 
     if (this.activeTab === 'profiles') {
-      this.moderatorService.rejectProfile(this.selectedItem.id, this.rejectionReason).subscribe({
+      this.moderatorService.rejectProfile(this.selectedItem.uuid, this.rejectionReason).subscribe({
         next: () => {
-          this.toastService.info(`Profil rejeté.`);
-          this.pendingProfiles = this.pendingProfiles.filter(p => p.id !== this.selectedItem.id);
+          this.toastService.warning('Profil refusé.');
+          this.pendingProfiles = this.pendingProfiles.filter(p => p.uuid !== this.selectedItem.uuid);
           this.closeRejectModal();
           this.submitting = false;
           this.cd.markForCheck();
@@ -149,16 +149,9 @@ export class ValidationsComponent implements OnInit {
         }
       });
     } else {
-      this.moderatorService.rejectOrganizerVerification(this.selectedItem.id, this.rejectionReason).subscribe({
+      this.moderatorService.rejectOrganizerVerification(this.selectedItem.uuid, this.rejectionReason).subscribe({
         next: () => {
-          this.toastService.info(`Demande d'organisateur rejetée.`);
-          this.pendingVerifications = this.pendingVerifications.filter(v => v.id !== this.selectedItem.id);
-          this.closeRejectModal();
-          this.submitting = false;
-          this.cd.markForCheck();
-        },
-        error: () => {
-          this.toastService.error('Erreur lors du rejet.');
+          this.toastService.warning('Vérification refusée.');
           this.submitting = false;
           this.cd.markForCheck();
         }

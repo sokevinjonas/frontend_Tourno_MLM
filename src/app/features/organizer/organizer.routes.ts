@@ -14,7 +14,7 @@ export const organizerRoutes: Routes = [
     loadComponent: () => import('./create-tournament/create-tournament.component').then(m => m.CreateTournamentComponent)
   },
   {
-    path: 'tournaments/:id',
+    path: 'tournaments/:uuid',
     loadComponent: () => import('./tournament-detail/tournament-detail.component').then(m => m.TournamentDetailComponent)
   },
   {

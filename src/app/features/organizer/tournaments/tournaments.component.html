@@ -71,7 +71,7 @@
           </div>
 
           <div class="flex gap-2">
-            <a [routerLink]="['/organizer/tournaments', t.id]" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-center py-2.5 rounded-lg text-sm font-bold transition-colors">
+            <a [routerLink]="['/organizer/tournaments', t.uuid]" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white text-center py-2.5 rounded-lg text-sm font-bold transition-colors">
               Gérer
             </a>
             <button (click)="openActionModal(t, $event)" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 transition-colors">
@@ -117,7 +117,7 @@
           </div>
         </button>
 
-        <a [routerLink]="['/organizer/tournaments', selectedTournament?.id]" 
+        <a [routerLink]="['/organizer/tournaments', selectedTournament?.uuid]" 
            class="w-full flex items-center gap-3 p-4 rounded-xl hover:bg-slate-800 text-slate-300 transition-all group">
           <span class="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 flex items-center justify-center font-bold">⚙️</span>
           <div class="text-left">

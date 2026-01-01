@@ -33,7 +33,7 @@ export class TournamentsComponent implements OnInit {
   };
 
   showDeleteModal = false;
-  selectedTournamentId: number | null = null;
+  selectedTournamentUuid: string | null = null;
 
   private searchSubject = new Subject<string>();
 
@@ -97,37 +97,37 @@ export class TournamentsComponent implements OnInit {
     });
   }
 
-  deleteTournament(id: number) {
-    this.selectedTournamentId = id;
+  deleteTournament(uuid: string) {
+    this.selectedTournamentUuid = uuid;
     this.showDeleteModal = true;
   }
 
   confirmDelete() {
-    if (this.selectedTournamentId === null) return;
+    if (this.selectedTournamentUuid === null) return;
     
     this.submitting = true;
-    this.adminService.deleteTournament(this.selectedTournamentId).subscribe({
+    this.adminService.deleteTournament(this.selectedTournamentUuid).subscribe({
       next: () => {
         this.toastService.success('Tournoi supprimé avec succès.');
-        this.tournaments = this.tournaments.filter(t => t.id !== this.selectedTournamentId);
+        this.tournaments = this.tournaments.filter(t => t.uuid !== this.selectedTournamentUuid);
         this.showDeleteModal = false;
-        this.selectedTournamentId = null;
+        this.selectedTournamentUuid = null;
         this.submitting = false;
         this.cd.markForCheck();
       },
       error: (err) => {
         this.toastService.error('Erreur lors de la suppression.');
         this.showDeleteModal = false;
-        this.selectedTournamentId = null;
+        this.selectedTournamentUuid = null;
         this.submitting = false;
         this.cd.markForCheck();
       }
     });
   }
 
-  changeStatus(id: number, status: string) {
+  changeStatus(uuid: string, status: string) {
     this.submitting = true;
-    this.tournamentService.changeStatus(id, status).subscribe({
+    this.tournamentService.changeStatus(uuid, status).subscribe({
       next: () => {
         this.toastService.success('Statut mis à jour.');
         this.loadTournaments();

@@ -79,7 +79,7 @@ export class TournamentsComponent implements OnInit {
   publishTournament() {
     if (!this.selectedTournament) return;
     this.processingAction = true;
-    this.tournamentService.changeStatus(this.selectedTournament.id, 'open').subscribe({
+    this.tournamentService.changeStatus(this.selectedTournament.uuid, 'open').subscribe({
       next: () => {
         this.toastService.success('Inscriptions ouvertes !');
         this.loadTournaments();
@@ -96,7 +96,7 @@ export class TournamentsComponent implements OnInit {
   launchTournament() {
     if (!this.selectedTournament) return;
     this.processingAction = true;
-    this.tournamentService.startTournament(this.selectedTournament.id).subscribe({
+    this.tournamentService.startTournament(this.selectedTournament.uuid).subscribe({
       next: () => {
         this.toastService.success('Le tournoi a été lancé avec succès !');
         this.loadTournaments();

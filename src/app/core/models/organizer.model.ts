@@ -7,7 +7,7 @@ export interface SocialLinks {
 }
 
 export interface Organizer {
-  id: number;
+  uuid: string;
   name: string;
   badge: BadgeType;
   tournaments: number;

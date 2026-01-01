@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface LeaderboardUser {
-  id: number;
+  uuid: string;
   name: string;
   avatar_url: string;
 }
@@ -71,11 +71,11 @@ export class LeaderboardService {
     return this.http.get<LeaderboardResponse>(`${this.apiUrl}/leaderboard/by-game/${game}`, { params });
   }
 
-  getUserStats(userId: number): Observable<UserStatsResponse> {
-    return this.http.get<UserStatsResponse>(`${this.apiUrl}/users/${userId}/stats`);
+  getUserStats(userUuid: string): Observable<UserStatsResponse> {
+    return this.http.get<UserStatsResponse>(`${this.apiUrl}/users/${userUuid}/stats`);
   }
 
-  getTournamentRankings(tournamentId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/tournaments/${tournamentId}/rankings`);
+  getTournamentRankings(tournamentUuid: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/tournaments/${tournamentUuid}/rankings`);
   }
 }

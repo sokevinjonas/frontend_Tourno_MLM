@@ -17,9 +17,9 @@ export class AdminService {
   /**
    * wallets
    */
-  addFunds(userId: number, amount: number, description?: string): Observable<any> {
+  addFunds(userUuid: string, amount: number, description?: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/wallet/add-funds`, {
-      user_id: userId,
+      user_uuid: userUuid,
       amount,
       description
     });
@@ -40,18 +40,18 @@ export class AdminService {
     return this.http.get<PaginatedResponse<User>>(`${this.apiUrl}/users`, { params });
   }
 
-  getUserById(id: number): Observable<User> {
-    return this.http.get<{ user: User }>(`${this.apiUrl}/users/${id}`).pipe(
+  getUserByUuid(uuid: string): Observable<User> {
+    return this.http.get<{ user: User }>(`${this.apiUrl}/users/${uuid}`).pipe(
       map(res => res.user)
     );
   }
 
-  banUser(id: number, reason: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users/${id}/ban`, { ban_reason: reason });
+  banUser(uuid: string, reason: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${uuid}/ban`, { ban_reason: reason });
   }
 
-  unbanUser(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users/${id}/unban`, {});
+  unbanUser(uuid: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${uuid}/unban`, {});
   }
 
   /**
@@ -81,7 +81,7 @@ export class AdminService {
     );
   }
 
-  deleteTournament(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/tournaments/${id}`);
+  deleteTournament(uuid: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/tournaments/${uuid}`);
   }
 }

@@ -144,7 +144,7 @@
         }
 
         <!-- Tournaments -->
-        @for (tournament of featuredTournaments; track tournament.id) {
+        @for (tournament of featuredTournaments; track tournament.uuid) {
           <div class="bg-slate-800 rounded-2xl shadow-sm border border-slate-700 overflow-hidden hover:shadow-xl hover:border-blue-500/50 transition-all hover:-translate-y-1 group relative">
              <div class="p-6">
                <div class="flex justify-between items-start mb-4">
@@ -152,7 +152,7 @@
                     {{getGameDisplayName(tournament.game)}}
                   </div>
                  <span class="text-sm font-bold text-white bg-white/10 border border-white/10 px-3 py-1 rounded-full flex items-center gap-1">
-                    {{tournament.entry_fee}} <span class="text-yellow-400">Pièces GPA 🪙</span>
+                    {{tournament.entry_fee}} <span class="text-yellow-400">GPA 🪙</span>
                  </span>
                </div>
               
@@ -181,7 +181,7 @@
   
                 @if (!isRegistrationExpired(tournament)) {
                   @if (!isTournamentFull(tournament)) {
-                    <a [routerLink]="['/tournaments', tournament.id]" class="block w-full text-center py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform active:scale-95">
+                    <a [routerLink]="['/tournaments', tournament.uuid]" class="block w-full text-center py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform active:scale-95">
                       Rejoindre
                     </a>
                   } @else {

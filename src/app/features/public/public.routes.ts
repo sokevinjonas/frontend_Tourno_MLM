@@ -41,7 +41,7 @@ export const publicRoutes: Routes = [
     data: { seo: { title: 'Tournois en Cours', description: 'Parcourez la liste des tournois actifs et inscrivez-vous pour prouver votre talent.' } }
   },
   {
-    path: 'tournaments/:id',
+    path: 'tournaments/:uuid',
     loadComponent: () => import('./tournament-details/tournament-details.component').then(m => m.TournamentDetailsComponent)
   },
   {

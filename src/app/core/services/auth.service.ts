@@ -5,7 +5,7 @@ import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface User {
-  id: number;
+  uuid: string;
   name: string;
   email: string;
   role: string;

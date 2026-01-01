@@ -50,15 +50,15 @@ export class UserDetailComponent implements OnInit {
   }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadUser(Number(id));
+    const uuid = this.route.snapshot.paramMap.get('id');
+    if (uuid) {
+      this.loadUser(uuid);
     }
   }
 
-  loadUser(id: number) {
+  loadUser(uuid: string) {
     this.loading = true;
-    this.adminService.getUserById(id).subscribe({
+    this.adminService.getUserByUuid(uuid).subscribe({
       next: (user: User) => {
         this.user = user;
         this.loading = false;
@@ -85,10 +85,10 @@ export class UserDetailComponent implements OnInit {
     if (!this.user?.profile) return;
     
     this.submitting = true;
-    this.moderatorService.validateProfile(this.user.profile.id).subscribe({
+    this.moderatorService.validateProfile(this.user.profile.uuid).subscribe({
       next: () => {
         this.toastService.success('Profil validé avec succès.');
-        this.loadUser(this.user!.id);
+        this.loadUser(this.user!.uuid);
         this.submitting = false;
         this.closeValidateModal();
       },
@@ -114,10 +114,10 @@ export class UserDetailComponent implements OnInit {
     if (!this.user?.profile) return;
     
     this.submitting = true;
-    this.moderatorService.rejectProfile(this.user.profile.id, this.rejection_reason || 'Non spécifiée').subscribe({
+    this.moderatorService.rejectProfile(this.user.profile.uuid, this.rejection_reason || 'Non spécifiée').subscribe({
       next: () => {
         this.toastService.success('Profil refusé avec succès.');
-        this.loadUser(this.user!.id);
+        this.loadUser(this.user!.uuid);
         this.submitting = false;
         this.closeRejectModal();
       },
@@ -143,10 +143,10 @@ export class UserDetailComponent implements OnInit {
     if (!this.user) return;
     
     this.submitting = true;
-    this.adminService.banUser(this.user.id, this.banReason || 'Non spécifiée').subscribe({
+    this.adminService.banUser(this.user.uuid, this.banReason || 'Non spécifiée').subscribe({
       next: () => {
         this.toastService.success('Utilisateur banni.');
-        this.loadUser(this.user!.id);
+        this.loadUser(this.user!.uuid);
         this.submitting = false;
         this.closeBanModal();
       },
@@ -163,10 +163,10 @@ export class UserDetailComponent implements OnInit {
     if (!this.user) return;
 
     this.submitting = true;
-    this.adminService.unbanUser(this.user.id).subscribe({
+    this.adminService.unbanUser(this.user.uuid).subscribe({
       next: () => {
         this.toastService.success('Utilisateur débanni.');
-        this.loadUser(this.user!.id);
+        this.loadUser(this.user!.uuid);
         this.submitting = false;
       },
       error: (err) => {

@@ -25,7 +25,7 @@ export class OrganizersComponent implements OnInit {
   currentUser: User | null = null;
   
   organizers: Organizer[] = [];
-  followedOrganizerIds = new Set<number>();
+  followedOrganizerUuids = new Set<string>();
   loading = false;
 
   // New properties
@@ -97,7 +97,7 @@ export class OrganizersComponent implements OnInit {
 
   checkMyFollowing() {
      this.organizerService.getMyFollowing().subscribe(res => {
-        this.followedOrganizerIds = new Set(res.following.map(o => o.id));
+        this.followedOrganizerUuids = new Set(res.following.map(o => o.uuid));
      });
   }
   toggleFollow(org: Organizer) {
@@ -106,32 +106,32 @@ export class OrganizersComponent implements OnInit {
        return;
     }
     
-    const isFollowing = this.followedOrganizerIds.has(org.id);
+    const isFollowing = this.followedOrganizerUuids.has(org.uuid);
     // Optimistic update
     if (isFollowing) {
-       this.followedOrganizerIds.delete(org.id);
+       this.followedOrganizerUuids.delete(org.uuid);
        org.followers--;
     } else {
-       this.followedOrganizerIds.add(org.id);
+       this.followedOrganizerUuids.add(org.uuid);
        org.followers++;
     }
 
-    this.organizerService.followOrganizer(org.id).subscribe({
+    this.organizerService.followOrganizer(org.uuid).subscribe({
       next: (res) => {
         if (res.is_following) {
-           this.followedOrganizerIds.add(org.id);
+           this.followedOrganizerUuids.add(org.uuid);
         } else {
-           this.followedOrganizerIds.delete(org.id);
+           this.followedOrganizerUuids.delete(org.uuid);
         }
         org.followers = res.followers_count;
       },
       error: (err) => {
         // Revert
         if (isFollowing) {
-           this.followedOrganizerIds.add(org.id);
+           this.followedOrganizerUuids.add(org.uuid);
            org.followers++;
         } else {
-           this.followedOrganizerIds.delete(org.id);
+           this.followedOrganizerUuids.delete(org.uuid);
            org.followers--;
         }
 
@@ -146,7 +146,7 @@ export class OrganizersComponent implements OnInit {
   }
   
   isFollowing(org: Organizer): boolean {
-     return this.followedOrganizerIds.has(org.id);
+     return this.followedOrganizerUuids.has(org.uuid);
   }
 
   plans = [

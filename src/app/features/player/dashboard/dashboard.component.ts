@@ -30,8 +30,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentTime = new Date();
 
   isMyWinner(match: Match): boolean {
-    const currentUserId = (this.authService.currentUserValue as any)?.id;
-    return match.winner_id === currentUserId;
+    const currentUserUuid = (this.authService.currentUserValue as any)?.uuid;
+    return match.winner_uuid === currentUserUuid;
   }
 
   getScheduledDate(match: Match): string | null {

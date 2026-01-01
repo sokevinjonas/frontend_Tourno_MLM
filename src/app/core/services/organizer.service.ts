@@ -39,16 +39,16 @@ export class OrganizerService {
     return this.http.get<any>(this.apiUrl, { params: httpParams });
   }
 
-  getOrganizer(id: number): Observable<{ organizer: OrganizerDetails }> {
-    return this.http.get<{ organizer: OrganizerDetails }>(`${this.apiUrl}/${id}`);
+  getOrganizer(uuid: string): Observable<{ organizer: OrganizerDetails }> {
+    return this.http.get<{ organizer: OrganizerDetails }>(`${this.apiUrl}/${uuid}`);
   }
 
-  followOrganizer(id: number): Observable<FollowResponse> {
-    return this.http.post<FollowResponse>(`${this.apiUrl}/${id}/follow`, {});
+  followOrganizer(uuid: string): Observable<FollowResponse> {
+    return this.http.post<FollowResponse>(`${this.apiUrl}/${uuid}/follow`, {});
   }
 
-  checkFollowingStatus(id: number): Observable<FollowingStatus> {
-    return this.http.get<FollowingStatus>(`${this.apiUrl}/${id}/check-following`);
+  checkFollowingStatus(uuid: string): Observable<FollowingStatus> {
+    return this.http.get<FollowingStatus>(`${this.apiUrl}/${uuid}/check-following`);
   }
 
   getMyFollowing(): Observable<MyFollowingResponse> {

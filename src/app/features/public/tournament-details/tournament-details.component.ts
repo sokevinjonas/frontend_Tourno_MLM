@@ -63,7 +63,7 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
   isLoading = true;
   isRegistering = false;
   isRegistered = false;
-  selectedGameAccountId: number | null = null;
+  selectedGameAccountUuid: string | null = null;
   error: string | null = null;
   
   private leaderboardService = inject(LeaderboardService);
@@ -127,9 +127,9 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      const id = +params['id'];
-      if (id) {
-        this.loadTournament(id);
+      const uuid = params['uuid'];
+      if (uuid) {
+        this.loadTournament(uuid);
       }
     });
 
@@ -155,9 +155,9 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  loadTournament(id: number) {
+  loadTournament(uuid: string) {
       this.isLoading = true;
-      this.tournamentService.getTournament(id).subscribe({
+      this.tournamentService.getTournament(uuid).subscribe({
           next: (data) => {
               this.tournament = data;
               console.log(this.tournament);
@@ -209,22 +209,22 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
                       const regs = (this.tournament as any).registrations || [];
                       
                       // Create a map for quick username lookup
-                      const playerMap: { [key: number]: string } = {};
+                      const playerMap: { [key: string]: string } = {};
                       regs.forEach((r: any) => {
-                          if (r.user_id) {
-                              playerMap[r.user_id] = r.game_account?.game_username || r.user?.name || 'Joueur ' + r.user_id;
+                          if (r.user_uuid) {
+                              playerMap[r.user_uuid] = r.game_account?.game_username || r.user?.name || 'Joueur ' + r.user_uuid;
                           }
                       });
 
                       this.tournament.rounds = allRounds.sort((a: any, b: any) => a.round_number - b.round_number).map((r: any) => {
-                          const roundMatches = allMatches.filter((m: any) => m.round_id === r.id);
+                          const roundMatches = allMatches.filter((m: any) => m.round_uuid === r.uuid);
                           return {
-                              id: r.id,
+                              uuid: r.uuid,
                               name: `Ronde ${r.round_number}`,
                               matches: roundMatches.map((m: any) => ({
-                                  id: m.id,
-                                  p1: playerMap[m.player1_id] || 'TBD',
-                                  p2: playerMap[m.player2_id] || 'TBD',
+                                  uuid: m.uuid,
+                                  p1: playerMap[m.player1_uuid] || 'TBD',
+                                  p2: playerMap[m.player2_uuid] || 'TBD',
                                   s1: m.player1_score,
                                   s2: m.player2_score,
                                   status: m.status,
@@ -241,7 +241,7 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
               
               // If authenticated, check for registration
               if (this.authService.isAuthenticated()) {
-                  this.tournamentService.checkRegistration(id).subscribe({
+                  this.tournamentService.checkRegistration(uuid).subscribe({
                       next: (res) => {
                           this.isRegistered = res.is_registered;
                           this.cd.markForCheck();
@@ -298,7 +298,7 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
 
   onParticipate() {
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/tournaments/' + this.tournament?.id } });
+      this.router.navigate(['/login'], { queryParams: { returnUrl: '/tournaments/' + this.tournament?.uuid } });
       return;
     }
 
@@ -315,9 +315,9 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
       // Auto-select first matching account if available
       const accounts = this.filteredGameAccounts;
       if (accounts.length > 0) {
-        this.selectedGameAccountId = accounts[0].id;
+        this.selectedGameAccountUuid = accounts[0].uuid;
       } else {
-        this.selectedGameAccountId = null;
+        this.selectedGameAccountUuid = null;
       }
       this.showPaymentModal = true;
     }
@@ -329,8 +329,8 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
   }
 
   confirmParticipation() {
-    if (!this.tournament || !this.selectedGameAccountId) {
-      if (!this.selectedGameAccountId) {
+    if (!this.tournament || !this.selectedGameAccountUuid) {
+      if (!this.selectedGameAccountUuid) {
         this.toastService.error(`Vous devez sélectionner un compte pour ce tournoi.`);
       }
       return;
@@ -343,12 +343,12 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
 
     this.isRegistering = true;
     
-    this.tournamentService.registerToTournament(this.tournament.id, this.selectedGameAccountId).subscribe({
+    this.tournamentService.registerToTournament(this.tournament.uuid, this.selectedGameAccountUuid).subscribe({
       next: (res) => {
         this.toastService.success('Inscription réussie ! Bonne chance.');
         this.isRegistered = true;
         this.closeModals();
-        this.loadTournament(this.tournament!.id);
+        this.loadTournament(this.tournament!.uuid);
         // Refresh user data (for balance)
         this.authService.getCurrentUser().subscribe();
         this.isRegistering = false;
@@ -365,7 +365,7 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
   fetchTournamentRankings() {
     if (!this.tournament) return;
     this.loadingRankings = true;
-    this.leaderboardService.getTournamentRankings(this.tournament.id).subscribe({
+    this.leaderboardService.getTournamentRankings(this.tournament.uuid).subscribe({
       next: (res) => {
         this.tournamentRankings = res;
         this.loadingRankings = false;

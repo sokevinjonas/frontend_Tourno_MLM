@@ -125,7 +125,7 @@
            } @else {
               @if (transactions.length > 0) {
                 <div class="divide-y divide-slate-700/50">
-                   @for (tx of transactions; track tx.id) {
+                   @for (tx of transactions; track tx.uuid) {
                      <div class="p-4 flex items-center justify-between hover:bg-slate-700/30 transition-colors">
                         <div class="flex items-center gap-3 sm:gap-4">
                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0" 

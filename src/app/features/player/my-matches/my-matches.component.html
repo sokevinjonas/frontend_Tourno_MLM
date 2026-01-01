@@ -63,7 +63,7 @@
     @if (!loading) {
       @if (filteredMatches.length > 0) {
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 pb-12">
-          @for (match of filteredMatches; track match.id) {
+          @for (match of filteredMatches; track match.uuid) {
           <div class="bg-slate-800/40 backdrop-blur-md border border-slate-700/50 rounded-xl p-2.5 group hover:border-blue-500/50 transition-all duration-300 relative overflow-hidden">
             
             <!-- Glossy Background Effect -->
@@ -73,7 +73,7 @@
               <!-- Header -->
               <div class="flex justify-between items-start mb-2">
                  <div class="space-y-0.5">
-                  <div class="text-[7px] text-blue-400 font-black uppercase tracking-widest">Tournament #{{ match.tournament_id }}</div>
+                  <div class="text-[7px] text-blue-400 font-black uppercase tracking-widest">Tournament UUID: {{ match.tournament_uuid | slice:0:8 }}...</div>
                   <h3 class="font-bold text-white text-xs line-clamp-1">Ronde {{ match.round_number }}</h3>
                 </div>
                 <span [class]="'px-1.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest border ' + getStatusClass(match.status)">
@@ -193,7 +193,7 @@
               <!-- Actions -->
               <div class="mt-2 flex gap-1.5">
                 <button 
-                  [routerLink]="['/tournaments', match.tournament_id]"
+                  [routerLink]="['/tournaments', match.tournament_uuid]"
                   class="flex-1 py-1.5 bg-slate-900 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded-lg text-[9px] transition-all uppercase tracking-widest">
                   Tournoi
                 </button>
@@ -295,7 +295,7 @@
                             class="w-full bg-slate-950 border-2 border-slate-800 rounded-xl py-3 text-center text-2xl font-black text-white focus:border-blue-500 transition-all outline-none"
                             min="0">
                       </div>
-                      <div class="text-[10px] text-slate-500 font-bold truncate">{{ selectedMatch.player1_id === (currentUser$ | async)?.id ? selectedMatch.player1?.name : selectedMatch.player2?.name }}</div>
+                      <div class="text-[10px] text-slate-500 font-bold truncate">{{ selectedMatch.player1_uuid === (currentUser$ | async)?.uuid ? selectedMatch.player1?.name : selectedMatch.player2?.name }}</div>
                    </div>
 
                    <!-- Opponent Score -->
@@ -308,7 +308,7 @@
                             class="w-full bg-slate-950 border-2 border-slate-800 rounded-xl py-3 text-center text-2xl font-black text-white focus:border-red-500 transition-all outline-none"
                             min="0">
                       </div>
-                      <div class="text-[10px] text-slate-500 font-bold truncate">{{ selectedMatch.player1_id === (currentUser$ | async)?.id ? selectedMatch.player2?.name : selectedMatch.player1?.name }}</div>
+                      <div class="text-[10px] text-slate-500 font-bold truncate">{{ selectedMatch.player1_uuid === (currentUser$ | async)?.uuid ? selectedMatch.player2?.name : selectedMatch.player1?.name }}</div>
                    </div>
                 </div>
 

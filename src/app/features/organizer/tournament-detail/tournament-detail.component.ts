@@ -24,7 +24,7 @@ export class TournamentDetailComponent implements OnInit {
   tournament: Tournament | null = null;
   matches: Match[] = [];
   rounds: any[] = [];
-  selectedRoundId: number | null = null;
+  selectedRoundUuid: string | null = null;
   roundInfo: any = null;
   loading = true;
   submitting = false;
@@ -61,15 +61,15 @@ export class TournamentDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.loadTournament(parseInt(id));
+    const uuid = this.route.snapshot.paramMap.get('uuid');
+    if (uuid) {
+      this.loadTournament(uuid);
     }
   }
 
-  loadTournament(id: number) {
+  loadTournament(uuid: string) {
     this.loading = true;
-    this.tournamentService.getTournament(id).subscribe({
+    this.tournamentService.getTournament(uuid).subscribe({
       next: (t) => {
         this.tournament = t;
         
@@ -87,19 +87,19 @@ export class TournamentDetailComponent implements OnInit {
 
         console.log('Tournament data:', this.tournament);
         
-        // Handle rounds
-        this.rounds = (t as any).rounds || [];
-        if (this.rounds.length > 0) {
-          // Select either current_round or the first round
-          const currentRoundNum = (t as any).current_round || 1;
-          const currentRound = this.rounds.find(r => r.round_number === currentRoundNum) || this.rounds[0];
-          this.selectedRoundId = currentRound.id;
-        }
+          // Handle rounds
+          this.rounds = (t as any).rounds || [];
+          if (this.rounds.length > 0) {
+            // Select either current_round or the first round
+            const currentRoundNum = (t as any).current_round || 1;
+            const currentRound = this.rounds.find(r => r.round_number === currentRoundNum) || this.rounds[0];
+            this.selectedRoundUuid = currentRound.uuid;
+          }
 
-        if (t.status !== 'open') {
-          this.loadMatches(id);
-          this.loadRoundsInfo(id);
-        }
+          if (t.status !== 'open') {
+            this.loadMatches(uuid);
+            this.loadRoundsInfo(uuid);
+          }
         this.loadOrganizerStats();
         this.loading = false; 
         this.cd.detectChanges();
@@ -113,8 +113,8 @@ export class TournamentDetailComponent implements OnInit {
     });
   }
 
-  loadRoundsInfo(id: number) {
-     this.tournamentService.getRoundsInfo(id).subscribe({
+  loadRoundsInfo(uuid: string) {
+     this.tournamentService.getRoundsInfo(uuid).subscribe({
        next: (res) => {
          this.roundInfo = res.data;
          this.cd.detectChanges();
@@ -134,10 +134,10 @@ export class TournamentDetailComponent implements OnInit {
   confirmNextRound() {
      if (!this.tournament) return;
      this.submitting = true;
-     this.tournamentService.nextRound(this.tournament.id).subscribe({
+     this.tournamentService.nextRound(this.tournament.uuid).subscribe({
         next: (res) => {
            this.toastService.success('Round suivant généré avec succès !');
-           this.loadTournament(this.tournament!.id);
+           this.loadTournament(this.tournament!.uuid);
            this.showNextRoundModal = false;
            this.submitting = false;
         },
@@ -152,17 +152,17 @@ export class TournamentDetailComponent implements OnInit {
   }
 
   get filteredMatches(): Match[] {
-    if (!this.selectedRoundId) return this.matches;
-    return this.matches.filter(m => (m as any).round_id === this.selectedRoundId);
+    if (!this.selectedRoundUuid) return this.matches;
+    return this.matches.filter(m => (m as any).round_uuid === this.selectedRoundUuid);
   }
 
-  selectRound(roundId: number) {
-    this.selectedRoundId = roundId;
+  selectRound(roundUuid: string) {
+    this.selectedRoundUuid = roundUuid;
     this.cd.detectChanges();
   }
 
-  loadMatches(id: number) {
-    this.matchService.getTournamentMatches(id).subscribe({
+  loadMatches(uuid: string) {
+    this.matchService.getTournamentMatches(uuid).subscribe({
       next: (matches) => {
         this.matches = matches.data;
         console.log('Matches:', this.matches);
@@ -190,10 +190,10 @@ export class TournamentDetailComponent implements OnInit {
   publishTournament() {
     if (!this.tournament) return;
     this.submitting = true;
-    this.tournamentService.changeStatus(this.tournament.id, 'open').subscribe({
+    this.tournamentService.changeStatus(this.tournament.uuid, 'open').subscribe({
       next: () => {
         this.toastService.success('Tournoi publié avec succès !');
-        this.loadTournament(this.tournament!.id);
+        this.loadTournament(this.tournament!.uuid);
         this.submitting = false;
         this.cd.detectChanges();
       },
@@ -212,10 +212,10 @@ export class TournamentDetailComponent implements OnInit {
   confirmLaunchTournament() {
     if (!this.tournament) return;
     this.submitting = true;
-    this.tournamentService.startTournament(this.tournament.id).subscribe({
+    this.tournamentService.startTournament(this.tournament.uuid).subscribe({
       next: () => {
         this.toastService.success('Tournoi lancé avec succès !');
-        this.loadTournament(this.tournament!.id);
+        this.loadTournament(this.tournament!.uuid);
         this.showLaunchModal = false;
         this.submitting = false;
       },
@@ -234,10 +234,10 @@ export class TournamentDetailComponent implements OnInit {
   confirmCloseRegistrations() {
     if (!this.tournament) return;
     this.submitting = true;
-    this.tournamentService.closeRegistrations(this.tournament.id).subscribe({
+    this.tournamentService.closeRegistrations(this.tournament.uuid).subscribe({
       next: () => {
         this.toastService.success('Inscriptions fermées.');
-        this.loadTournament(this.tournament!.id);
+        this.loadTournament(this.tournament!.uuid);
         this.showCloseRegistrationsModal = false;
         this.submitting = false;
         this.cd.detectChanges();
@@ -269,13 +269,13 @@ export class TournamentDetailComponent implements OnInit {
     if (!this.selectedMatch || this.score1 === null || this.score2 === null) return;
     
     this.submitting = true;
-    this.matchService.enterScore(this.selectedMatch.id, {
+    this.matchService.enterScore(this.selectedMatch.uuid, {
       player1_score: this.score1,
       player2_score: this.score2
     }).subscribe({
       next: () => {
         this.toastService.success('Score enregistré !');
-        this.loadMatches(this.tournament!.id);
+        this.loadMatches(this.tournament!.uuid);
         this.closeScoreModal();
         this.submitting = false;
         this.cd.detectChanges();
@@ -296,10 +296,10 @@ export class TournamentDetailComponent implements OnInit {
   confirmCompleteTournament() {
     if (!this.tournament) return;
     this.submitting = true;
-    this.tournamentService.completeTournament(this.tournament.id).subscribe({
+    this.tournamentService.completeTournament(this.tournament.uuid).subscribe({
       next: () => {
         this.toastService.success('Tournoi finalisé ! Les récompenses ont été distribuées.');
-        this.loadTournament(this.tournament!.id);
+        this.loadTournament(this.tournament!.uuid);
         this.showCompleteModal = false;
         this.submitting = false;
         this.cd.detectChanges();

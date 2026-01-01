@@ -20,7 +20,7 @@ export class ComplaintsComponent implements OnInit {
   selectedMatch: Match | null = null;
   
   resolveForm = {
-    winner_id: 0,
+    winner_uuid: '',
     player1_score: 0,
     player2_score: 0
   };
@@ -52,7 +52,7 @@ export class ComplaintsComponent implements OnInit {
   openResolveModal(match: Match) {
     this.selectedMatch = match;
     this.resolveForm = {
-      winner_id: match.winner_id || 0,
+      winner_uuid: match.winner_uuid || '',
       player1_score: match.player1_score || 0,
       player2_score: match.player2_score || 0
     };
@@ -68,10 +68,10 @@ export class ComplaintsComponent implements OnInit {
     if (!this.selectedMatch) return;
     this.submitting = true;
 
-    this.moderatorService.validateMatchResult(this.selectedMatch.id, this.resolveForm).subscribe({
+    this.moderatorService.validateMatchResult(this.selectedMatch.uuid, this.resolveForm).subscribe({
       next: () => {
         this.toastService.success('Litige résolu avec succès.');
-        this.disputedMatches = this.disputedMatches.filter(m => m.id !== this.selectedMatch?.id);
+        this.disputedMatches = this.disputedMatches.filter(m => m.uuid !== this.selectedMatch?.uuid);
         this.closeResolveModal();
         this.submitting = false;
       },

@@ -1,8 +1,8 @@
 export type UserRole = 'player' | 'organizer' | 'moderator' | 'admin';
 
 export interface Wallet {
-  id: number;
-  user_id: number;
+  uuid: string;
+  user_uuid: string;
   balance: string;
   blocked_balance: string;
   created_at: string;
@@ -10,8 +10,8 @@ export interface Wallet {
 }
 
 export interface GameAccount {
-  id: number;
-  user_id: number;
+  uuid: string;
+  user_uuid: string;
   game: string;
   game_username: string;
   team_screenshot_path: string;
@@ -20,7 +20,7 @@ export interface GameAccount {
 }
 
 export interface User {
-  id: number;
+  uuid: string;
   name: string;
   email: string;
   role: UserRole;
@@ -38,23 +38,23 @@ export interface User {
 }
 
 export interface UserProfile {
-  id: number;
-  user_id: number;
+  uuid: string;
+  user_uuid: string;
   user?: User;
   whatsapp_number: string;
   country: string;
   city: string;
   status: 'pending' | 'validated' | 'rejected' | 'active';
   rejection_reason?: string;
-  validated_by?: number;
+  validated_by_uuid?: string;
   validated_at?: string;
   created_at: string;
   updated_at?: string;
 }
 
 export interface OrganizerVerification {
-  id: number;
-  user_id: number;
+  uuid: string;
+  user_uuid: string;
   user?: User;
   whatsapp_number: string;
   country: string;

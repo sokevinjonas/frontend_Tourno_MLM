@@ -89,22 +89,22 @@
                 <span [class]="tournament.status | tournamentStatusClass" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full border border-current tracking-widest">
                   {{ tournament.status | tournamentStatus }}
                 </span>
-                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-slate-800/50 px-2 py-0.5 rounded-md">ID: #{{ tournament.id }}</span>
-                <span class="text-xs text-slate-500 font-medium">Par Organisateur #{{ tournament.organizer_id }}</span>
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-slate-800/50 px-2 py-0.5 rounded-md">UUID: {{ tournament.uuid | slice:0:8 }}...</span>
+                <span class="text-xs text-slate-500 font-medium">Par Organisateur: {{ tournament.organizer.name }}</span>
               </div>
             </div>
           </div>
 
           <div class="flex flex-wrap gap-2 lg:justify-end">
             <!-- View link -->
-            <a [routerLink]="['/tournaments', tournament.id]" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 hover:bg-slate-700 hover:text-white transition-all">
+            <a [routerLink]="['/tournaments', tournament.uuid]" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 hover:bg-slate-700 hover:text-white transition-all">
               Voir la page
             </a>
             
             <!-- Quick Actions -->
             <button 
               *ngIf="tournament.status !== 'cancelled' && tournament.status !== 'completed'"
-              (click)="changeStatus(tournament.id, 'cancelled')"
+              (click)="changeStatus(tournament.uuid, 'cancelled')"
               class="px-5 py-2.5 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-lg shadow-red-500/5"
             >
               Annuler
@@ -112,7 +112,7 @@
 
             <button 
               *ngIf="tournament.status === 'draft' || tournament.status === 'cancelled'"
-              (click)="deleteTournament(tournament.id)"
+              (click)="deleteTournament(tournament.uuid)"
               class="px-3 py-2.5 bg-slate-950 text-slate-600 text-xs font-bold rounded-xl border border-slate-800 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>

@@ -121,7 +121,7 @@ export class UsersComponent implements OnInit {
     this.submitting = true;
 
     this.adminService.addFunds(
-      this.selectedUser.id, 
+      this.selectedUser.uuid, 
       this.fundForm.amount, 
       this.fundForm.description
     ).subscribe({

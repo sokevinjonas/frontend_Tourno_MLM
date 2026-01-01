@@ -35,8 +35,9 @@ export class HomeComponent implements OnInit {
   loadFeaturedTournaments() {
      this.tournamentService.getTournaments().subscribe({
         next: (data) => {
-           // Get 3 latest (by ID desc)
-           this.featuredTournaments = data.sort((a, b) => b.id - a.id).slice(0, 6);
+           // Get 3 latest        // Since IDs are now UUIDs, numeric subtraction won't work.
+           // We'll just take the first 6 or sort by created_at if available.
+           this.featuredTournaments = data.slice(0, 6);
            this.isLoadingTournaments = false;
            this.cd.markForCheck();
         },

@@ -83,7 +83,7 @@
                         <p class="text-white font-bold">{{ user.name }}</p>
                         <span *ngIf="user.is_banned" class="px-1.5 py-0.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded text-[8px] font-black uppercase">Banni</span>
                     </div>
-                    <p class="text-[10px] text-slate-500 uppercase tracking-tighter">ID: #{{ user.id }}</p>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-tighter">UUID: {{ user.uuid | slice:0:8 }}...</p>
                   </div>
                 </div>
               </td>
@@ -122,7 +122,7 @@
                   <button (click)="openAddFundsModal(user)" class="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl hover:bg-emerald-500 hover:text-white transition-all border border-emerald-500/20 shadow-lg shadow-emerald-500/5" title="Ajouter des fonds">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                   </button>
-                  <button [routerLink]="['/admin/users', user.id]" class="p-2.5 bg-slate-800 text-slate-400 rounded-xl hover:bg-slate-700 hover:text-white transition-all border border-slate-700" title="Détails">
+                  <button [routerLink]="['/admin/users', user.uuid]" class="p-2.5 bg-slate-800 text-slate-400 rounded-xl hover:bg-slate-700 hover:text-white transition-all border border-slate-700" title="Détails">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                   </button>
                 </div>
