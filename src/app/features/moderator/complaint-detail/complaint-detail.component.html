@@ -45,13 +45,13 @@
               <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6">
                   <div class="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
                       <div class="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-2xl font-bold text-slate-500 border border-slate-700">
-                          {{ match?.player1?.name?.charAt(0) || '?' }}
+                          {{ match.player1!.name.charAt(0) || '?' }}
                       </div>
                       <div>
-                          <h3 class="text-xl font-black text-white uppercase">{{ match?.player1?.name || 'Joueur 1' }}</h3>
+                          <h3 class="text-xl font-black text-white uppercase">{{ match.player1!.name || 'Joueur 1' }}</h3>
                           <p class="text-xs text-slate-500">Joueur 1</p>
                       </div>
-                      <div class="ml-auto text-4xl font-black text-slate-500">{{ match?.player1_score || 0 }}</div>
+                      <div class="ml-auto text-4xl font-black text-slate-500">{{ match.player1_score || 0 }}</div>
                   </div>
 
                   <!-- Submission details -->
@@ -84,13 +84,13 @@
               <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6">
                   <div class="flex items-center gap-4 mb-6 pb-6 border-b border-white/5">
                       <div class="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center text-2xl font-bold text-slate-500 border border-slate-700">
-                          {{ match?.player2?.name?.charAt(0) || '?' }}
+                          {{ match.player2!.name.charAt(0) || '?' }}
                       </div>
                       <div>
-                          <h3 class="text-xl font-black text-white uppercase">{{ match?.player2?.name || 'Joueur 2' }}</h3>
+                          <h3 class="text-xl font-black text-white uppercase">{{ match.player2!.name || 'Joueur 2' }}</h3>
                           <p class="text-xs text-slate-500">Joueur 2</p>
                       </div>
-                      <div class="ml-auto text-4xl font-black text-slate-500">{{ match?.player2_score || 0 }}</div>
+                      <div class="ml-auto text-4xl font-black text-slate-500">{{ match.player2_score || 0 }}</div>
                   </div>
 
                   <!-- Submission details -->

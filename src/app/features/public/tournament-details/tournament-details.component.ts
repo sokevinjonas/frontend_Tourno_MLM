@@ -203,34 +203,43 @@ export class TournamentDetailsComponent implements OnInit, OnDestroy {
                   }
 
                   // Map rounds and matches for the tree/bracket view
-                  if ((this.tournament as any).rounds && (this.tournament as any).matches) {
-                      const allMatches = (this.tournament as any).matches || [];
-                      const allRounds = (this.tournament as any).rounds || [];
+                  if (this.tournament.rounds) {
                       const regs = (this.tournament as any).registrations || [];
-                      
-                      // Create a map for quick username lookup
                       const playerMap: { [key: string]: string } = {};
+                      
                       regs.forEach((r: any) => {
-                          if (r.user_uuid) {
-                              playerMap[r.user_uuid] = r.game_account?.game_username || r.user?.name || 'Joueur ' + r.user_uuid;
-                          }
+                          const uid = r.user_uuid || r.user?.uuid;
+                          const name = r.user?.name;
+                          const gameUser = r.game_account?.game_username || r.user?.name || 'Joueur';
+                          
+                          if (uid) playerMap[uid] = gameUser;
+                          // Also map by registration uuid just in case
+                          if (r.uuid) playerMap[r.uuid] = gameUser;
+                          // Fallback to name-based mapping if IDs are inconsistent
+                          if (name) playerMap[name] = gameUser;
                       });
 
-                      this.tournament.rounds = allRounds.sort((a: any, b: any) => a.round_number - b.round_number).map((r: any) => {
-                          const roundMatches = allMatches.filter((m: any) => m.round_uuid === r.uuid);
+                      this.tournament.rounds = [...this.tournament.rounds].sort((a: any, b: any) => a.round_number - b.round_number).map((r: any) => {
+                          const roundMatches = r.matches || [];
                           return {
-                              uuid: r.uuid,
+                              ...r,
                               name: `Ronde ${r.round_number}`,
-                              matches: roundMatches.map((m: any) => ({
-                                  uuid: m.uuid,
-                                  p1: playerMap[m.player1_uuid] || 'TBD',
-                                  p2: playerMap[m.player2_uuid] || 'TBD',
-                                  s1: m.player1_score,
-                                  s2: m.player2_score,
-                                  status: m.status,
-                                  scheduled_at: m.scheduled_at,
-                                  deadline_at: m.deadline_at
-                              }))
+                              matches: roundMatches.map((m: any) => {
+                                  // Link players using various possible fields
+                                  const p1id = m.player1_uuid || m.player1?.uuid;
+                                  const p1name = m.player1?.name;
+                                  const p2id = m.player2_uuid || m.player2?.uuid;
+                                  const p2name = m.player2?.name;
+                                  
+                                  return {
+                                      ...m,
+                                      // Priority: Map match ID -> Map match Name -> Direct match game_username -> Direct match name
+                                      p1: (p1id ? playerMap[p1id] : null) || (p1name ? playerMap[p1name] : null) || m.player1?.game_account?.game_username || m.player1?.name || 'TBD',
+                                      p2: (p2id ? playerMap[p2id] : null) || (p2name ? playerMap[p2name] : null) || m.player2?.game_account?.game_username || m.player2?.name || 'TBD',
+                                      s1: m.player1_score,
+                                      s2: m.player2_score,
+                                  };
+                              })
                           };
                       });
                   }

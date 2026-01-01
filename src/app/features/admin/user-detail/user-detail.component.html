@@ -7,355 +7,389 @@
     </a>
 
     <!-- Loading State -->
-    <div *ngIf="loading" class="flex justify-center py-20">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
+    @if (loading) {
+      <div class="flex justify-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }
 
     <!-- Banner for Banned Users -->
-    <div *ngIf="!loading && user?.is_banned" class="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center gap-6 animate-in slide-in-from-top duration-500">
-      <div class="w-14 h-14 bg-red-500/20 text-red-500 rounded-2xl flex items-center justify-center shrink-0">
-        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    @if (!loading && user?.is_banned) {
+      <div class="mb-8 p-6 bg-red-500/10 border border-red-500/20 rounded-3xl flex items-center gap-6 animate-in slide-in-from-top duration-500">
+        <div class="w-14 h-14 bg-red-500/20 text-red-500 rounded-2xl flex items-center justify-center shrink-0">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-red-500 font-black text-xl mb-1 uppercase tracking-tight">Utilisateur Banni</h3>
+          <p class="text-red-500/70 text-sm">
+            Cet utilisateur a été suspendu de la plateforme. 
+            @if (user?.ban_reason) {
+              <span class="block mt-2 text-white font-medium">Raison : {{ user?.ban_reason }}</span>
+            }
+          </p>
+        </div>
       </div>
-      <div>
-        <h3 class="text-red-500 font-black text-xl mb-1 uppercase tracking-tight">Utilisateur Banni</h3>
-        <p class="text-red-500/70 text-sm">
-          Cet utilisateur a été suspendu de la plateforme. 
-          <span *ngIf="user?.ban_reason" class="block mt-2 text-white font-medium">Raison : {{ user?.ban_reason }}</span>
-        </p>
-      </div>
-    </div>
+    }
 
     <!-- Administrative Actions -->
-    <div *ngIf="!loading && user" class="mb-8 flex flex-wrap gap-4">
-      <!-- Validation Buttons -->
-      <button 
-        *ngIf="user.profile?.status === 'pending'"
-        (click)="openValidateModal()"
-        [disabled]="submitting"
-        class="flex-1 min-w-[200px] py-4 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-        Valider le Profil
-      </button>
+    @if (!loading && user) {
+      <div class="mb-8 flex flex-wrap gap-4">
+        <!-- Validation Buttons -->
+        @if (user.profile?.status === 'pending') {
+          <button 
+            (click)="openValidateModal()"
+            [disabled]="submitting"
+            class="flex-1 min-w-[200px] py-4 px-6 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-3 disabled:opacity-50"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+            Valider le Profil
+          </button>
 
-      <button 
-        *ngIf="user.profile?.status === 'pending'"
-        (click)="openRejectModal()"
-        [disabled]="submitting"
-        class="flex-1 min-w-[200px] py-4 px-6 bg-slate-900 border border-orange-500/30 hover:bg-orange-500 hover:text-white text-orange-500 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        Refuser le Profil
-      </button>
+          <button 
+            (click)="openRejectModal()"
+            [disabled]="submitting"
+            class="flex-1 min-w-[200px] py-4 px-6 bg-slate-900 border border-orange-500/30 hover:bg-orange-500 hover:text-white text-orange-500 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            Refuse le Profil
+          </button>
+        }
 
-      <!-- Moderation Buttons -->
-      <button 
-        *ngIf="!user.is_banned"
-        (click)="openBanModal()"
-        [disabled]="submitting"
-        class="flex-1 min-w-[200px] py-4 px-6 bg-slate-900 border border-red-500/30 hover:bg-red-500 hover:text-white text-red-500 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-        Bannir l'Utilisateur
-      </button>
-
-      <button 
-        *ngIf="user.is_banned"
-        (click)="unbanUser()"
-        [disabled]="submitting"
-        class="flex-1 min-w-[200px] py-4 px-6 bg-emerald-600/10 border border-emerald-500/20 hover:bg-emerald-600 text-emerald-500 hover:text-white rounded-2xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 disabled:opacity-50"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-        Réactiver le Compte
-      </button>
-    </div>
+        <!-- Moderation Buttons -->
+        @if (!user.is_banned) {
+          <button 
+            (click)="openBanModal()"
+            [disabled]="submitting"
+            class="flex-1 min-w-[200px] py-4 px-6 bg-slate-900 border border-red-500/30 hover:bg-red-500 hover:text-white text-red-500 rounded-2xl font-black uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+            Bannir l'Utilisateur
+          </button>
+        } @else {
+          <button 
+            (click)="unbanUser()"
+            [disabled]="submitting"
+            class="flex-1 min-w-[200px] py-4 px-6 bg-emerald-600/10 border border-emerald-500/20 hover:bg-emerald-600 text-emerald-500 hover:text-white rounded-2xl font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+          >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            Réactiver le Compte
+          </button>
+        }
+      </div>
+    }
 
     <!-- User Profile Card -->
-    <div *ngIf="!loading && user" class="space-y-8">
-      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
-        <div class="absolute top-0 right-0 p-8">
-            <span 
-                [ngClass]="{
-                    'bg-blue-500/10 text-blue-500 border-blue-500/20': user.role === 'admin',
-                    'bg-purple-500/10 text-purple-500 border-purple-500/20': user.role === 'moderator',
-                    'bg-orange-500/10 text-orange-500 border-orange-500/20': user.role === 'organizer',
-                    'bg-slate-500/10 text-slate-500 border-slate-500/20': user.role === 'player'
-                }"
-                class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border"
-            >
-                {{ user.role }}
-            </span>
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
-          <div class="w-32 h-32 rounded-3xl bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-2 border-slate-700 shadow-2xl shrink-0 overflow-hidden">
-            <img *ngIf="user.avatar_url" [src]="user.avatar_url" class="w-full h-full object-cover">
-            <span *ngIf="!user.avatar_url">{{ user.name.charAt(0).toUpperCase() }}</span>
+    @if (!loading && user) {
+      <div class="space-y-8">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+          <div class="absolute top-0 right-0 p-8">
+              <span 
+                  [ngClass]="{
+                      'bg-blue-500/10 text-blue-500 border-blue-500/20': user.role === 'admin',
+                      'bg-purple-500/10 text-purple-500 border-purple-500/20': user.role === 'moderator',
+                      'bg-orange-500/10 text-orange-500 border-orange-500/20': user.role === 'organizer',
+                      'bg-slate-500/10 text-slate-500 border-slate-500/20': user.role === 'player'
+                  }"
+                  class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border"
+              >
+                  {{ user.role }}
+              </span>
           </div>
-          <div class="flex-1 pt-2">
-            <div class="flex items-center gap-3 justify-center md:justify-start mb-2">
-                <h1 class="text-4xl font-black text-white uppercase tracking-tight">{{ user.name }}</h1>
-                <svg *ngIf="user.profile?.status === 'validated'" class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.64.304 1.24.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-            </div>
-            <p class="text-slate-400 text-lg mb-8 font-medium italic">{{ user.email }}</p>
-            
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">ID Unique</p>
-                <p class="text-white font-mono font-bold">UUID: {{ user.uuid | slice:0:8 }}...</p>
-              </div>
-              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Inscrit le</p>
-                <p class="text-white font-bold">{{ user.created_at | date:'dd MMM yyyy' }}</p>
-              </div>
-              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">État Compte</p>
-                <p [class]="user.is_banned ? 'text-red-500' : 'text-emerald-500'" class="font-black uppercase text-[10px] tracking-wider">
-                    {{ user.is_banned ? 'Banni' : 'Actif' }}
-                </p>
-              </div>
-              <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Profil</p>
-                <p [ngClass]="{
-                    'text-emerald-500': user.profile?.status === 'validated' || user.profile?.status === 'active',
-                    'text-orange-500': user.profile?.status === 'pending',
-                    'text-red-500': user.profile?.status === 'rejected'
-                }" class="font-black uppercase text-[10px] tracking-wider">
-                    {{ user.profile?.status || 'Non créé' }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Information Sections -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Profile Details -->
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-white uppercase tracking-tight">Détails du Profil</h3>
-                <div class="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <div class="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+            <div class="w-32 h-32 rounded-3xl bg-slate-800 flex items-center justify-center text-4xl font-bold text-slate-500 border-2 border-slate-700 shadow-2xl shrink-0 overflow-hidden">
+              @if (user.avatar_url) {
+                <img [src]="user.avatar_url" class="w-full h-full object-cover">
+              } @else {
+                <span>{{ user.name.charAt(0).toUpperCase() }}</span>
+              }
+            </div>
+            <div class="flex-1 pt-2">
+              <div class="flex items-center gap-3 justify-center md:justify-start mb-2">
+                  <h1 class="text-4xl font-black text-white uppercase tracking-tight">{{ user.name }}</h1>
+                  @if (user.profile?.status === 'validated') {
+                    <svg class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.64.304 1.24.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                  }
+              </div>
+              <p class="text-slate-400 text-lg mb-8 font-medium italic">{{ user.email }}</p>
+              
+              <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">ID Unique</p>
+                  <p class="text-white font-mono font-bold">UUID: {{ user.uuid | slice:0:8 }}...</p>
                 </div>
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Inscrit le</p>
+                  <p class="text-white font-bold">{{ user.created_at | date:'dd MMM yyyy' }}</p>
+                </div>
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">État Compte</p>
+                  <p [class]="user.is_banned ? 'text-red-500' : 'text-emerald-500'" class="font-black uppercase text-[10px] tracking-wider">
+                      {{ user.is_banned ? 'Banni' : 'Actif' }}
+                  </p>
+                </div>
+                <div class="bg-slate-950/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Profil</p>
+                  <p [ngClass]="{
+                      'text-emerald-500': user.profile?.status === 'validated' || user.profile?.status === 'active',
+                      'text-orange-500': user.profile?.status === 'pending',
+                      'text-red-500': user.profile?.status === 'rejected'
+                  }" class="font-black uppercase text-[10px] tracking-wider">
+                      {{ user.profile?.status || 'Non créé' }}
+                  </p>
+                </div>
+              </div>
             </div>
-            
+          </div>
+        </div>
+
+        <!-- Information Sections -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Profile Details -->
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
+              <div class="flex justify-between items-center mb-6">
+                  <h3 class="text-xl font-black text-white uppercase tracking-tight">Détails du Profil</h3>
+                  <div class="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
+                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  </div>
+              </div>
+              
+              <div class="space-y-6">
+                  <div class="flex flex-col gap-1">
+                      <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">WhatsApp</p>
+                      <p class="text-white font-bold">{{ user.profile?.whatsapp_number || 'Non renseigné' }}</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                      <div class="flex flex-col gap-1">
+                          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Pays</p>
+                          <p class="text-white font-bold">{{ user.profile?.country || 'N/A' }}</p>
+                      </div>
+                      <div class="flex flex-col gap-1">
+                          <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Ville</p>
+                          <p class="text-white font-bold">{{ user.profile?.city || 'N/A' }}</p>
+                      </div>
+                  </div>
+                  <div class="pt-4 border-t border-slate-800">
+                      <div class="flex justify-between items-center">
+                          <span class="text-xs text-slate-500 font-medium">Dernière mise à jour profil</span>
+                          <span class="text-xs text-white font-bold">{{ (user.profile?.updated_at || user.created_at) | date:'short' }}</span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Wallet Summary -->
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-xl font-black text-white uppercase tracking-tight">Portefeuille</h3>
+              <div class="w-10 h-10 bg-emerald-500/10 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-500/20">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+            </div>
+
             <div class="space-y-6">
-                <div class="flex flex-col gap-1">
-                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">WhatsApp</p>
-                    <p class="text-white font-bold">{{ user.profile?.whatsapp_number || 'Non renseigné' }}</p>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1">
-                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Pays</p>
-                        <p class="text-white font-bold">{{ user.profile?.country || 'N/A' }}</p>
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Ville</p>
-                        <p class="text-white font-bold">{{ user.profile?.city || 'N/A' }}</p>
-                    </div>
-                </div>
-                <div class="pt-4 border-t border-slate-800">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs text-slate-500 font-medium">Dernière mise à jour profil</span>
-                        <span class="text-xs text-white font-bold">{{ (user.profile?.updated_at || user.created_at) | date:'short' }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+              <div class="bg-slate-900 border border-white/5 rounded-2xl p-6 shadow-inner">
+                  <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Solde Disponible</p>
+                  <div class="flex items-baseline gap-2">
+                      <span class="text-4xl font-black text-white tracking-tighter">{{ user.wallet?.balance || '0.00' | number:'1.0-0' }}</span>
+                      <span class="text-xs text-slate-500 font-black uppercase tracking-widest">FCFA</span>
+                  </div>
+              </div>
 
-        <!-- Wallet Summary -->
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-black text-white uppercase tracking-tight">Portefeuille</h3>
-            <div class="w-10 h-10 bg-emerald-500/10 text-emerald-500 rounded-xl flex items-center justify-center border border-emerald-500/20">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <div class="grid grid-cols-1 gap-4">
+                  <div class="bg-slate-950/50 border border-slate-800 rounded-2xl p-4 flex justify-between items-center">
+                      <div class="flex items-center gap-3">
+                          <div class="w-8 h-8 bg-orange-500/10 text-orange-500 rounded-lg flex items-center justify-center border border-orange-500/20">
+                              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                          </div>
+                          <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Solde Bloqué</span>
+                      </div>
+                      <span class="text-white font-black">{{ user.wallet?.blocked_balance || '0.00' | number:'1.0-0' }} FCFA</span>
+                  </div>
+              </div>
             </div>
           </div>
 
-          <div class="space-y-6">
-            <div class="bg-slate-900 border border-white/5 rounded-2xl p-6 shadow-inner">
-                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Solde Disponible</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="text-4xl font-black text-white tracking-tighter">{{ user.wallet?.balance || '0.00' | number:'1.0-0' }}</span>
-                    <span class="text-xs text-slate-500 font-black uppercase tracking-widest">FCFA</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 gap-4">
-                <div class="bg-slate-950/50 border border-slate-800 rounded-2xl p-4 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-orange-500/10 text-orange-500 rounded-lg flex items-center justify-center border border-orange-500/20">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                        </div>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Solde Bloqué</span>
+          <!-- Game Accounts -->
+          @if (user.game_accounts && user.game_accounts.length > 0) {
+            <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-black text-white uppercase tracking-tight">Comptes de Jeux</h3>
+                    <div class="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                     </div>
-                    <span class="text-white font-black">{{ user.wallet?.blocked_balance || '0.00' | number:'1.0-0' }} FCFA</span>
                 </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- Game Accounts -->
-        <div *ngIf="user.game_accounts && user.game_accounts.length > 0" class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-white uppercase tracking-tight">Comptes de Jeux</h3>
-                <div class="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @for (account of user.game_accounts; track account.uuid) {
-                <div class="bg-slate-950/50 border border-slate-800 rounded-2xl p-6 group">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center border border-slate-700">
-                                <span class="text-xl">🎮</span>
-                            </div>
-                            <div>
-                                <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">{{ account.game }}</p>
-                                <p class="text-white font-bold">{{ account.game_username }}</p>
-                                <span class="text-slate-500">UUID: {{ account.uuid | slice:0:8 }}...</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    @for (account of user.game_accounts; track account.uuid) {
+                    <div class="bg-slate-950/50 border border-slate-800 rounded-2xl p-6 group">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center border border-slate-700">
+                                    <span class="text-xl">🎮</span>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">{{ account.game }}</p>
+                                    <p class="text-white font-bold">{{ account.game_username }}</p>
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">UUID: {{ account.uuid | slice:0:8 }}...</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="aspect-video bg-slate-900 rounded-xl border border-slate-800 overflow-hidden relative cursor-pointer group/img" (click)="openImageModal(getScreenshotUrl(account.team_screenshot_path))">
-                        <img *ngIf="account.team_screenshot_path" [src]="getScreenshotUrl(account.team_screenshot_path)" class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110">
-                        <div *ngIf="!account.team_screenshot_path" class="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-2">
-                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span class="text-[10px] uppercase font-black tracking-widest">Pas de capture</span>
+                        <div class="aspect-video bg-slate-900 rounded-xl border border-slate-800 overflow-hidden relative cursor-pointer group/img" (click)="openImageModal(getScreenshotUrl(account.team_screenshot_path))">
+                            @if (account.team_screenshot_path) {
+                              <img [src]="getScreenshotUrl(account.team_screenshot_path)" class="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110">
+                              <div class="absolute inset-0 bg-slate-950/0 group-hover/img:bg-slate-950/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all">
+                                 <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                              </div>
+                            } @else {
+                              <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-2">
+                                  <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                  <span class="text-[10px] uppercase font-black tracking-widest">Pas de capture</span>
+                              </div>
+                            }
                         </div>
-                        <div *ngIf="account.team_screenshot_path" class="absolute inset-0 bg-slate-950/0 group-hover/img:bg-slate-950/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all">
-                             <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                        </div>
                     </div>
+                    }
                 </div>
-                }
             </div>
+          }
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>
 
 <!-- Validation Confirmation Modal -->
-<div *ngIf="showValidateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeValidateModal()"></div>
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
-          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+@if (showValidateModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeValidateModal()"></div>
+      <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Valider Profil</h3>
+          <p class="text-slate-400 text-sm">Confirmez-vous la validation du profil de <strong class="text-white">{{ user?.name }}</strong> ? Cela lui permettra de participer aux tournois.</p>
         </div>
-        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Valider Profil</h3>
-        <p class="text-slate-400 text-sm">Confirmez-vous la validation du profil de <strong class="text-white">{{ user?.name }}</strong> ? Cela lui permettra de participer aux tournois.</p>
+    
+        <div class="flex gap-4">
+          <button (click)="closeValidateModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+          <button 
+            (click)="confirmValidation()" 
+            [disabled]="submitting"
+            class="flex-1 py-4 px-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            @if (submitting) {
+              <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            }
+            Confirmer
+          </button>
+        </div>
       </div>
-  
-      <div class="flex gap-4">
-        <button (click)="closeValidateModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
-        <button 
-          (click)="confirmValidation()" 
-          [disabled]="submitting"
-          class="flex-1 py-4 px-4 rounded-2xl bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all shadow-lg shadow-emerald-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-          Confirmer
-        </button>
-      </div>
-    </div>
-</div>
+  </div>
+}
 
 <!-- Reject Profile Modal -->
-<div *ngIf="showRejectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeRejectModal()"></div>
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-orange-500/10 text-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
-          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+@if (showRejectModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeRejectModal()"></div>
+      <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 bg-orange-500/10 text-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </div>
+          <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Refuser le Profil</h3>
+          <p class="text-slate-400 text-sm">Indiquez la raison pour laquelle vous refusez le profil de <strong class="text-white">{{ user?.name }}</strong>.</p>
         </div>
-        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Refuser le Profil</h3>
-        <p class="text-slate-400 text-sm">Indiquez la raison pour laquelle vous refusez le profil de <strong class="text-white">{{ user?.name }}</strong>.</p>
-      </div>
-  
-      <div class="space-y-6 mb-8">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Raison du refus</label>
-          <textarea 
-            [(ngModel)]="rejection_reason"
-            placeholder="Ex: Photos illisibles, informations erronées..."
-            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors h-32 resize-none"
-          ></textarea>
+    
+        <div class="space-y-6 mb-8">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Raison du refus</label>
+            <textarea 
+              [(ngModel)]="rejection_reason"
+              placeholder="Ex: Photos illisibles, informations erronées..."
+              class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-orange-500 transition-colors h-32 resize-none"
+            ></textarea>
+          </div>
+        </div>
+    
+        <div class="flex gap-4">
+          <button (click)="closeRejectModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+          <button 
+            (click)="confirmReject()" 
+            [disabled]="submitting || !rejection_reason"
+            class="flex-1 py-4 px-4 rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            @if (submitting) {
+              <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            }
+            Refuse
+          </button>
         </div>
       </div>
-  
-      <div class="flex gap-4">
-        <button (click)="closeRejectModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
-        <button 
-          (click)="confirmReject()" 
-          [disabled]="submitting || !rejection_reason"
-          class="flex-1 py-4 px-4 rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-          Refuser
-        </button>
-      </div>
-    </div>
-</div>
+  </div>
+}
 
 <!-- Ban User Modal -->
-<div *ngIf="showBanModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeBanModal()"></div>
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
-          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+@if (showBanModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-sm" (click)="closeBanModal()"></div>
+      <div class="bg-slate-900 border border-slate-700 rounded-3xl p-8 max-w-md w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+        <div class="text-center mb-8">
+          <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-red-500/20">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          </div>
+          <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Bannir l'Utilisateur</h3>
+          <p class="text-slate-400 text-sm">Veuillez indiquer la raison pour laquelle vous bannissez <strong class="text-white">{{ user?.name }}</strong>. Son compte sera désactivé.</p>
         </div>
-        <h3 class="text-2xl font-black text-white mb-2 uppercase tracking-tight">Bannir l'Utilisateur</h3>
-        <p class="text-slate-400 text-sm">Veuillez indiquer la raison pour laquelle vous bannissez <strong class="text-white">{{ user?.name }}</strong>. Son compte sera désactivé.</p>
-      </div>
-  
-      <div class="space-y-6 mb-8">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Raison du bannissement</label>
-          <textarea 
-            [(ngModel)]="banReason"
-            placeholder="Ex: Triche, comportement toxique, etc..."
-            class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-red-500 transition-colors h-32 resize-none"
-          ></textarea>
+    
+        <div class="space-y-6 mb-8">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">Raison du bannissement</label>
+            <textarea 
+              [(ngModel)]="banReason"
+              placeholder="Ex: Triche, comportement toxique, etc..."
+              class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-white text-sm focus:outline-none focus:border-red-500 transition-colors h-32 resize-none"
+            ></textarea>
+          </div>
+        </div>
+    
+        <div class="flex gap-4">
+          <button (click)="closeBanModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
+          <button 
+            (click)="confirmBan()" 
+            [disabled]="submitting || !banReason"
+            class="flex-1 py-4 px-4 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all shadow-lg shadow-red-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            @if (submitting) {
+              <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            }
+            Bannir
+          </button>
         </div>
       </div>
-  
-      <div class="flex gap-4">
-        <button (click)="closeBanModal()" class="flex-1 py-4 px-4 rounded-2xl border border-slate-700 text-slate-300 font-bold hover:bg-slate-800 transition-colors">Annuler</button>
-        <button 
-          (click)="confirmBan()" 
-          [disabled]="submitting || !banReason"
-          class="flex-1 py-4 px-4 rounded-2xl bg-red-600 text-white font-bold hover:bg-red-500 transition-all shadow-lg shadow-red-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          <span *ngIf="submitting" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-          Bannir
-        </button>
-      </div>
-    </div>
-</div>
+  </div>
+}
 
 <!-- Image Preview Modal -->
-<div *ngIf="showImageModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/95 backdrop-blur-md" (click)="closeImageModal()"></div>
-    
-    <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center animate-in zoom-in duration-300">
-        <!-- Close Button -->
-        <button 
-            (click)="closeImageModal()" 
-            class="absolute -top-12 right-0 p-2 text-slate-400 hover:text-white transition-colors"
-        >
-            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+@if (showImageModal) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/95 backdrop-blur-md" (click)="closeImageModal()"></div>
+      
+      <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center animate-in zoom-in duration-300">
+          <!-- Close Button -->
+          <button 
+              (click)="closeImageModal()" 
+              class="absolute -top-12 right-0 p-2 text-slate-400 hover:text-white transition-colors"
+          >
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
 
-        <img 
-            [src]="selectedImageUrl" 
-            class="w-full h-full object-contain rounded-2xl shadow-2xl border border-white/10"
-            alt="Aperçu capture"
-        >
-    </div>
-</div>
+          <img 
+              [src]="selectedImageUrl" 
+              class="w-full h-full object-contain rounded-2xl shadow-2xl border border-white/10"
+              alt="Aperçu capture"
+          >
+      </div>
+  </div>
+}

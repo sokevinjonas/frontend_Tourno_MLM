@@ -1,5 +1,11 @@
 <div class="min-h-screen bg-slate-950 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-7xl mx-auto">
+    <!-- Back Link -->
+    <a routerLink="/admin/dashboard" class="flex items-center gap-2 text-slate-500 hover:text-white transition-colors mb-8 group w-fit">
+      <svg class="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Retour au tableau de bord
+    </a>
+
     <!-- Header -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
       <div>
@@ -59,137 +65,156 @@
         </div>
       </div>
     </div>
+    </div>
 
     <!-- Tournaments List -->
     <div class="space-y-4">
-      <div *ngIf="loading" class="flex justify-center p-20 bg-slate-900/30 rounded-3xl border border-slate-800 border-dashed">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-
-      <div *ngIf="!loading && tournaments.length === 0" class="text-center py-24 bg-slate-900/30 rounded-3xl border border-slate-800 border-dashed">
-        <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-700">
-            <svg class="w-8 h-8 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      @if (loading) {
+        <div class="flex justify-center p-20 bg-slate-900/30 rounded-3xl border border-slate-800 border-dashed">
+          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
-        <h3 class="text-xl font-bold text-white mb-2">Aucun tournoi trouvé</h3>
-        <p class="text-slate-500 mt-2">Aucun tournoi ne correspond à vos critères actuels.</p>
-      </div>
+      }
 
-      <div *ngFor="let tournament of tournaments" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-all group relative overflow-hidden shadow-lg hover:shadow-black/40">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-6 justify-between">
-          <div class="flex items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-slate-800 overflow-hidden shrink-0 border border-slate-700 shadow-inner">
-              <img *ngIf="tournament.image" [src]="tournament.image" class="w-full h-full object-cover">
-              <div *ngIf="!tournament.image" class="w-full h-full flex items-center justify-center text-slate-600">
-                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      @if (!loading && tournaments.length === 0) {
+        <div class="text-center py-24 bg-slate-900/30 rounded-3xl border border-slate-800 border-dashed">
+          <div class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-slate-700">
+              <svg class="w-8 h-8 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Aucun tournoi trouvé</h3>
+          <p class="text-slate-500 mt-2">Aucun tournoi ne correspond à vos critères actuels.</p>
+        </div>
+      }
+
+      @for (tournament of tournaments; track tournament.uuid) {
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-all group relative overflow-hidden shadow-lg hover:shadow-black/40">
+          <div class="flex flex-col lg:flex-row lg:items-center gap-6 justify-between">
+            <div class="flex items-center gap-6">
+              <div class="w-16 h-16 rounded-2xl bg-slate-800 overflow-hidden shrink-0 border border-slate-700 shadow-inner">
+                @if (tournament.image) {
+                  <img [src]="tournament.image" class="w-full h-full object-cover">
+                } @else {
+                  <div class="w-full h-full flex items-center justify-center text-slate-600">
+                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </div>
+                }
+              </div>
+              <div>
+                <h3 class="text-lg font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{{ tournament.name }}</h3>
+                <div class="flex items-center gap-3 mt-1.5">
+                  <span [class]="tournament.status | tournamentStatusClass" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full border border-current tracking-widest">
+                    {{ tournament.status | tournamentStatus }}
+                  </span>
+                  <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-slate-800/50 px-2 py-0.5 rounded-md">UUID: {{ tournament.uuid | slice:0:8 }}...</span>
+                  <span class="text-xs text-slate-500 font-medium">Par Organisateur: {{ tournament.organizer.name }}</span>
+                </div>
               </div>
             </div>
-            <div>
-              <h3 class="text-lg font-black text-white group-hover:text-blue-400 transition-colors uppercase tracking-tight">{{ tournament.name }}</h3>
-              <div class="flex items-center gap-3 mt-1.5">
-                <span [class]="tournament.status | tournamentStatusClass" class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full border border-current tracking-widest">
-                  {{ tournament.status | tournamentStatus }}
-                </span>
-                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-slate-800/50 px-2 py-0.5 rounded-md">UUID: {{ tournament.uuid | slice:0:8 }}...</span>
-                <span class="text-xs text-slate-500 font-medium">Par Organisateur: {{ tournament.organizer.name }}</span>
-              </div>
+
+            <div class="flex flex-wrap gap-2 lg:justify-end">
+              <!-- View link -->
+              <a [routerLink]="['/tournaments', tournament.uuid]" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 hover:bg-slate-700 hover:text-white transition-all">
+                Voir la page
+              </a>
+              
+              <!-- Quick Actions -->
+              @if (tournament.status !== 'cancelled' && tournament.status !== 'completed') {
+                <button 
+                  (click)="changeStatus(tournament.uuid, 'cancelled')"
+                  class="px-5 py-2.5 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-lg shadow-red-500/5"
+                >
+                  Annuler
+                </button>
+              }
+
+              @if (tournament.status === 'draft' || tournament.status === 'cancelled') {
+                <button 
+                  (click)="deleteTournament(tournament.uuid)"
+                  class="px-3 py-2.5 bg-slate-950 text-slate-600 text-xs font-bold rounded-xl border border-slate-800 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
+                >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+              }
             </div>
           </div>
-
-          <div class="flex flex-wrap gap-2 lg:justify-end">
-            <!-- View link -->
-            <a [routerLink]="['/tournaments', tournament.uuid]" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 hover:bg-slate-700 hover:text-white transition-all">
-              Voir la page
-            </a>
-            
-            <!-- Quick Actions -->
-            <button 
-              *ngIf="tournament.status !== 'cancelled' && tournament.status !== 'completed'"
-              (click)="changeStatus(tournament.uuid, 'cancelled')"
-              class="px-5 py-2.5 bg-red-500/10 text-red-500 text-xs font-bold rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-lg shadow-red-500/5"
-            >
-              Annuler
-            </button>
-
-            <button 
-              *ngIf="tournament.status === 'draft' || tournament.status === 'cancelled'"
-              (click)="deleteTournament(tournament.uuid)"
-              class="px-3 py-2.5 bg-slate-950 text-slate-600 text-xs font-bold rounded-xl border border-slate-800 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
-            >
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
-          </div>
         </div>
-      </div>
+      }
     </div>
 
     <!-- Pagination -->
-    <div *ngIf="pagination && pagination.last_page > 1" class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 bg-slate-900 border border-slate-800 rounded-3xl px-8 py-6 shadow-xl">
-        <div class="text-xs font-medium text-slate-500">
-            Affichage de <span class="text-white font-bold">{{ (pagination.current_page - 1) * pagination.per_page + 1 }}</span> à <span class="text-white font-bold">{{ mathMin(pagination.current_page * pagination.per_page, pagination.total) }}</span> sur <span class="text-white font-bold">{{ pagination.total }}</span> tournois
-        </div>
-        <div class="flex items-center gap-2">
-            <button 
-                [disabled]="pagination.current_page === 1"
-                (click)="onPageChange(pagination.current_page - 1)"
-                class="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            
-            <div class="flex items-center gap-1.5">
-                <button 
-                    *ngFor="let page of getPages()"
-                    (click)="onPageChange(page)"
-                    [class.bg-blue-600]="pagination.current_page === page"
-                    [class.text-white]="pagination.current_page === page"
-                    [class.border-blue-500]="pagination.current_page === page"
-                    [class.shadow-lg]="pagination.current_page === page"
-                    [class.shadow-blue-600/20]="pagination.current_page === page"
-                    class="w-10 h-10 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs"
-                >
-                    {{ page }}
-                </button>
-            </div>
+    @if (pagination && pagination.last_page > 1) {
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-6 bg-slate-900 border border-slate-800 rounded-3xl px-8 py-6 shadow-xl">
+          <div class="text-xs font-medium text-slate-500">
+              Affichage de <span class="text-white font-bold">{{ (pagination.current_page - 1) * pagination.per_page + 1 }}</span> à <span class="text-white font-bold">{{ mathMin(pagination.current_page * pagination.per_page, pagination.total) }}</span> sur <span class="text-white font-bold">{{ pagination.total }}</span> tournois
+          </div>
+          <div class="flex items-center gap-2">
+              <button 
+                  [disabled]="pagination.current_page === 1"
+                  (click)="onPageChange(pagination.current_page - 1)"
+                  class="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+              </button>
+              
+              <div class="flex items-center gap-1.5">
+                  @for (page of getPages(); track page) {
+                    <button 
+                        (click)="onPageChange(page)"
+                        [class.bg-blue-600]="pagination.current_page === page"
+                        [class.text-white]="pagination.current_page === page"
+                        [class.border-blue-500]="pagination.current_page === page"
+                        [class.shadow-lg]="pagination.current_page === page"
+                        [class.shadow-blue-600/20]="pagination.current_page === page"
+                        class="w-10 h-10 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all font-bold text-xs"
+                    >
+                        {{ page }}
+                    </button>
+                  }
+              </div>
 
-            <button 
-                [disabled]="pagination.current_page === pagination.last_page"
-                (click)="onPageChange(pagination.current_page + 1)"
-                class="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-            >
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-            </button>
-        </div>
-    </div>
+              <button 
+                  [disabled]="pagination.current_page === pagination.last_page"
+                  (click)="onPageChange(pagination.current_page + 1)"
+                  class="p-2.5 rounded-xl border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+              </button>
+          </div>
+      </div>
+    }
   </div>
 </div>
 
 <!-- Delete Tournament Modal -->
-<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showDeleteModal = false"></div>
-    <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
-        <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
-            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-        </div>
-        
-        <div class="text-center mb-8">
-            <h3 class="text-2xl font-black text-white mb-3 uppercase tracking-tight">Supprimer le Tournoi ?</h3>
-            <p class="text-slate-500 leading-relaxed text-sm">
-                Cette action est irréversible. Tous les participants inscrits seront <span class="text-red-400 font-bold">automatiquement remboursés</span> sur leur portefeuille.
-            </p>
-        </div>
+@if (showDeleteModal) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-slate-950/90 backdrop-blur-md" (click)="showDeleteModal = false"></div>
+      <div class="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-10 max-w-lg w-full relative z-10 shadow-3xl animate-in zoom-in duration-200">
+          <div class="w-16 h-16 bg-red-500/10 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+              <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </div>
+          
+          <div class="text-center mb-8">
+              <h3 class="text-2xl font-black text-white mb-3 uppercase tracking-tight">Supprimer le Tournoi ?</h3>
+              <p class="text-slate-500 leading-relaxed text-sm">
+                  Cette action est irréversible. Tous les participants inscrits seront <span class="text-red-400 font-bold">automatiquement remboursés</span> sur leur portefeuille.
+              </p>
+          </div>
 
-        <div class="space-y-3">
-            <button 
-                (click)="confirmDelete()" 
-                [disabled]="submitting"
-                class="w-full py-4 px-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-500 transition-all shadow-xl shadow-red-600/20 disabled:opacity-50 uppercase tracking-widest text-xs flex items-center justify-center gap-2"
-            >
-                <svg *ngIf="submitting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                {{ submitting ? 'Suppression...' : 'Confirmer la Suppression' }}
-            </button>
-            <button (click)="showDeleteModal = false" class="w-full py-4 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-[10px]">
-                Annuler
-            </button>
-        </div>
-    </div>
-</div>
+          <div class="space-y-3">
+              <button 
+                  (click)="confirmDelete()" 
+                  [disabled]="submitting"
+                  class="w-full py-4 px-6 rounded-2xl bg-red-600 text-white font-black hover:bg-red-500 transition-all shadow-xl shadow-red-600/20 disabled:opacity-50 uppercase tracking-widest text-xs flex items-center justify-center gap-2"
+              >
+                  @if (submitting) {
+                    <svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  }
+                  {{ submitting ? 'Suppression...' : 'Confirmer la Suppression' }}
+              </button>
+              <button (click)="showDeleteModal = false" class="w-full py-4 px-6 rounded-2xl border border-slate-800 text-slate-500 font-bold hover:bg-slate-800 hover:text-slate-300 transition-all uppercase tracking-widest text-[10px]">
+                  Annuler
+              </button>
+          </div>
+      </div>
+  </div>
+}

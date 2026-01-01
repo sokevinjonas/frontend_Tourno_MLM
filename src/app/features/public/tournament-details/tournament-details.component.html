@@ -172,7 +172,7 @@
                          
                          <!-- Round Header -->
                          <div class="sticky top-0 z-20 bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl p-4 text-center shadow-lg">
-                            <h4 class="text-blue-400 font-bold uppercase tracking-widest text-xs">{{round.name}}</h4>
+                            <h4 class="text-blue-400 font-bold uppercase tracking-widest text-xs">{{round.round_name ?? 'Round ' + round.round_number}}</h4>
                             <div class="text-[10px] text-slate-500 mt-1 font-black uppercase">Round {{round.uuid | slice:0:8}}</div>
                          </div>
                          
@@ -210,25 +210,25 @@
                                      }
                                   </div>
 
-                                  <div class="p-3 space-y-1">
+                                   <div class="p-3 space-y-1">
                                      <!-- Player 1 -->
                                      <div class="flex justify-between items-center p-2 rounded-lg transition-colors"
                                           [ngClass]="{
-                                            'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && match.s1 > (match.s2 || 0),
-                                            'opacity-40 filter grayscale': match.status === 'completed' && match.s1 < (match.s2 || 0)
+                                            'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && (match.s1 || 0) > (match.s2 || 0),
+                                            'opacity-40 filter grayscale': match.status === 'completed' && (match.s1 || 0) < (match.s2 || 0)
                                           }">
                                         <div class="flex items-center gap-2 min-w-0">
                                            <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-500/30 transition-colors">
-                                              {{match.p1.charAt(0)}}
+                                              {{match.p1?.charAt(0)}}
                                            </div>
                                            <span class="text-xs font-bold text-white truncate max-w-[120px]">{{match.p1}}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                           @if (match.status === 'completed' && match.s1 > (match.s2 || 0)) {
-                                             <span class="text-[10px]">👑</span>
+                                           @if (match.status === 'completed' && (match.s1 || 0) > (match.s2 || 0)) {
+                                              <span class="text-[10px]">👑</span>
                                            }
-                                           <span *ngIf="match.s1 !== null" class="font-black text-sm font-mono" [class.text-blue-400]="match.s1 > (match.s2 || 0)">{{match.s1}}</span>
-                                           <span *ngIf="match.s1 === null" class="text-xs text-slate-600">-</span>
+                                           <span *ngIf="match.s1 !== null && match.s1 !== undefined" class="font-black text-sm font-mono" [class.text-blue-400]="(match.s1 || 0) > (match.s2 || 0)">{{match.s1}}</span>
+                                           <span *ngIf="match.s1 === null || match.s1 === undefined" class="text-xs text-slate-600">-</span>
                                         </div>
                                      </div>
                                      
@@ -241,24 +241,24 @@
                                      <!-- Player 2 -->
                                      <div class="flex justify-between items-center p-2 rounded-lg transition-colors"
                                           [ngClass]="{
-                                            'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && match.s2 > (match.s1 || 0),
-                                            'opacity-40 filter grayscale': match.status === 'completed' && match.s2 < (match.s1 || 0)
+                                            'bg-blue-500/10 border border-blue-500/20': match.status === 'completed' && (match.s2 || 0) > (match.s1 || 0),
+                                            'opacity-40 filter grayscale': match.status === 'completed' && (match.s2 || 0) < (match.s1 || 0)
                                           }">
                                         <div class="flex items-center gap-2 min-w-0">
                                            <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:border-blue-500/30 transition-colors">
-                                              {{match.p2.charAt(0)}}
+                                              {{match.p2?.charAt(0)}}
                                            </div>
                                            <span class="text-xs font-bold text-white truncate max-w-[120px]">{{match.p2}}</span>
                                         </div>
                                         <div class="flex items-center gap-2">
-                                           @if (match.status === 'completed' && match.s2 > (match.s1 || 0)) {
-                                             <span class="text-[10px]">👑</span>
+                                           @if (match.status === 'completed' && (match.s2 || 0) > (match.s1 || 0)) {
+                                              <span class="text-[10px]">👑</span>
                                            }
-                                           <span *ngIf="match.s2 !== null" class="font-black text-sm font-mono" [class.text-blue-400]="match.s2 > (match.s1 || 0)">{{match.s2}}</span>
-                                           <span *ngIf="match.s2 === null" class="text-xs text-slate-600">-</span>
+                                           <span *ngIf="match.s2 !== null && match.s2 !== undefined" class="font-black text-sm font-mono" [class.text-blue-400]="(match.s2 || 0) > (match.s1 || 0)">{{match.s2}}</span>
+                                           <span *ngIf="match.s2 === null || match.s2 === undefined" class="text-xs text-slate-600">-</span>
                                         </div>
                                      </div>
-                                  </div>
+                                   </div>
 
                                   <!-- Match Footer (Deadline) -->
                                   <div class="bg-slate-900/30 border-t border-white/5 py-1.5 px-3 flex justify-between items-center">

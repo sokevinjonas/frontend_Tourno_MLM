@@ -5,6 +5,38 @@ import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { BadgeType } from '../models/organizer.model';
 
+export interface Match {
+  uuid: string;
+  tournament_uuid?: string;
+  round_uuid?: string;
+  round_number?: number;
+  player1_uuid?: string | null;
+  player2_uuid?: string | null;
+  player1_score?: number | null;
+  player2_score?: number | null;
+  winner_uuid?: string | null;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'live' | 'scheduled';
+  scheduled_at: string | null;
+  deadline_at: string | null;
+  player1?: any;
+  player2?: any;
+  winner?: any;
+  // UI Properties
+  p1?: string;
+  p2?: string;
+  s1?: number | null;
+  s2?: number | null;
+}
+
+export interface Round {
+  uuid: string;
+  tournament_uuid?: string;
+  round_number: number;
+  round_name?: string | null;
+  status?: 'pending' | 'in_progress' | 'completed';
+  matches?: Match[];
+}
+
 export interface Tournament {
   uuid: string;
   organizer: {
@@ -40,7 +72,7 @@ export interface Tournament {
   image?: string;
   is_featured?: boolean;
   registrations?: any[];
-  rounds?: any[];
+  rounds?: Round[];
   created_at?: string;
   updated_at?: string;
 }
