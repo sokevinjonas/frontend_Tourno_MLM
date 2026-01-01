@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { UserProfile, OrganizerVerification } from '../models/user.model';
+import { User, UserProfile, OrganizerVerification } from '../models/user.model';
 import { Match } from './match.service';
 
 @Injectable({
@@ -13,6 +13,24 @@ export class ModeratorService {
   private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
+
+  getUserByUuid(uuid: string): Observable<User> {
+    return this.http.get<any>(`${this.apiUrl}/users/${uuid}`).pipe(
+      map(res => res.user || res.data || res)
+    );
+  }
+
+  getProfileByUuid(uuid: string): Observable<UserProfile> {
+    return this.http.get<any>(`${this.apiUrl}/profiles/${uuid}`).pipe(
+      map(res => res.profile || res.data || res)
+    );
+  }
+
+  getMatchByUuid(uuid: string): Observable<Match> {
+    return this.http.get<any>(`${this.apiUrl}/matches/${uuid}`).pipe(
+      map(res => res.match || res.data || res)
+    );
+  }
 
   /**
    * profiles
@@ -59,5 +77,11 @@ export class ModeratorService {
 
   rejectOrganizerVerification(uuid: string, reason: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/organizers/verification/${uuid}/reject`, { rejection_reason: reason });
+  }
+
+  getOrganizerVerificationByUuid(uuid: string): Observable<OrganizerVerification> {
+    return this.http.get<any>(`${this.apiUrl}/organizers/verification/${uuid}`).pipe(
+      map(res => res.verification || res.data || res)
+    );
   }
 }

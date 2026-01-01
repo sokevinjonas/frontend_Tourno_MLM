@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModeratorService } from '../../../core/services/moderator.service';
+import { RouterLink } from '@angular/router';
 import { UserProfile, OrganizerVerification } from '../../../core/models/user.model';
 import { ToastService } from '../../../core/services/toast.service';
 import { FormsModule } from '@angular/forms';
@@ -8,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-validations',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './validations.component.html'
 })
 export class ValidationsComponent implements OnInit {

@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModeratorService } from '../../../core/services/moderator.service';
 import { MatchService, Match } from '../../../core/services/match.service';
+import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-complaints',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './complaints.component.html'
 })
 export class ComplaintsComponent implements OnInit {

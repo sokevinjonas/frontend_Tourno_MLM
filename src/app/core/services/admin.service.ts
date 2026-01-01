@@ -41,8 +41,8 @@ export class AdminService {
   }
 
   getUserByUuid(uuid: string): Observable<User> {
-    return this.http.get<{ user: User }>(`${this.apiUrl}/users/${uuid}`).pipe(
-      map(res => res.user)
+    return this.http.get<any>(`${this.apiUrl}/users/${uuid}`).pipe(
+      map(res => res.user || res.data || res)
     );
   }
 
