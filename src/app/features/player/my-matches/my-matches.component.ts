@@ -312,7 +312,39 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
 
   getOpponentSubmission(match: Match): any {
     const userUuid = this.authService.currentUserValue?.uuid;
-    const opponentUuid = match.player1_uuid === userUuid ? match.player2_uuid : match.player1_uuid;
-    return this.getSubmission(match, opponentUuid || null);
+    const opponent = this.getOpponent(match);
+    return this.getSubmission(match, opponent?.uuid || null);
+  }
+
+  getOpponent(match: Match): any {
+    const userUuid = this.authService.currentUserValue?.uuid;
+    const p1Uuid = (match as any).player1_uuid || match.player1?.uuid;
+    const p2Uuid = (match as any).player2_uuid || match.player2?.uuid;
+    
+    if (p1Uuid === userUuid) return match.player2;
+    if (p2Uuid === userUuid) return match.player1;
+    
+    // Safety fallback
+    return match.player2;
+  }
+
+  getMe(match: Match): any {
+    const userUuid = this.authService.currentUserValue?.uuid;
+    const p1Uuid = (match as any).player1_uuid || match.player1?.uuid;
+    const p2Uuid = (match as any).player2_uuid || match.player2?.uuid;
+    
+    if (p1Uuid === userUuid) return match.player1;
+    if (p2Uuid === userUuid) return match.player2;
+    
+    // Safety fallback
+    return match.player1;
+  }
+
+  getWhatsAppLink(player: any): string | null {
+    const phone = player?.profile?.whatsapp_number || player?.whatsapp_number;
+    if (!phone) return null;
+    // Remove non-numeric characters
+    const cleanPhone = phone.replace(/\D/g, '');
+    return `https://wa.me/${cleanPhone}`;
   }
 }
