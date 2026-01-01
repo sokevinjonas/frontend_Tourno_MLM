@@ -11,6 +11,8 @@ import { TournamentStatusPipe } from '../../../shared/pipes/tournament-status.pi
 import { GameNamePipe } from '../../../shared/pipes/game-name.pipe';
 import { TournamentStatusClassPipe } from '../../../shared/pipes/tournament-status-class.pipe';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
+import { MatchResult } from '../../../core/services/match.service';
 
 @Component({
   selector: 'app-tournament-detail',
@@ -39,9 +41,12 @@ export class TournamentDetailComponent implements OnInit {
   showCloseRegistrationsModal = false;
   showCompleteModal = false;
   showScoreModal = false;
+  showProofsModal = false;
+  showImageModal = false;
   selectedMatch: Match | null = null;
   score1: number | null = null;
   score2: number | null = null;
+  previewImageUrl: string | null = null;
 
    icons = {
     back: '<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
@@ -321,5 +326,89 @@ export class TournamentDetailComponent implements OnInit {
 
   isArray(val: any): boolean {
     return Array.isArray(val);
+  }
+
+  // Proofs Modal Methods
+  openProofsModal(match: Match) {
+    this.selectedMatch = match;
+    this.showProofsModal = true;
+    
+    // Fetch full match details to get match_results
+    this.matchService.getMatch(match.uuid).subscribe({
+      next: (fullMatch) => {
+        console.log('Full match data loaded:', fullMatch);
+        if (this.selectedMatch && this.selectedMatch.uuid === fullMatch.uuid) {
+          this.selectedMatch = { ...this.selectedMatch, ...fullMatch };
+          this.cd.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching match details:', err);
+      }
+    });
+  }
+
+  closeProofsModal() {
+    this.showProofsModal = false;
+    this.selectedMatch = null;
+  }
+
+  openImagePreview(url: string | null) {
+    if (!url) return;
+    this.previewImageUrl = url;
+    this.showImageModal = true;
+  }
+
+  closeImagePreview() {
+    this.showImageModal = false;
+    this.previewImageUrl = null;
+  }
+
+  getImageUrl(path: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    if (path.startsWith('data:')) return path;
+    
+    // Remove 'public/' prefix if present
+    let cleanPath = path;
+    if (path.startsWith('public/')) {
+      cleanPath = path.substring(7);
+    }
+    
+    const baseApiUrl = environment.apiUrl.replace(/\/api$/, '');
+    const finalPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
+    const url = `${baseApiUrl}/storage/${finalPath}`;
+    console.log('Generated Image URL:', url);
+    return url;
+  }
+
+  getSubmission(match: Match, forPlayerUuid: string | null): MatchResult | null {
+    if (!match.match_results || !forPlayerUuid) return null;
+    
+    // Try primary identifying field
+    let sub = match.match_results.find((r: any) => 
+      (r.submitted_by_uuid === forPlayerUuid) || 
+      (r.user_uuid === forPlayerUuid) || 
+      (r.player_uuid === forPlayerUuid)
+    );
+
+    // Fallback: If only 2 results and indices match players (standard behavior)
+    if (!sub && match.match_results.length === 2) {
+      const p1Uuid = match.player1_uuid || match.player1?.uuid;
+      const p2Uuid = match.player2_uuid || match.player2?.uuid;
+      
+      if (forPlayerUuid === p1Uuid) return match.match_results[0];
+      if (forPlayerUuid === p2Uuid) return match.match_results[1];
+    }
+
+    return sub || null;
+  }
+
+  getP1Submission(match: Match): any {
+    return this.getSubmission(match, match.player1_uuid || match.player1?.uuid || null);
+  }
+
+  getP2Submission(match: Match): any {
+    return this.getSubmission(match, match.player2_uuid || match.player2?.uuid || null);
   }
 }

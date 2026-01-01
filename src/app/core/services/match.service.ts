@@ -57,6 +57,12 @@ export class MatchService {
     return this.http.get<PaginatedResponse<Match>>(`${environment.apiUrl}/tournaments/${tournamentUuid}/matches`);
   }
 
+  getMatch(uuid: string): Observable<Match> {
+    return this.http.get<any>(`${this.apiUrl}/${uuid}`).pipe(
+      map(res => res.match || res.data || res)
+    );
+  }
+
   enterScore(matchUuid: string, score: { player1_score: number, player2_score: number }): Observable<Match> {
     return this.http.post<Match>(`${this.apiUrl}/${matchUuid}/enter-score`, score);
   }
