@@ -72,13 +72,12 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  loadMatches() {
+  loadMatches(statuses?: string[]) {
     this.loading = true;
-    // We use getPendingMatches for the main view to get submissions and statuses
-    this.matchService.getPendingMatches().subscribe({
+    this.matchService.getPendingMatches(statuses).subscribe({
       next: (res) => {
         this.matches = res;
-        this.filterMatches();
+        this.filteredMatches = res; // No further local filtering needed
         this.loading = false;
         this.cd.markForCheck();
       },
@@ -92,21 +91,21 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
 
   setTab(tab: 'active' | 'completed' | 'expired') {
     this.activeTab = tab;
-    this.filterMatches();
+    let statuses: string[] = [];
+    
+    if (tab === 'active') {
+      statuses = ['scheduled', 'in_progress', 'pending_validation'];
+    } else if (tab === 'completed') {
+      statuses = ['completed'];
+    } else if (tab === 'expired') {
+      statuses = ['expired', 'disputed'];
+    }
+    
+    this.loadMatches(statuses);
   }
 
   filterMatches() {
-    if (this.activeTab === 'active') {
-      this.filteredMatches = this.matches.filter(m => 
-        ['scheduled', 'in_progress', 'pending_validation'].includes(m.status)
-      );
-    } else if (this.activeTab === 'completed') {
-      this.filteredMatches = this.matches.filter(m => m.status === 'completed');
-    } else if (this.activeTab === 'expired') {
-      this.filteredMatches = this.matches.filter(m => 
-        ['expired', 'disputed'].includes(m.status)
-      );
-    }
+    // This method is now replaced by backend filtering in setTab/loadMatches
   }
 
   sanitize(html: string): SafeHtml {

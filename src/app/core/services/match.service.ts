@@ -75,8 +75,12 @@ export class MatchService {
     );
   }
 
-  getPendingMatches(): Observable<Match[]> {
-    return this.http.get<any>(`${this.apiUrl}/my/pending`).pipe(
+  getPendingMatches(statuses?: string[]): Observable<Match[]> {
+    let params = '';
+    if (statuses && statuses.length > 0) {
+      params = '?' + statuses.map(s => `status[]=${s}`).join('&');
+    }
+    return this.http.get<any>(`${this.apiUrl}/my/pending${params}`).pipe(
       map(res => res.matches || res)
     );
   }
