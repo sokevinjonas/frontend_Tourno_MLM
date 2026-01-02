@@ -97,3 +97,28 @@
   [imageUrl]="viewImageUrl"
   (close)="closeViewModal()">
 </app-image-view-modal>
+
+<!-- Validation Waiting Modal -->
+<div *ngIf="showWaitModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+  <div class="bg-slate-800 rounded-3xl p-8 max-w-md w-full border border-slate-700 shadow-2xl text-center relative overflow-hidden group">
+    <!-- Decorative background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-transparent opacity-50"></div>
+    
+    <div class="relative z-10">
+      <div class="w-20 h-20 bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform duration-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      
+      <h2 class="text-2xl font-bold text-white mb-4">Modification Enregistrée</h2>
+      <p class="text-slate-300 mb-8 leading-relaxed">
+        Le profil a été resoumis et est en attente de validation par les administrateurs. 
+        <br><br>
+        Vous recevrez une notification dès que votre compte sera prêt.
+      </p>
+      
+      <button (click)="closeWaitModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/20">
+        Compris
+      </button>
+    </div>
+  </div>
+</div>

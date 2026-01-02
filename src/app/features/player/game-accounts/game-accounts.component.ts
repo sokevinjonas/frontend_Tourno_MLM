@@ -38,9 +38,16 @@ export class GameAccountsComponent {
     this.selectedAccount = null;
   }
 
+  // Success Wait Modal
+  showWaitModal = false;
+
   onAccountSaved() {
     this.closeAccountModal();
-    // Optional: Show global toast here if desired, or rely on modal's feedback
+    this.showWaitModal = true;
+  }
+
+  closeWaitModal() {
+    this.showWaitModal = false;
   }
 
   // View Image Modal

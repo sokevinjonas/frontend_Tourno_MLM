@@ -31,15 +31,16 @@ export class PlayerService {
       })
     );
   }
-  updateGameAccount(id: number, gameType: string, inGameName: string, screenshot?: File): Observable<any> {
+  updateGameAccount(uuid: string, gameType: string, inGameName: string, screenshot?: File): Observable<any> {
     const formData = new FormData();
+    formData.append('_method', 'PATCH'); // Spoof PATCH for Laravel multipart/form-data
     formData.append('game', gameType);
     formData.append('game_username', inGameName);
     if (screenshot) {
       formData.append('team_screenshot_path', screenshot);
     }
-
-    return this.http.post<any>(`${this.apiUrl}/game-accounts/${id}`, formData).pipe(
+ 
+    return this.http.post<any>(`${this.apiUrl}/game-accounts/${uuid}`, formData).pipe(
       tap(() => {
         this.authService.getCurrentUser().subscribe();
       })

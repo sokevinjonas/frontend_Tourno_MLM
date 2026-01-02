@@ -3,6 +3,7 @@ import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PlayerService } from '../../../core/services/player.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-game-account-modal',
@@ -103,6 +104,7 @@ export class GameAccountModalComponent implements OnChanges {
   @Output() success = new EventEmitter<void>();
 
   private playerService = inject(PlayerService);
+  private toastService = inject(ToastService);
   private fb = inject(FormBuilder);
   private zone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
@@ -215,7 +217,7 @@ export class GameAccountModalComponent implements OnChanges {
     if (this.account) {
         // Update
         request$ = this.playerService.updateGameAccount(
-            this.account.id, 
+            this.account.uuid, 
             gameType!, 
             inGameName!, 
             this.selectedFile || undefined
@@ -230,8 +232,9 @@ export class GameAccountModalComponent implements OnChanges {
     }
 
     request$.subscribe({
-      next: () => {
+      next: (res) => {
         this.isSubmitting = false;
+        this.toastService.success(this.account ? 'Compte mis à jour avec succès' : 'Compte ajouté avec succès');
         this.success.emit();
         this.onClose();
       },
