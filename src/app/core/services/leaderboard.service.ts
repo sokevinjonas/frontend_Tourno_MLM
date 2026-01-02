@@ -55,7 +55,7 @@ export class LeaderboardService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
-  getGlobalLeaderboard(page: number = 1, perPage: number = 25): Observable<LeaderboardResponse> {
+  getGlobalLeaderboard(page: number = 1, perPage: number = 5): Observable<LeaderboardResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('per_page', perPage.toString());
@@ -63,7 +63,7 @@ export class LeaderboardService {
     return this.http.get<LeaderboardResponse>(`${this.apiUrl}/leaderboard/global`, { params });
   }
 
-  getGameLeaderboard(game: string, page: number = 1, perPage: number = 25): Observable<LeaderboardResponse> {
+  getGameLeaderboard(game: string, page: number = 1, perPage: number = 5): Observable<LeaderboardResponse> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('per_page', perPage.toString());
