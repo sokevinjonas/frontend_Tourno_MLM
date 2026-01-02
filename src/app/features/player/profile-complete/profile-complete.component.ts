@@ -51,10 +51,24 @@ export class ProfileCompleteComponent implements OnInit {
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         const profile = user.profile || {};
+        let whatsappNumber = user.profile?.whatsapp_number || profile.whatsapp_number || '';
+        
+        // Handle existing number with prefix
+        if (whatsappNumber.startsWith('+')) {
+          // Sort by length descending to match longest prefixes first (e.g. +243 before +24)
+          const sortedCountries = [...this.countries].sort((a, b) => b.callingCode.length - a.callingCode.length);
+          const matchedCountry = sortedCountries.find(c => whatsappNumber.startsWith(c.callingCode));
+          
+          if (matchedCountry) {
+            this.selectedCountry = matchedCountry;
+            whatsappNumber = whatsappNumber.replace(matchedCountry.callingCode, '').trim();
+          }
+        }
+
         const data = {
-           whatsapp_number: user.profile?.whatsapp_number || profile.whatsapp_number || '',
+           whatsapp_number: whatsappNumber,
            city: user.profile?.city || profile.city || '',
-           country: user.profile?.country || profile.country || 'Cameroun'
+           country: user.profile?.country || profile.country || (this.selectedCountry?.name || 'Burkina Faso')
         };
         
         if (data.whatsapp_number || data.city) {
@@ -78,7 +92,13 @@ export class ProfileCompleteComponent implements OnInit {
     if (this.personalInfoForm.valid) {
       this.isLoading = true;
       
-      this.playerService.updateProfile(this.personalInfoForm.value).subscribe({
+      const formData = { ...this.personalInfoForm.value };
+      // Prepend calling code if not already present (safety check)
+      if (formData.whatsapp_number && !formData.whatsapp_number.startsWith('+')) {
+        formData.whatsapp_number = `${this.selectedCountry.callingCode}${formData.whatsapp_number}`;
+      }
+      
+      this.playerService.updateProfile(formData).subscribe({
         next: (response) => {
           this.isLoading = false;
           // Use server message if available, else default
