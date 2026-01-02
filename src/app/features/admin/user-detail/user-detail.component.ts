@@ -177,4 +177,19 @@ export class UserDetailComponent implements OnInit {
       }
     });
   }
+
+  openWhatsApp() {
+    const number = this.user?.profile?.whatsapp_number;
+    if (!number) {
+      this.toastService.error('Numéro WhatsApp non renseigné.');
+      return;
+    }
+
+    // Clean number: remove non-digits but keep + if present at start
+    const cleanNumber = number.replace(/[^\d+]/g, '');
+    const message = `Bonjour cher joueur ${this.user?.name}, je suis l'agent de la plateforme G4me Pro Africa chargé de vérifier votre numéro whatsapp et valider votre profil. Veuillez me confirmer qu'il s'agit bien de vous`;
+    
+    const url = `https://wa.me/${cleanNumber.startsWith('+') ? cleanNumber.substring(1) : cleanNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  }
 }
