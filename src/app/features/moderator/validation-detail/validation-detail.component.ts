@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
@@ -35,7 +36,7 @@ export class ValidationDetailComponent implements OnInit {
 
   getScreenshotUrl(path: string): string {
     if (!path) return '';
-    const baseUrl = 'http://localhost:8000/storage';
+    const baseUrl = environment.storageUrl;
     return `${baseUrl}/${path}`;
   }
 

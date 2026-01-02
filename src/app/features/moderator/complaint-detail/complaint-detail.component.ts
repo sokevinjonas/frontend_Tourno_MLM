@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ModeratorService } from '../../../core/services/moderator.service';
@@ -35,7 +36,7 @@ export class ComplaintDetailComponent implements OnInit {
   ) {}
 
   getScreenshotUrl(path: string): string {
-    const baseUrl = 'http://localhost:8000/storage';
+    const baseUrl = environment.storageUrl;
     return `${baseUrl}/${path}`;
   }
 

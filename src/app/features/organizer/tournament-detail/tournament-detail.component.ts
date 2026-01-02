@@ -375,9 +375,9 @@ export class TournamentDetailComponent implements OnInit {
       cleanPath = path.substring(7);
     }
     
-    const baseApiUrl = environment.apiUrl.replace(/\/api$/, '');
+    const baseUrl = environment.storageUrl;
     const finalPath = cleanPath.startsWith('/') ? cleanPath.substring(1) : cleanPath;
-    const url = `${baseApiUrl}/storage/${finalPath}`;
+    const url = `${baseUrl}/${finalPath}`;
     console.log('Generated Image URL:', url);
     return url;
   }

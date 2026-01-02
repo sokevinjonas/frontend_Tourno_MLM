@@ -20,7 +20,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   private cd = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
   
-  storageUrl = environment.apiUrl.replace(/\/api$/, '') + '/storage/';
+  
 
   matches: Match[] = [];
   filteredMatches: Match[] = [];
@@ -162,7 +162,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     if (!path) return null;
     if (path.startsWith('http')) return path;
     if (path.startsWith('data:')) return path;
-    return `${this.storageUrl}${path}`;
+    return `${environment.storageUrl}/${path}`;
   }
 
   openImagePreview(url: string | null) {

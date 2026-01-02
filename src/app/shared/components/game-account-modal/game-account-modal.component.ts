@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output, inject, NgZone, ChangeDetectorRef, OnInit, SimpleChanges, OnChanges } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PlayerService } from '../../../core/services/player.service';
@@ -137,8 +138,8 @@ export class GameAccountModalComponent implements OnChanges {
   getAccountImageUrl(path: string | null): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    const baseUrl = this.playerService.apiUrl.replace('/api', '');
-    return `${baseUrl}/storage/${path}`;
+    const baseUrl = environment.storageUrl;
+    return `${baseUrl}/${path}`;
   }
 
   onClose() {

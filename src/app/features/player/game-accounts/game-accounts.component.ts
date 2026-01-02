@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../core/services/auth.service';
 import { PlayerService } from '../../../core/services/player.service';
@@ -60,7 +61,7 @@ export class GameAccountsComponent {
   getAccountImageUrl(path: string | null): string {
     if (!path) return '';
     if (path.startsWith('http')) return path;
-    const baseUrl = this.playerService.apiUrl.replace('/api', '');
-    return `${baseUrl}/storage/${path}`;
+    const baseUrl = environment.storageUrl;
+    return `${baseUrl}/${path}`;
   }
 }
