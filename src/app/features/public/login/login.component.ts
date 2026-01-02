@@ -27,7 +27,7 @@ export class LoginComponent {
 
     this.authService.sendMagicLink(this.email).subscribe({
       next: () => {
-        this.router.navigate(['/auth/verify'], { queryParams: { email: this.email, sent: true } });
+        this.router.navigate(['/auth/verify-code'], { queryParams: { email: this.email } });
       },
       error: (err) => {
         console.error('Magic Link Error:', err);

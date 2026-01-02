@@ -32,10 +32,6 @@ export const publicRoutes: Routes = [
     data: { seo: { title: 'Inscription', description: 'Créez votre compte GPA et commencez votre aventure e-sport dès aujourd\'hui.' } }
   },
   {
-    path: 'auth/verify',
-    loadComponent: () => import('./auth-verify/auth-verify.component').then(m => m.AuthVerifyComponent)
-  },
-  {
     path: 'tournaments',
     loadComponent: () => import('./tournaments/tournaments.component').then(m => m.TournamentsComponent),
     data: { seo: { title: 'Tournois en Cours', description: 'Parcourez la liste des tournois actifs et inscrivez-vous pour prouver votre talent.' } }

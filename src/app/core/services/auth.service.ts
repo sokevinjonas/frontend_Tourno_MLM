@@ -71,19 +71,25 @@ export class AuthService {
   }
 
   /**
-   * Envoie un Magic Link par email
+   * Envoie un code de vérification par email
    * POST /auth/magic-link/send
    */
-  sendMagicLink(email: string, redirectUrl?: string): Observable<any> {
-    const defaultRedirect = window.location.origin + '/auth/verify';
-    return this.http.post(`${this.apiUrl}/auth/magic-link/send`, {
-      email,
-      redirect_url: redirectUrl || defaultRedirect
-    });
+  sendMagicLink(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/magic-link/send`, { email });
   }
 
   /**
-   * Vérifie le token Magic Link
+   * Vérifie le code à 6 chiffres
+   * POST /auth/magic-link/verify
+   */
+  verifyCode(code: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/auth/magic-link/verify`, { code }).pipe(
+      tap(response => this.handleAuthSuccess(response))
+    );
+  }
+
+  /**
+   * Vérifie le token Magic Link (OBSOLÈTE - Remplacé par verifyCode)
    * POST /auth/magic-link/verify
    */
   verifyMagicLink(token: string): Observable<AuthResponse> {
