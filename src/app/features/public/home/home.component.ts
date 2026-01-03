@@ -37,13 +37,20 @@ export class HomeComponent implements OnInit {
         next: (data) => {
            // Get 3 latest        // Since IDs are now UUIDs, numeric subtraction won't work.
            // We'll just take the first 6 or sort by created_at if available.
-           this.featuredTournaments = data.slice(0, 6);
+           if (data && Array.isArray(data)) {
+             this.featuredTournaments = data.slice(0, 6);
+           } else {
+             console.warn('HomeComponent: Received non-array data from getTournaments()', data);
+             this.featuredTournaments = [];
+           }
            this.isLoadingTournaments = false;
            this.cd.markForCheck();
         },
         error: (err) => {
            console.error('Failed to load home tournaments', err);
            this.isLoadingTournaments = false;
+           this.featuredTournaments = [];
+           this.cd.markForCheck();
         }
      });
   }

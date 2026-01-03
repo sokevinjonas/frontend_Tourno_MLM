@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { BadgeType } from '../models/organizer.model';
 
@@ -110,7 +110,12 @@ export class TournamentService {
         if (Array.isArray(data)) {
           return data.map(t => this.mapTournamentData(t));
         }
-        return data;
+        console.error('TournamentService: Expected array for tournaments but got:', data);
+        return [];
+      }),
+      catchError(err => {
+        console.error('TournamentService: Error fetching tournaments', err);
+        return of([]);
       })
     );
   }
