@@ -46,6 +46,7 @@ export class TournamentDetailComponent implements OnInit {
   selectedMatch: Match | null = null;
   score1: number | null = null;
   score2: number | null = null;
+  isUpdatingScore = false;
   previewImageUrl: string | null = null;
 
    icons = {
@@ -263,6 +264,7 @@ export class TournamentDetailComponent implements OnInit {
     this.selectedMatch = match;
     this.score1 = match.player1_score;
     this.score2 = match.player2_score;
+    this.isUpdatingScore = match.status === 'completed';
     this.showScoreModal = true;
   }
 
@@ -271,19 +273,29 @@ export class TournamentDetailComponent implements OnInit {
     this.selectedMatch = null;
     this.score1 = null;
     this.score2 = null;
+    this.isUpdatingScore = false;
   }
 
   submitScore() {
     if (!this.selectedMatch || this.score1 === null || this.score2 === null) return;
     
     this.submitting = true;
-    this.matchService.enterScore(this.selectedMatch.uuid, {
+    const scoreData = {
       player1_score: this.score1,
       player2_score: this.score2
-    }).subscribe({
+    };
+
+    const action = this.isUpdatingScore 
+      ? this.matchService.updateMatchScore(this.selectedMatch.uuid, scoreData)
+      : this.matchService.enterScore(this.selectedMatch.uuid, scoreData);
+
+    action.subscribe({
       next: () => {
-        this.toastService.success('Score enregistré !');
+        this.toastService.success(this.isUpdatingScore ? 'Score mis à jour !' : 'Score enregistré !');
         this.loadMatches(this.tournament!.uuid);
+        if (this.isUpdatingScore) {
+          this.loadTournament(this.tournament!.uuid); // Refresh tournament/standings on update
+        }
         this.closeScoreModal();
         this.submitting = false;
         this.cd.detectChanges();

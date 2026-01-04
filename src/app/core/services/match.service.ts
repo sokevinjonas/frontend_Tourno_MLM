@@ -67,6 +67,10 @@ export class MatchService {
     return this.http.post<Match>(`${this.apiUrl}/${matchUuid}/enter-score`, score);
   }
 
+  updateMatchScore(matchUuid: string, score: { player1_score: number, player2_score: number }): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${matchUuid}/update-score`, score);
+  }
+
   reportResult(matchUuid: string, data: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/${matchUuid}/submit-result`, data);
   }
