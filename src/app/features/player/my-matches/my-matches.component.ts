@@ -327,7 +327,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     let sub = match.match_results.find((r: any) => 
       (r.submitted_by_uuid === forPlayerUuid) || 
       (r.user_uuid === forPlayerUuid) || 
-      (r.player_uuid === forPlayerUuid)
+      (r.player_uuid === forPlayerUuid) ||
+      (r.submitter?.uuid === forPlayerUuid)
     );
 
     // Fallback: If only 2 results and indices match players (standard behavior)
