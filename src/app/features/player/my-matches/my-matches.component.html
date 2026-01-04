@@ -108,12 +108,11 @@
                 <!-- VS Badge -->
                 <div class="relative flex flex-col items-center justify-center p-2">
                    <div class="text-3xl font-black text-slate-700/20 italic select-none tracking-tighter">VS</div>
-                   <!-- Score Display -->
                    @if (match.player1_score !== null || match.player2_score !== null) {
                     <div class="absolute inset-0 flex items-center justify-center gap-2">
-                       <span class="text-xl font-black text-white drop-shadow-lg">{{ match.player1_uuid === (currentUser$ | async)?.uuid ? match.player2_score : match.player1_score }}</span>
+                       <span class="text-xl font-black text-white drop-shadow-lg">{{ getOpponentScore(match) !== null ? getOpponentScore(match) : '-' }}</span>
                        <span class="text-xl font-black text-slate-600">:</span>
-                       <span class="text-xl font-black text-blue-400 drop-shadow-lg">{{ match.player1_uuid === (currentUser$ | async)?.uuid ? match.player1_score : match.player2_score }}</span>
+                       <span class="text-xl font-black text-blue-400 drop-shadow-lg">{{ getMeScore(match) !== null ? getMeScore(match) : '-' }}</span>
                     </div>
                    }
                 </div>
@@ -301,7 +300,9 @@
        <div class="relative bg-slate-900 border border-slate-800 w-full max-w-sm rounded-[2rem] shadow-2xl overflow-hidden animate-zoom-in">
           <div class="p-5 sm:p-6">
              <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-white uppercase tracking-tighter">Soumettre le Score</h3>
+                <h3 class="text-lg font-bold text-white uppercase tracking-tighter">
+                  {{ isUpdating ? 'Modifier le Résultat' : 'Soumettre le Score' }}
+                </h3>
                 <button (click)="closeScoreModal()" class="text-slate-500 hover:text-white transition-colors">
                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -399,9 +400,9 @@
                 <div class="pt-4 flex flex-col gap-3">
                    <button 
                       (click)="submitScore()"
-                      [disabled]="submittingScore || !selectedFile"
+                      [disabled]="submittingScore || (!isUpdating && !selectedFile)"
                       class="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black rounded-2xl shadow-lg shadow-blue-600/20 transition-all transform active:scale-95 uppercase tracking-widest text-sm">
-                      {{ submittingScore ? 'Envoi en cours...' : 'Soumettre le Résultat' }}
+                      {{ submittingScore ? (isUpdating ? 'Mise à jour...' : 'Envoi en cours...') : (isUpdating ? 'Mettre à jour le Résultat' : 'Soumettre le Résultat') }}
                    </button>
                    <button 
                       (click)="closeScoreModal()"

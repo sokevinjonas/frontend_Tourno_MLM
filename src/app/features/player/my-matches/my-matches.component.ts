@@ -39,6 +39,7 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   showProofsModal = false;
   previewImageUrl: string | null = null;
   submittingScore = false;
+  isUpdating = false;
   scoreForm = {
     own_score: 0,
     opponent_score: 0,
@@ -143,6 +144,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     this.showScoreModal = true;
     
     const ownSub = this.getOwnSubmission(match);
+    this.isUpdating = !!ownSub;
+    
     if (ownSub) {
       this.scoreForm = { 
         own_score: ownSub.own_score, 
@@ -208,8 +211,8 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
   }
 
   submitScore() {
-    if (!this.selectedMatch || (!this.selectedFile && !this.filePreview)) {
-      // Maybe add error toast if file is required
+    // Screenshot is mandatory for initial submission, but optional for updates
+    if (!this.selectedMatch || (!this.isUpdating && !this.selectedFile)) {
       return;
     }
 
@@ -233,23 +236,29 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
           if (!this.selectedMatch.match_results) this.selectedMatch.match_results = [];
           
           const userUuid = this.authService.currentUserValue?.uuid;
+          const oldSub = this.getOwnSubmission(this.selectedMatch);
+          
           if (userUuid) {
              const newResult: MatchResult = {
-                uuid: res?.uuid || 'temp-' + Date.now(),
+                uuid: res?.uuid || oldSub?.uuid || 'temp-' + Date.now(),
                 match_uuid: this.selectedMatch.uuid,
                 submitted_by_uuid: userUuid,
                 own_score: this.scoreForm.own_score,
                 opponent_score: this.scoreForm.opponent_score,
-                screenshot_path: this.filePreview || '',
+                screenshot_path: this.filePreview || oldSub?.screenshot_path || '',
                 comment: this.scoreForm.comment || null,
                 status: 'pending',
-                created_at: new Date().toISOString(),
+                created_at: oldSub?.created_at || new Date().toISOString(),
                 updated_at: new Date().toISOString()
              };
+             
+             // Update match status to pending_validation locally
+             this.selectedMatch.status = 'pending_validation';
+             
              // Remove existing own submission if any
              this.selectedMatch.match_results = [
-               ...this.selectedMatch.match_results.filter((r: MatchResult) => r.submitted_by_uuid !== userUuid),
-               newResult
+                ...this.selectedMatch.match_results.filter((r: MatchResult) => r.submitted_by_uuid !== userUuid),
+                newResult
              ];
           }
         }
@@ -342,6 +351,26 @@ export class MyMatchesComponent implements OnInit, OnDestroy {
     const userUuid = this.authService.currentUserValue?.uuid;
     const opponent = this.getOpponent(match);
     return this.getSubmission(match, opponent?.uuid || null);
+  }
+
+  getMeScore(match: Match): number | null {
+    const userUuid = this.authService.currentUserValue?.uuid;
+    const p1Uuid = (match as any).player1_uuid || match.player1?.uuid;
+    const p2Uuid = (match as any).player2_uuid || match.player2?.uuid;
+    
+    if (p1Uuid === userUuid) return match.player1_score;
+    if (p2Uuid === userUuid) return match.player2_score;
+    return null;
+  }
+
+  getOpponentScore(match: Match): number | null {
+    const userUuid = this.authService.currentUserValue?.uuid;
+    const p1Uuid = (match as any).player1_uuid || match.player1?.uuid;
+    const p2Uuid = (match as any).player2_uuid || match.player2?.uuid;
+    
+    if (p1Uuid === userUuid) return match.player2_score;
+    if (p2Uuid === userUuid) return match.player1_score;
+    return null;
   }
 
   getOpponent(match: Match): any {
