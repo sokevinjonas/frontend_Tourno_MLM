@@ -30,11 +30,19 @@ export class WalletComponent implements OnInit {
   pageSize = 10;
   totalTransactions = 0;
 
-  // Withdrawal Form
+  // Deposit & Withdrawal Form
   withdrawalAmount: number = 5;
   withdrawalPhone: string = '';
   confirmPhone: string = '';
   submittingWithdrawal = false;
+
+  // Recharge
+  rechargePhone: string = '';
+  submittingRecharge = false;
+  selectedPack: any = null;
+  showRechargeModal = false;
+  readonly DEPOSIT_FEE_PERCENTAGE = 7;
+  readonly COIN_RATE = 500;
 
   rechargePacks = [
     { id: 'starter', coins: 5, price: 2500, label: 'Pack Débutant', description: 'Idéal pour tester la plateforme', isPopular: false },
@@ -50,7 +58,6 @@ export class WalletComponent implements OnInit {
   refreshData() {
     this.loading = true;
     this.loadTransactions();
-    this.loadStats();
   }
 
   loadTransactions() {
@@ -62,29 +69,11 @@ export class WalletComponent implements OnInit {
         this.loading = false;
         this.cd.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error fetching transactions', err);
         this.loading = false;
         this.cd.detectChanges();
       }
-    });
-  }
-
-  loadStats() {
-    this.paymentService.getWalletStats().subscribe({
-      next: (res: WalletStatisticsResponse) => {
-        const { wallet, transactions, tournaments } = res;
-        this.walletStats = {
-          balance: wallet.balance,
-          blocked_balance: wallet.blocked_balance,
-          available_balance: wallet.available_balance,
-          total_credited: transactions.total_credited,
-          total_debited: transactions.total_debited,
-          tournament_stats: tournaments
-        } as any;
-        this.cd.detectChanges();
-      },
-      error: (err) => console.error('Error fetching stats', err)
     });
   }
 
@@ -96,6 +85,16 @@ export class WalletComponent implements OnInit {
 
   get totalPages(): number {
     return Math.ceil(this.totalTransactions / this.pageSize);
+  }
+
+  getEstimatedCoins(price: number): number {
+    const feeAmount = (price * this.DEPOSIT_FEE_PERCENTAGE) / 100;
+    const netAmount = price - feeAmount;
+    return netAmount / this.COIN_RATE;
+  }
+
+  getFeeAmount(price: number): number {
+    return (price * this.DEPOSIT_FEE_PERCENTAGE) / 100;
   }
 
   setActiveTab(tab: 'history' | 'recharge' | 'withdraw') {
@@ -113,8 +112,33 @@ export class WalletComponent implements OnInit {
   }
 
   selectPack(pack: any) {
-    this.toastService.info(`Ouverture du paiement pour ${pack.label}...`);
-    // Logic for recharge will go here
+    this.selectedPack = pack;
+    this.showRechargeModal = true;
+  }
+
+  cancelRecharge() {
+    this.showRechargeModal = false;
+    this.selectedPack = null;
+  }
+
+  confirmRecharge() {
+    this.submittingRecharge = true;
+    this.paymentService.initiateDeposit(this.selectedPack.price).subscribe({
+      next: (res) => {
+        if (res.success && res.data.payment_url) {
+          this.toastService.success('Redirection vers la page de paiement...');
+          window.location.href = res.data.payment_url;
+        } else {
+          this.toastService.error('Erreur lors de l\'initiation du dépôt.');
+          this.submittingRecharge = false;
+        }
+      },
+      error: (err) => {
+        console.error('Recharge error', err);
+        this.toastService.error('Une erreur est survenue lors de l\'initiation du dépôt.');
+        this.submittingRecharge = false;
+      }
+    });
   }
 
   confirmWithdrawal() {
@@ -134,9 +158,10 @@ export class WalletComponent implements OnInit {
     }
 
     this.submittingWithdrawal = true;
-    this.paymentService.withdraw({
+    this.paymentService.requestWithdrawal({
       amount: this.withdrawalAmount,
-      phone: this.withdrawalPhone
+      phone: this.withdrawalPhone,
+      method: 'orange_money' // Defaulting to orange_money for now as per doc
     }).subscribe({
       next: () => {
         this.toastService.success('Demande de retrait envoyée avec succès. Traitement sous 48h.');
@@ -144,7 +169,7 @@ export class WalletComponent implements OnInit {
         this.activeTab = 'history';
         this.refreshData();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.toastService.error('Erreur lors de la demande de retrait.');
         this.submittingWithdrawal = false;
       }

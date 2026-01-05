@@ -326,4 +326,67 @@
     </div>
   </div>
 </div>
+
+<!-- Recharge Modal -->
+@if (showRechargeModal && selectedPack) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" (click)="cancelRecharge()"></div>
+    
+    <div class="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-[2.5rem] p-8 shadow-2xl animate-fade-in-up">
+      <div class="text-center space-y-4 mb-8">
+        <div class="w-20 h-20 bg-orange-500/10 rounded-3xl flex items-center justify-center mx-auto text-orange-500 border border-orange-500/20">
+          <span class="text-4xl">🪙</span>
+        </div>
+        <h3 class="text-2xl font-black text-white uppercase tracking-tight">Finaliser votre achat</h3>
+        <p class="text-slate-400 text-sm">Récapitulatif de votre commande :</p>
+        
+        <div class="bg-slate-950/50 rounded-2xl p-4 border border-slate-800 space-y-2">
+           <div class="flex justify-between text-xs sm:text-sm">
+              <span class="text-slate-500">Montant payé :</span>
+              <span class="text-white font-bold">{{ selectedPack.price | number }} FCFA</span>
+           </div>
+           <div class="flex justify-between text-xs sm:text-sm">
+              <span class="text-slate-500">Frais ({{ DEPOSIT_FEE_PERCENTAGE }}%) :</span>
+              <span class="text-red-400 font-medium">- {{ getFeeAmount(selectedPack.price) | number }} FCFA</span>
+           </div>
+           <div class="h-px bg-slate-800 my-1"></div>
+           <div class="flex justify-between items-center pt-1">
+              <span class="text-slate-300 font-bold text-sm">Pièces reçues :</span>
+              <span class="text-orange-400 font-black text-xl">{{ getEstimatedCoins(selectedPack.price) | number:'1.2-2' }} 🪙</span>
+           </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-blue-600/5 border border-blue-500/10 rounded-2xl p-4 flex items-start gap-3">
+           <div class="text-blue-400 mt-0.5">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+           </div>
+           <p class="text-[10px] text-slate-400 leading-relaxed uppercase tracking-tighter">
+             <strong>Note :</strong> Une fois validé, vous serez redirigé vers <strong>FusionPay</strong> pour finaliser la transaction sécurisée.
+           </p>
+        </div>
+        
+        <div class="flex gap-4 pt-4">
+           <button 
+             (click)="cancelRecharge()"
+             class="flex-1 py-4 px-6 rounded-2xl bg-slate-800 text-slate-300 font-bold hover:bg-slate-700 transition-all active:scale-95">
+             Annuler
+           </button>
+           <button 
+             (click)="confirmRecharge()"
+             [disabled]="submittingRecharge"
+             class="flex-[2] py-4 px-6 rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-500 transition-all shadow-lg shadow-orange-600/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3">
+              @if (submittingRecharge) {
+                <svg class="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Redirection...
+              } @else {
+                Continuer vers le paiement
+              }
+           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
 }
