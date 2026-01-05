@@ -108,7 +108,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.cd.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading player stats', err);
         this.loading = false;
         this.cd.detectChanges();

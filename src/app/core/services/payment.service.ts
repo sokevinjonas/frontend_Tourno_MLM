@@ -8,38 +8,48 @@ import { Transaction, TransactionsResponse, WalletBalance, WalletStats, WalletSt
   providedIn: 'root'
 })
 export class PaymentService {
-  private apiUrl = `${environment.apiUrl}/coin-wallet`;
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
   getTransactions(limit: number = 10, offset: number = 0): Observable<TransactionsResponse> {
-    return this.http.get<{ success: boolean, data: Transaction[] }>(`${this.apiUrl}/transactions`, {
+    return this.http.get<TransactionsResponse>(`${this.apiUrl}/wallet/transactions`, {
       params: { limit: limit.toString(), offset: offset.toString() }
-    }).pipe(
-      map(res => ({
-        transactions: res.data,
-        pagination: { limit, offset, total: res.data.length } // API doesn't seem to provide total in this specific snippet, but keeping structure
-      }))
-    );
+    });
   }
 
   getBalance(): Observable<WalletBalance> {
-    return this.http.get<{ success: boolean; balance: number }>(`${this.apiUrl}/balance`).pipe(
-      map(res => ({ balance: res.balance, currency: 'XOF' }))
-    );
+    return this.http.get<WalletBalance>(`${this.apiUrl}/wallet/balance`);
+  }
+
+  getWalletStats(): Observable<WalletStatisticsResponse> {
+    return this.http.get<WalletStatisticsResponse>(`${this.apiUrl}/wallet/statistics`);
   }
 
   initiateDeposit(amountMoney: number): Observable<{ success: boolean; data: { transaction: any; payment_url: string; token: string } }> {
-    return this.http.post<{ success: boolean; data: { transaction: any; payment_url: string; token: string } }>(`${this.apiUrl}/deposit/initiate`, { 
+    return this.http.post<{ success: boolean; data: { transaction: any; payment_url: string; token: string } }>(`${this.apiUrl}/coin-wallet/deposit/initiate`, { 
       amount_money: amountMoney
     });
   }
 
   requestWithdrawal(data: { amount: number; phone: string; method?: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/withdrawal/request`, {
+    return this.http.post(`${this.apiUrl}/coin-wallet/withdrawal/request`, {
       amount_coins: data.amount,
       payment_phone: data.phone,
       payment_method: data.method || 'orange_money'
     });
+  }
+
+  // Admin Methods
+  getPendingWithdrawals(): Observable<{ success: boolean, data: any[] }> {
+    return this.http.get<{ success: boolean, data: any[] }>(`${environment.apiUrl}/admin/coin-wallet/withdrawals/pending`);
+  }
+
+  approveWithdrawal(uuid: string, note?: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/admin/coin-wallet/withdrawals/${uuid}/approve`, { admin_note: note });
+  }
+
+  rejectWithdrawal(uuid: string, reason: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/admin/coin-wallet/withdrawals/${uuid}/reject`, { rejection_reason: reason });
   }
 }

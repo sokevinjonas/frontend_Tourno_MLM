@@ -58,6 +58,7 @@ export class WalletComponent implements OnInit {
   refreshData() {
     this.loading = true;
     this.loadTransactions();
+    this.loadStats();
   }
 
   loadTransactions() {
@@ -74,6 +75,24 @@ export class WalletComponent implements OnInit {
         this.loading = false;
         this.cd.detectChanges();
       }
+    });
+  }
+
+  loadStats() {
+    this.paymentService.getWalletStats().subscribe({
+      next: (res) => {
+        const { wallet, transactions, tournaments } = res;
+        this.walletStats = {
+          balance: wallet.balance,
+          blocked_balance: wallet.blocked_balance,
+          available_balance: wallet.available_balance,
+          total_credited: transactions.total_credited,
+          total_debited: transactions.total_debited,
+          tournament_stats: tournaments
+        } as any;
+        this.cd.detectChanges();
+      },
+      error: (err: any) => console.error('Error fetching stats', err)
     });
   }
 

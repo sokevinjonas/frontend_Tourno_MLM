@@ -192,7 +192,7 @@ export class TournamentDetailComponent implements OnInit {
         } as any;
         this.cd.detectChanges();
       },
-      error: (err) => console.error('Error loading stats', err)
+      error: (err: any) => console.error('Error loading stats', err)
     });
   }
 
